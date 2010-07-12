@@ -11,7 +11,8 @@ About the Code
 --------------
 This project was written in the JDK 1.6.0 Update 20
 
-The supporting library versions are listed below
+The supporting library versions are listed below:
+
 * commons-cli.jar :: Apache Commons CLI 2.0
 * commons-io.jar :: Apache Commons I/O 1.4
 * commons-lang.jar :: Apache Commons Lang 2.4
