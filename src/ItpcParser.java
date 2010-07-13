@@ -458,6 +458,7 @@ public class ItpcParser {
 
         idx++;
       }
+      // xxx: columns for char data file export
       summaryColumns.add(subjectId);
       summaryColumns.add(projectSiteIdx);
       summaryColumns.add(ageIdx);
