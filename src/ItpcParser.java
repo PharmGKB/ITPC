@@ -65,6 +65,7 @@ import util.PoiWorksheetIterator;
  * @author Ryan Whaley
  */
 public class ItpcParser {
+  enum Value {Unknown, Yes, No}
 
   private static final Logger sf_logger = Logger.getLogger(ItpcParser.class);
   private static final String sf_sheetName = "Combined_Data";
@@ -809,40 +810,40 @@ public class ItpcParser {
           iterateMappedTotals(nonStar4CountMap, projectSite);
         }
 
-        String isPotent;
+        Value isPotent;
         if ((row.get(paroxetineCol) != null && row.get(paroxetineCol).equals("1")) ||
             (row.get(fluoxetineCol) != null && row.get(fluoxetineCol).equals("1")) ||
             (row.get(quinidienCol)  != null && row.get(quinidienCol).equals("1")) ||
             (row.get(buproprionCol) != null && row.get(buproprionCol).equals("1")) ||
             (row.get(duloxetineCol) != null && row.get(duloxetineCol).equals("1"))) {
-          isPotent = "True";
+          isPotent = Value.Yes;
         }
         else if ((row.get(paroxetineCol) != null && row.get(paroxetineCol).equals("0")) &&
             (row.get(fluoxetineCol) != null && row.get(fluoxetineCol).equals("0")) &&
             (row.get(quinidienCol)  != null && row.get(quinidienCol).equals("0")) &&
             (row.get(buproprionCol) != null && row.get(buproprionCol).equals("0")) &&
             (row.get(duloxetineCol) != null && row.get(duloxetineCol).equals("0"))) {
-          isPotent = "False";
+          isPotent = Value.No;
         }
         else {
-          isPotent="Unknown";
+          isPotent = Value.Unknown;
         }
 
-        String isWeak;
+        Value isWeak;
         if ((row.get(cimetidineCol) != null && row.get(cimetidineCol).equals("1"))
             || (row.get(sertralineCol) != null && row.get(sertralineCol).equals("1"))
             || (row.get(citalopramCol) != null && row.get(citalopramCol).equals("1"))
             ) {
-          isWeak = "True";
+          isWeak = Value.Yes;
         }
         else if ((row.get(cimetidineCol) != null && row.get(cimetidineCol).equals("0"))
             && (row.get(sertralineCol) != null && row.get(sertralineCol).equals("0"))
             && (row.get(citalopramCol) != null && row.get(citalopramCol).equals("0"))
             ) {
-          isWeak = "False";
+          isWeak = Value.No;
         }
         else {
-          isWeak = "Unknown";
+          isWeak = Value.Unknown;
         }
 
         // xxx: calculate a score
@@ -861,10 +862,10 @@ public class ItpcParser {
             genotypes.add(genoGroup.get(a));
           }
 
-          if (isPotent.equalsIgnoreCase("True")) {
+          if (isPotent == Value.Yes) {
             score = 0f;
           }
-          else if (genoScore.containsKey(a) && !isPotent.equalsIgnoreCase("Unknown")) {
+          else if (genoScore.containsKey(a) && isPotent != Value.Unknown) {
             score += genoScore.get(a);
           }
           else {
@@ -875,7 +876,7 @@ public class ItpcParser {
           writeCell(newRow, scoreIdx, "Unknown");
         }
         else {
-          if (isWeak.equalsIgnoreCase("true")) {
+          if (isWeak == Value.Yes) {
             score -= 0.5f;
           }
           if (score<0.0f) {
@@ -907,8 +908,8 @@ public class ItpcParser {
         writeCell(newRow, genotypeIdx, genoBuilder.toString());
 
 
-        writeCell(newRow, weakIdx, isWeak);
-        writeCell(newRow, potentIdx, isPotent);
+        writeCell(newRow, weakIdx, getValueText(isWeak));
+        writeCell(newRow, potentIdx, getValueText(isPotent));
 
         String key = genoBuilder.toString() + "," + isWeak + "," + isPotent;
         if (genophenoMap.containsKey(key)) {
@@ -922,103 +923,103 @@ public class ItpcParser {
         String metabolizerStatus = "Unclassified";
         String geno = genoBuilder.toString();
 
-        if (isPotent.equals("True") && geno.contains("Unknown")) {
+        if (isPotent == Value.Yes && geno.contains("Unknown")) {
           metabStatusTotals[17]++; metabolizerStatus = "Poor";
         }
 
-        else if (isPotent.equals("True")) {
+        else if (isPotent == Value.Yes) {
           metabStatusTotals[18]++; metabolizerStatus = "Poor";
         }
 
-        else if (geno.equals("UM/UM") && isWeak.equals("False")) {
+        else if (geno.equals("UM/UM") && isWeak == Value.No) {
           metabStatusTotals[0]++; metabolizerStatus = "Ultrarapid one";
         }
 
-        else if ((geno.equals("UM/UM")) && isWeak.equals("True")) {
+        else if ((geno.equals("UM/UM")) && isWeak == Value.Yes) {
           metabStatusTotals[1]++; metabolizerStatus = "Ultrarapid two";
         }
 
-        else if (geno.equals("EM/UM") && isWeak.equals("False")) {
+        else if (geno.equals("EM/UM") && isWeak == Value.No) {
           metabStatusTotals[2]++; metabolizerStatus = "Ultrarapid three";
         }
 
-        else if (geno.equals("IM/UM") && isWeak.equals("False")) {
+        else if (geno.equals("IM/UM") && isWeak == Value.No) {
           metabStatusTotals[3]++; metabolizerStatus = "Extensive one";
         }
 
-        else if (geno.equals("EM/UM") && isWeak.equals("True")) {
+        else if (geno.equals("EM/UM") && isWeak == Value.Yes) {
           metabStatusTotals[4]++; metabolizerStatus = "Extensive one";
         }
 
-        else if (geno.equals("EM/EM") && isWeak.equals("False")) {
+        else if (geno.equals("EM/EM") && isWeak == Value.No) {
           metabStatusTotals[5]++; metabolizerStatus = "Extensive two";
         }
 
-        else if (geno.equals("IM/UM") && isWeak.equals("True")) {
+        else if (geno.equals("IM/UM") && isWeak == Value.Yes) {
           metabStatusTotals[6]++; metabolizerStatus = "Extensive two";
         }
 
-        else if (geno.equals("PM/UM") && isWeak.equals("False")) {
+        else if (geno.equals("PM/UM") && isWeak == Value.No) {
           metabStatusTotals[7]++; metabolizerStatus = "Extensive two";
         }
 
-        else if ((geno.equals("IM/PM")) && isWeak.equals("True")) {
+        else if ((geno.equals("IM/PM")) && isWeak == Value.Yes) {
           metabStatusTotals[8]++; metabolizerStatus = "Intermediate one";
         }
 
-        else if ((geno.equals("EM/IM")) && isWeak.equals("False")) {
+        else if ((geno.equals("EM/IM")) && isWeak == Value.No) {
           metabStatusTotals[9]++; metabolizerStatus = "Intermediate one";
         }
 
-        else if ((geno.equals("EM/EM")) && isWeak.equals("True")) {
+        else if ((geno.equals("EM/EM")) && isWeak == Value.Yes) {
           metabStatusTotals[10]++; metabolizerStatus = "Intermediate one";
         }
 
-        else if ((geno.equals("IM/IM")) && isWeak.equals("False")) {
+        else if ((geno.equals("IM/IM")) && isWeak == Value.No) {
           metabStatusTotals[11]++; metabolizerStatus = "Intermediate two";
         }
 
-        else if ((geno.equals("EM/PM")) && isWeak.equals("False")) {
+        else if ((geno.equals("EM/PM")) && isWeak == Value.No) {
           metabStatusTotals[12]++; metabolizerStatus = "Intermediate two";
         }
 
-        else if ((geno.equals("EM/IM")) && isWeak.equals("True")) {
+        else if ((geno.equals("EM/IM")) && isWeak == Value.Yes) {
           metabStatusTotals[13]++; metabolizerStatus = "Intermediate two";
         }
 
-        else if ((geno.equals("EM/PM")) && isWeak.equals("True")) {
+        else if ((geno.equals("EM/PM")) && isWeak == Value.Yes) {
           metabStatusTotals[14]++; metabolizerStatus = "Intermediate three";
         }
 
-        else if ((geno.equals("IM/IM")) && isWeak.equals("True")) {
+        else if ((geno.equals("IM/IM")) && isWeak == Value.Yes) {
           metabStatusTotals[15]++; metabolizerStatus = "Intermediate three";
         }
 
-        else if ((geno.equals("IM/PM")) && isWeak.equals("False")) {
+        else if ((geno.equals("IM/PM")) && isWeak == Value.No) {
           metabStatusTotals[16]++; metabolizerStatus = "Intermediate three";
         }
 
-        else if ((geno.equals("IM/PM")) && isWeak.equals("True")) {
+        else if ((geno.equals("IM/PM")) && isWeak == Value.Yes) {
           metabStatusTotals[19]++; metabolizerStatus = "Poor";
         }
 
-        else if ((geno.equals("PM/PM")) && isWeak.equals("True")) {
+        else if ((geno.equals("PM/PM")) && isWeak == Value.Yes) {
           metabStatusTotals[20]++; metabolizerStatus = "Poor";
         }
 
-        else if ((geno.equals("PM/PM")) && isWeak.equals("False")) {
+        else if ((geno.equals("PM/PM")) && isWeak == Value.No) {
           metabStatusTotals[21]++; metabolizerStatus = "Poor";
         }
 
-        else if (geno.equals("PM/PM") && isWeak.equals("Unknown") && isPotent.equals("Unknown")) {
+        else if (geno.equals("PM/PM") && isWeak == Value.Unknown && isPotent == Value.Unknown) {
           metabStatusTotals[22]++; metabolizerStatus = "Poor";
         }
 
-        else if (isWeak.equals("Unknown") && isPotent.equals("Unknown")) {
+        else if (isWeak == Value.Unknown && isPotent == Value.Unknown) {
           metabStatusTotals[23]++; metabolizerStatus = "Unclassified";
         }
 
-        else if (!(geno.contains("Unknown") && isWeak.equals("False") && isPotent.equals("False"))) {
+        else if (!(geno.contains("Unknown") && isWeak == Value.No && isPotent == Value.No)) {
           sf_logger.warn("No metab. status for: " + row.get(subjectId) + " :: " + geno + " :: " + isWeak + "/" + isPotent);
           metabStatusTotals[24]++;
         }
@@ -1644,7 +1645,7 @@ public class ItpcParser {
             .append(" -> ")
             .append(value);
         sf_logger.info(sb.toString());
-        
+
         row.removeCell(cell);
         row.createCell(idx).setCellType(Cell.CELL_TYPE_NUMERIC);
       }
@@ -1683,5 +1684,13 @@ public class ItpcParser {
     }
 
     return true;
+  }
+
+  protected static String getValueText(Value value) {
+    switch (value) {
+      case Yes: return "True";
+      case No:  return "False";
+      default: return "Unknown";
+    }
   }
 }
