@@ -71,55 +71,55 @@ public class ItpcParser {
   private static final String sf_sheetName = "Combined_Data";
   private static final Pattern sf_alleleRegex = Pattern.compile("\\*\\d+");
 
-  private static final Map<String,String> genoGroup = new HashMap<String,String>();
+  private static final Map<String,Metabolizer.Status> genoGroup = new HashMap<String,Metabolizer.Status>();
   static {
-    genoGroup.put("*3","PM");
-    genoGroup.put("*4","PM");
-    genoGroup.put("*5","PM");
-    genoGroup.put("*6","PM");
-    genoGroup.put("*7","PM");
-    genoGroup.put("*8","PM");
-    genoGroup.put("*11","PM");
-    genoGroup.put("*12","PM");
-    genoGroup.put("*13","PM");
-    genoGroup.put("*14","PM");
-    genoGroup.put("*15","PM");
-    genoGroup.put("*16","PM");
-    genoGroup.put("*18","PM");
-    genoGroup.put("*19","PM");
-    genoGroup.put("*20","PM");
-    genoGroup.put("*40","PM");
-    genoGroup.put("*42","PM");
-    genoGroup.put("*44","PM");
-    genoGroup.put("*56","PM");
-    genoGroup.put("*36","PM");
-    genoGroup.put("*38","PM");
-    genoGroup.put("*4XN","PM");
+    genoGroup.put("*3",Metabolizer.Status.PM);
+    genoGroup.put("*4",Metabolizer.Status.PM);
+    genoGroup.put("*5",Metabolizer.Status.PM);
+    genoGroup.put("*6",Metabolizer.Status.PM);
+    genoGroup.put("*7",Metabolizer.Status.PM);
+    genoGroup.put("*8",Metabolizer.Status.PM);
+    genoGroup.put("*11",Metabolizer.Status.PM);
+    genoGroup.put("*12",Metabolizer.Status.PM);
+    genoGroup.put("*13",Metabolizer.Status.PM);
+    genoGroup.put("*14",Metabolizer.Status.PM);
+    genoGroup.put("*15",Metabolizer.Status.PM);
+    genoGroup.put("*16",Metabolizer.Status.PM);
+    genoGroup.put("*18",Metabolizer.Status.PM);
+    genoGroup.put("*19",Metabolizer.Status.PM);
+    genoGroup.put("*20",Metabolizer.Status.PM);
+    genoGroup.put("*40",Metabolizer.Status.PM);
+    genoGroup.put("*42",Metabolizer.Status.PM);
+    genoGroup.put("*44",Metabolizer.Status.PM);
+    genoGroup.put("*56",Metabolizer.Status.PM);
+    genoGroup.put("*36",Metabolizer.Status.PM);
+    genoGroup.put("*38",Metabolizer.Status.PM);
+    genoGroup.put("*4XN",Metabolizer.Status.PM);
 
-    genoGroup.put("*9","IM");
-    genoGroup.put("*10","IM");
-    genoGroup.put("*17","IM");
-    genoGroup.put("*29","IM");
-    genoGroup.put("*37","IM");
-    genoGroup.put("*41","IM");
-    genoGroup.put("*45","IM");
-    genoGroup.put("*46","IM");
+    genoGroup.put("*9",Metabolizer.Status.IM);
+    genoGroup.put("*10",Metabolizer.Status.IM);
+    genoGroup.put("*17",Metabolizer.Status.IM);
+    genoGroup.put("*29",Metabolizer.Status.IM);
+    genoGroup.put("*37",Metabolizer.Status.IM);
+    genoGroup.put("*41",Metabolizer.Status.IM);
+    genoGroup.put("*45",Metabolizer.Status.IM);
+    genoGroup.put("*46",Metabolizer.Status.IM);
 
-    genoGroup.put("*1","EM");
-    genoGroup.put("*2","EM");
-    genoGroup.put("*33","EM");
-    genoGroup.put("*35","EM");
-    genoGroup.put("*39","EM");
-    genoGroup.put("*43","EM");
+    genoGroup.put("*1",Metabolizer.Status.EM);
+    genoGroup.put("*2",Metabolizer.Status.EM);
+    genoGroup.put("*33",Metabolizer.Status.EM);
+    genoGroup.put("*35",Metabolizer.Status.EM);
+    genoGroup.put("*39",Metabolizer.Status.EM);
+    genoGroup.put("*43",Metabolizer.Status.EM);
 
-    genoGroup.put("*1XN", "UM");
-    genoGroup.put("*2XN", "UM");
-    genoGroup.put("*9XN", "UM");
-    genoGroup.put("*10XN", "UM");
-    genoGroup.put("*35XN", "UM");
-    genoGroup.put("*39XN", "UM");
-    genoGroup.put("*41XN", "UM");
-    genoGroup.put("*45XN", "UM");
+    genoGroup.put("*1XN", Metabolizer.Status.UM);
+    genoGroup.put("*2XN", Metabolizer.Status.UM);
+    genoGroup.put("*9XN", Metabolizer.Status.UM);
+    genoGroup.put("*10XN", Metabolizer.Status.UM);
+    genoGroup.put("*35XN", Metabolizer.Status.UM);
+    genoGroup.put("*39XN", Metabolizer.Status.UM);
+    genoGroup.put("*41XN", Metabolizer.Status.UM);
+    genoGroup.put("*45XN", Metabolizer.Status.UM);
   }
   private static final Map<String,Float> genoScore = new HashMap<String,Float>();
   static {
@@ -162,12 +162,12 @@ public class ItpcParser {
     genoScore.put("*41XN",2f);
     genoScore.put("*45XN",2f);
   }
-  private static final Map<String,Integer> genoPriority = new HashMap<String,Integer>();
+  private static final Map<Metabolizer.Status,Integer> genoPriority = new HashMap<Metabolizer.Status,Integer>();
   static {
-    genoPriority.put("PM",1);
-    genoPriority.put("IM",2);
-    genoPriority.put("EM",3);
-    genoPriority.put("UM",4);
+    genoPriority.put(Metabolizer.Status.PM,1);
+    genoPriority.put(Metabolizer.Status.IM,2);
+    genoPriority.put(Metabolizer.Status.EM,3);
+    genoPriority.put(Metabolizer.Status.UM,4);
   }
   private static List<Integer> summaryColumns = new ArrayList<Integer>();
   private static final String[] metabTable = new String[]{
@@ -776,7 +776,7 @@ public class ItpcParser {
         // output for characteristic data
         copyCharacterData(outputSummaryWriter, row);
 
-        List<String> genotypes = new ArrayList<String>();
+        Metabolizer metab = new Metabolizer();
 
         Row newRow;
         if (filter != DataSet.ALL) {
@@ -856,10 +856,10 @@ public class ItpcParser {
             outputSummaryWriter.write(",");
           }
           if (a.equals("Unknown") || !genoGroup.keySet().contains(a)) {
-            genotypes.add("Unknown");
+            metab.addStatus(Metabolizer.Status.Unknown);
           }
           else {
-            genotypes.add(genoGroup.get(a));
+            metab.addStatus(genoGroup.get(a));
           }
 
           if (isPotent == Value.Yes) {
@@ -872,7 +872,7 @@ public class ItpcParser {
             incompleteScore = true;
           }
         }
-        if (incompleteScore && !(genotypes.size()==2 && genotypes.get(0).equals("PM") && genotypes.get(1).equals("PM"))) {
+        if (incompleteScore && !metab.is(Metabolizer.Status.PM,Metabolizer.Status.PM)) {
           writeCell(newRow, scoreIdx, "Unknown");
         }
         else {
@@ -897,21 +897,13 @@ public class ItpcParser {
           sf_logger.warn("row " + (idx+1) + ": uncertain variant");
         }
 
-        StringBuilder genoBuilder = new StringBuilder();
-        Collections.sort(genotypes, String.CASE_INSENSITIVE_ORDER);
-        for (int x = 0; x < genotypes.size(); x++) {
-          genoBuilder.append(genotypes.get(x));
-          if (x != genotypes.size() - 1) {
-            genoBuilder.append("/");
-          }
-        }
-        writeCell(newRow, genotypeIdx, genoBuilder.toString());
+        writeCell(newRow, genotypeIdx, metab.toString());
 
 
-        writeCell(newRow, weakIdx, getValueText(isWeak));
-        writeCell(newRow, potentIdx, getValueText(isPotent));
+        writeCell(newRow, weakIdx, getText(isWeak));
+        writeCell(newRow, potentIdx, getText(isPotent));
 
-        String key = genoBuilder.toString() + "," + isWeak + "," + isPotent;
+        String key = metab.toString() + "," + isWeak + "," + isPotent;
         if (genophenoMap.containsKey(key)) {
           genophenoMap.put(key, genophenoMap.get(key) + 1);
         } else {
@@ -921,9 +913,8 @@ public class ItpcParser {
         //xxx: Metabolizer status totals caclulation
         // these categories should match the lines in metabTable
         String metabolizerStatus = "Unclassified";
-        String geno = genoBuilder.toString();
 
-        if (isPotent == Value.Yes && geno.contains("Unknown")) {
+        if (isPotent == Value.Yes && metab.isUnknown()) {
           metabStatusTotals[17]++; metabolizerStatus = "Poor";
         }
 
@@ -931,87 +922,87 @@ public class ItpcParser {
           metabStatusTotals[18]++; metabolizerStatus = "Poor";
         }
 
-        else if (geno.equals("UM/UM") && isWeak == Value.No) {
+        else if (metab.is(Metabolizer.Status.UM,Metabolizer.Status.UM) && isWeak == Value.No) {
           metabStatusTotals[0]++; metabolizerStatus = "Ultrarapid one";
         }
 
-        else if ((geno.equals("UM/UM")) && isWeak == Value.Yes) {
+        else if (metab.is(Metabolizer.Status.UM,Metabolizer.Status.UM) && isWeak == Value.Yes) {
           metabStatusTotals[1]++; metabolizerStatus = "Ultrarapid two";
         }
 
-        else if (geno.equals("EM/UM") && isWeak == Value.No) {
+        else if (metab.is(Metabolizer.Status.EM,Metabolizer.Status.UM) && isWeak == Value.No) {
           metabStatusTotals[2]++; metabolizerStatus = "Ultrarapid three";
         }
 
-        else if (geno.equals("IM/UM") && isWeak == Value.No) {
+        else if (metab.is(Metabolizer.Status.IM,Metabolizer.Status.UM) && isWeak == Value.No) {
           metabStatusTotals[3]++; metabolizerStatus = "Extensive one";
         }
 
-        else if (geno.equals("EM/UM") && isWeak == Value.Yes) {
+        else if (metab.is(Metabolizer.Status.EM,Metabolizer.Status.UM) && isWeak == Value.Yes) {
           metabStatusTotals[4]++; metabolizerStatus = "Extensive one";
         }
 
-        else if (geno.equals("EM/EM") && isWeak == Value.No) {
+        else if (metab.is(Metabolizer.Status.EM,Metabolizer.Status.EM) && isWeak == Value.No) {
           metabStatusTotals[5]++; metabolizerStatus = "Extensive two";
         }
 
-        else if (geno.equals("IM/UM") && isWeak == Value.Yes) {
+        else if (metab.is(Metabolizer.Status.IM,Metabolizer.Status.UM) && isWeak == Value.Yes) {
           metabStatusTotals[6]++; metabolizerStatus = "Extensive two";
         }
 
-        else if (geno.equals("PM/UM") && isWeak == Value.No) {
+        else if (metab.is(Metabolizer.Status.PM,Metabolizer.Status.UM) && isWeak == Value.No) {
           metabStatusTotals[7]++; metabolizerStatus = "Extensive two";
         }
 
-        else if ((geno.equals("IM/PM")) && isWeak == Value.Yes) {
+        else if (metab.is(Metabolizer.Status.IM,Metabolizer.Status.PM) && isWeak == Value.Yes) {
           metabStatusTotals[8]++; metabolizerStatus = "Intermediate one";
         }
 
-        else if ((geno.equals("EM/IM")) && isWeak == Value.No) {
+        else if (metab.is(Metabolizer.Status.EM,Metabolizer.Status.IM) && isWeak == Value.No) {
           metabStatusTotals[9]++; metabolizerStatus = "Intermediate one";
         }
 
-        else if ((geno.equals("EM/EM")) && isWeak == Value.Yes) {
+        else if (metab.is(Metabolizer.Status.EM,Metabolizer.Status.EM) && isWeak == Value.Yes) {
           metabStatusTotals[10]++; metabolizerStatus = "Intermediate one";
         }
 
-        else if ((geno.equals("IM/IM")) && isWeak == Value.No) {
+        else if (metab.is(Metabolizer.Status.IM,Metabolizer.Status.IM) && isWeak == Value.No) {
           metabStatusTotals[11]++; metabolizerStatus = "Intermediate two";
         }
 
-        else if ((geno.equals("EM/PM")) && isWeak == Value.No) {
+        else if (metab.is(Metabolizer.Status.EM,Metabolizer.Status.PM) && isWeak == Value.No) {
           metabStatusTotals[12]++; metabolizerStatus = "Intermediate two";
         }
 
-        else if ((geno.equals("EM/IM")) && isWeak == Value.Yes) {
+        else if (metab.is(Metabolizer.Status.EM,Metabolizer.Status.IM) && isWeak == Value.Yes) {
           metabStatusTotals[13]++; metabolizerStatus = "Intermediate two";
         }
 
-        else if ((geno.equals("EM/PM")) && isWeak == Value.Yes) {
+        else if (metab.is(Metabolizer.Status.EM,Metabolizer.Status.PM) && isWeak == Value.Yes) {
           metabStatusTotals[14]++; metabolizerStatus = "Intermediate three";
         }
 
-        else if ((geno.equals("IM/IM")) && isWeak == Value.Yes) {
+        else if (metab.is(Metabolizer.Status.IM,Metabolizer.Status.IM) && isWeak == Value.Yes) {
           metabStatusTotals[15]++; metabolizerStatus = "Intermediate three";
         }
 
-        else if ((geno.equals("IM/PM")) && isWeak == Value.No) {
+        else if (metab.is(Metabolizer.Status.IM,Metabolizer.Status.PM) && isWeak == Value.No) {
           metabStatusTotals[16]++; metabolizerStatus = "Intermediate three";
         }
 
-        else if ((geno.equals("IM/PM")) && isWeak == Value.Yes) {
+        else if (metab.is(Metabolizer.Status.IM,Metabolizer.Status.PM) && isWeak == Value.Yes) {
           metabStatusTotals[19]++; metabolizerStatus = "Poor";
         }
 
-        else if ((geno.equals("PM/PM")) && isWeak == Value.Yes) {
+        else if (metab.is(Metabolizer.Status.PM,Metabolizer.Status.PM) && isWeak == Value.Yes) {
           metabStatusTotals[20]++; metabolizerStatus = "Poor";
         }
 
-        else if ((geno.equals("PM/PM")) && isWeak == Value.No) {
+        else if (metab.is(Metabolizer.Status.PM,Metabolizer.Status.PM) && isWeak == Value.No) {
           metabStatusTotals[21]++; metabolizerStatus = "Poor";
         }
 
-        else if (geno.equals("PM/PM") && isWeak == Value.Unknown && isPotent == Value.Unknown) {
+        else if (metab.is(Metabolizer.Status.PM,Metabolizer.Status.PM) && isWeak == Value.Unknown && isPotent == Value.Unknown) {
           metabStatusTotals[22]++; metabolizerStatus = "Poor";
         }
 
@@ -1019,13 +1010,13 @@ public class ItpcParser {
           metabStatusTotals[23]++; metabolizerStatus = "Unclassified";
         }
 
-        else if (!(geno.contains("Unknown") && isWeak == Value.No && isPotent == Value.No)) {
-          sf_logger.warn("No metab. status for: " + row.get(subjectId) + " :: " + geno + " :: " + isWeak + "/" + isPotent);
+        else if (!(metab.isUnknown() && isWeak == Value.No && isPotent == Value.No)) {
+          sf_logger.warn("No metab. status for: " + row.get(subjectId) + " :: " + metab.toString() + " :: " + isWeak + "/" + isPotent);
           metabStatusTotals[24]++;
         }
 
         else {
-          sf_logger.warn("No matching logic for: " + row.get(subjectId) + " :: " + geno + " :: " + isWeak + "/" + isPotent);
+          sf_logger.warn("No matching logic for: " + row.get(subjectId) + " :: " + metab.toString() + " :: " + isWeak + "/" + isPotent);
           metabStatusTotals[24]++;
         }
 
@@ -1444,7 +1435,8 @@ public class ItpcParser {
       for (String existingAllele : alleles) {
         // if the new allele has a higher priority (lower number) than an existing one, replace it
         if ((genoPriority.get(genoGroup.get(allele)) < genoPriority.get(genoGroup.get(existingAllele)))
-            || (existingAllele.equals("*1") && genoPriority.get(existingAllele).equals(genoPriority.get(allele)))) {
+            || (existingAllele.equals("*1") && genoPriority.get(genoGroup.get(existingAllele)).equals(genoPriority.get(genoGroup.get(allele))))
+            ) {
           removeAllele = existingAllele;
         }
       }
@@ -1686,7 +1678,7 @@ public class ItpcParser {
     return true;
   }
 
-  protected static String getValueText(Value value) {
+  protected static String getText(Value value) {
     switch (value) {
       case Yes: return "True";
       case No:  return "False";

@@ -263,6 +263,13 @@
       </item>
     </group>
   </component>
+  <component name="ProjectDictionaryState">
+    <dictionary name="whaleyr">
+      <words>
+        <w>metabolizer</w>
+      </words>
+    </dictionary>
+  </component>
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/ItpcParser.iml" filepath="$PROJECT_DIR$/ItpcParser.iml" />
