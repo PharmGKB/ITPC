@@ -12,14 +12,9 @@ public class Metabolizer {
   public enum Status {Unknown, PM, IM, EM, UM}
 
   private List<Status> m_statuses = new ArrayList<Status>();
-  private String m_text;
 
   public List<Status> getStatuses() {
     return m_statuses;
-  }
-
-  public void setStatuses(List<Status> m_statuses) {
-    this.m_statuses = m_statuses;
   }
 
   public void addStatus(Status status) throws Exception {
