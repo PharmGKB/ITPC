@@ -282,6 +282,26 @@ public class SubjectTest extends TestCase {
 
   public void testInclude() {
     Subject subject = makeDefaultSubject();
+    setPhenotypes(subject);
+    assertEquals(Subject.Value.Yes, subject.include());
+
+    subject.setFollowup("2");
+    assertEquals(Subject.Value.No, subject.include());
+  }
+
+  public void testIncludeWo4a() {
+    Subject subject = makeDefaultSubject();
+    setPhenotypes(subject);
+    assertEquals(Subject.Value.Yes, subject.includeWo4a());
+
+    subject.setTimeBtwSurgTamox("200");    
+    assertEquals(Subject.Value.Yes, subject.includeWo4a());
+
+    subject.setFollowup("2");
+    assertEquals(Subject.Value.No, subject.includeWo4a());
+  }
+
+  private void setPhenotypes(Subject subject) {
     subject.setMenoStatus("2");
     subject.setMetastatic("0");
     subject.setPriorHistory("0");
@@ -297,11 +317,6 @@ public class SubjectTest extends TestCase {
     subject.setGenoSource("1");
     subject.setBloodSource("2");
     subject.setFollowup("1");
-    
-    assertEquals(Subject.Value.Yes, subject.include());
-
-    subject.setFollowup("2");
-    assertEquals(Subject.Value.No, subject.include());
   }
 
   private void weaksToNo(Subject subject) {
