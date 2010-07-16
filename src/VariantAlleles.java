@@ -41,62 +41,32 @@ import org.apache.commons.lang.StringUtils;
 
 
 /**
- * @author: Ryan Whaley
+ * This class doesn't allow "Unknown" as a value, it only accepts a,c,g,t, or - (for deletion)
+ * User: Ryan Whaley
  */
-public class VariantAlleles {
+public class VariantAlleles extends StringPair {
 
-  List<String> m_basePairs = new ArrayList<String>();
-  boolean uncertain = false;
+  public VariantAlleles() {}
 
   public VariantAlleles(String alleles) {
-    if (StringUtils.isEmpty(alleles) || alleles.toLowerCase().contains("na")) {
+    if (alleles == null) {
       return;
     }
-    else if (alleles.trim().contains(" or ")) {
-      uncertain = true;
-      return;
-    }
+
     alleles = alleles.trim().toLowerCase();
     String[] data = alleles.split("/");
     Arrays.sort(data, String.CASE_INSENSITIVE_ORDER);
     for (String base : data) {
-      m_basePairs.add(base.trim());
+      this.addString(base.trim().toLowerCase());
     }
   }
 
-  public int baseCount(String base) {
-    int count = 0;
-    for (String element : m_basePairs) {
-      if (element.equalsIgnoreCase(base)) count++;
-    }
-    return count;
+  public boolean isValid(String string) {
+    return (string.equals("a")
+        || string.equals("t")
+        || string.equals("g")
+        || string.equals("c")
+        || string.equals("-"));
   }
 
-  public boolean contains(String base) {
-    return baseCount(base)>0;
-  }
-
-  public boolean is(String base1, String base2) {
-    if (base1 != null && base2 != null) {
-      if (base1.equalsIgnoreCase(base2)) {
-        return baseCount(base1)==2;
-      }
-      else {
-        return (baseCount(base1) == 1 && baseCount(base2)==1);
-      }
-    }
-    return false;
-  }
-
-  public List<String> getBasePairs() {
-    return m_basePairs;
-  }
-
-  public boolean hasData() {
-    return (m_basePairs!=null && !m_basePairs.isEmpty() && m_basePairs.size()==2);
-  }
-
-  public boolean isUncertain() {
-    return uncertain;
-  }
 }
