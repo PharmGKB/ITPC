@@ -55,7 +55,6 @@ import util.Value;
 public class ItpcSheet implements Iterator {
   public static final String SHEET_NAME = "Combined_Data";
 
-  private File m_excelFile = null;
   private Sheet m_dataSheet = null;
 
   protected int subjectId = -1;
@@ -149,7 +148,6 @@ public class ItpcSheet implements Iterator {
       throw new Exception("File not in right format: " + file);
     }
 
-    this.setExcelFile(file);
     InputStream inputFileStream = null;
 
     try {
@@ -309,14 +307,6 @@ public class ItpcSheet implements Iterator {
 
       idx++;
     }
-  }
-
-  public File getExcelFile() {
-    return m_excelFile;
-  }
-
-  private void setExcelFile(File excelFile) {
-    m_excelFile = excelFile;
   }
 
   private PoiWorksheetIterator getSampleIterator() {
