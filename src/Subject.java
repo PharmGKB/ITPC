@@ -1,3 +1,6 @@
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 /**
  * Created by IntelliJ IDEA.
  * User: whaleyr
@@ -5,6 +8,8 @@
  * Time: 8:16:01 AM
  */
 public class Subject {
+  private static final Pattern sf_alleleRegex = Pattern.compile("\\*\\d+");
+
   public static final String PAROXETINE = "Paroxetine";
   public static final String FLUOXETINE = "Fluoxetine";
   public static final String QUINIDINE = "Quinidine";
@@ -36,7 +41,7 @@ public class Subject {
   private String m_genoSource1 = null;
   private String m_genoSource2 = null;
   private String m_genoSource3 = null;
-  private Deletion m_deletion = null;
+  private Deletion m_deletion = Deletion.Unknown;
 
   private Value m_hasParoxetine = Value.Unknown;
   private Value m_hasFluoxetine = Value.Unknown;
@@ -50,7 +55,6 @@ public class Subject {
 
   private Genotype m_genotypePgkb = new Genotype();
   private Genotype m_genotypeAmplichip = new Genotype();
-  private Genotype m_genotypeFinal = new Genotype();
 
   private VariantAlleles m_rs1065852 = new VariantAlleles();
   private VariantAlleles m_rs4986774 = new VariantAlleles();
@@ -59,6 +63,10 @@ public class Subject {
   private VariantAlleles m_rs16947 = new VariantAlleles();
   private VariantAlleles m_rs28371706 = new VariantAlleles();
   private VariantAlleles m_rs28371725 = new VariantAlleles();
+
+  public Subject() {
+    this.calculateGenotypePgkb();
+  }
 
   public Genotype getGenotypePgkb() {
     return m_genotypePgkb;
@@ -76,12 +84,17 @@ public class Subject {
     m_genotypeAmplichip = genotypeAmplichip;
   }
 
-  public Genotype getGenotypeFinal() {
-    return m_genotypeFinal;
+  public void setGenotypeAmplichip(String alleles) throws Exception {
+    this.setGenotypeAmplichip(processAmplichip(alleles));
   }
 
-  public void setGenotypeFinal(Genotype genotypeFinal) {
-    m_genotypeFinal = genotypeFinal;
+  public Genotype getGenotypeFinal() {
+    if (m_genotypeAmplichip != null && !m_genotypeAmplichip.hasData()) {
+      return m_genotypeAmplichip;
+    }
+    else {
+      return m_genotypePgkb;
+    }
   }
 
   public Value getWeak() {
@@ -326,7 +339,7 @@ public class Subject {
         }
       }
 
-      //       *4                    *3                   *6 w/ exception for a haplotype rule for *10
+      //       *4                            *3                                *6 w/ exception for a haplotype rule for *10
       if (this.getRs3892097().hasData() && this.getRs4986774().hasData() && (this.getRs5030655().hasData() || (this.getRs1065852().is("t","c") && !this.getRs5030655().hasData())) && deletionDetectable()) {
 
         // *2
@@ -429,19 +442,60 @@ public class Subject {
   }
 
   public void setDeletion(String deletion) {
-    if (deletion.equalsIgnoreCase("homozygous deletion")) {
-      this.setDeletion(Deletion.Homo);
-    }
-    else if (deletion.contains("deletion") && !deletion.contains("no deletion")) {
-      this.setDeletion(Deletion.Hetero);
-    }
-    else if (deletion.equalsIgnoreCase("NA")) {
+    if (deletion == null) {
       this.setDeletion(Deletion.Unknown);
     }
     else {
-      this.setDeletion(Deletion.None);
+      deletion = deletion.toLowerCase();
+
+      if (deletion.equalsIgnoreCase("homozygous deletion")) {
+        this.setDeletion(Deletion.Homo);
+      }
+      else if (deletion.contains("deletion") && !deletion.contains("no deletion")) {
+        this.setDeletion(Deletion.Hetero);
+      }
+      else if (deletion.equalsIgnoreCase("NA")) {
+        this.setDeletion(Deletion.Unknown);
+      }
+      else {
+        this.setDeletion(Deletion.None);
+      }
+    }
+  }
+
+  protected static Genotype processAmplichip(String amplichip) throws Exception {
+    Genotype genotype = new Genotype();
+
+    if (amplichip != null && amplichip.contains("/")) {
+      String[] tokens = amplichip.split("/");
+      for (String token : tokens) {
+        try {
+          genotype.addString(alleleStrip(token));
+        }
+        catch (Exception ex) {
+          throw new Exception("Error processing amplichip: " + amplichip, ex);
+        }
+      }
     }
 
+    return genotype;
+  }
+
+  private static String alleleStrip(String allele) throws Exception {
+    String alleleClean;
+
+    Matcher m = sf_alleleRegex.matcher(allele);
+    if (m.find()) {
+      alleleClean = allele.substring(m.start(),m.end());
+      if (allele.toLowerCase().contains("xn")) {
+        alleleClean += "XN";
+      }
+    }
+    else {
+      throw new Exception("Malformed allele: " + allele);
+    }
+
+    return alleleClean;
   }
 
   enum Value {Unknown, Yes, No}

@@ -36,6 +36,7 @@ public class SubjectTest extends TestCase {
 
   public void testCalculateGenotypePgkb() {
     Subject subject = new Subject();
+    assertEquals("Unknown/Unknown",subject.getGenotypePgkb().toString());
     subject.setDeletion("no deletion");
 
     VariantAlleles va1 = new VariantAlleles("a/-");
@@ -63,6 +64,23 @@ public class SubjectTest extends TestCase {
 
     subject.setDeletion("deletion");
     assertEquals("*1/*5",subject.getGenotypePgkb().toString());
+  }
+
+  public void testSetGenotypeAmplichip() {
+    Subject subject = makeDefaultSubject();
+    try {
+      subject.setGenotypeAmplichip("*1AXN/*3B");
+      assertEquals("*1XN/*3",subject.getGenotypeAmplichip().toString());
+
+      subject.setGenotypeAmplichip("*1axn/*3");
+      assertEquals("*1XN/*3",subject.getGenotypeAmplichip().toString());
+
+      subject.setGenotypeAmplichip("*1/*1");
+      assertEquals("*1/*1",subject.getGenotypeAmplichip().toString());
+    }
+    catch (Exception ex) {
+      fail("Couldn't parse amplichip");
+    }
   }
 
   private void weaksToNo(Subject subject) {
