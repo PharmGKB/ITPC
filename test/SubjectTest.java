@@ -1,4 +1,5 @@
 import junit.framework.TestCase;
+import util.Value;
 
 /**
  * Created by IntelliJ IDEA.
@@ -22,8 +23,8 @@ public class SubjectTest extends TestCase {
 
     assertEquals(2f, subject.getScore());
 
-    subject.setHasCimetidine(Subject.Value.Yes);
-    subject.setHasParoxetine(Subject.Value.Yes);
+    subject.setHasCimetidine(Value.Yes);
+    subject.setHasParoxetine(Value.Yes);
 
     assertEquals(1.5f, subject.getScore());
 
@@ -84,221 +85,221 @@ public class SubjectTest extends TestCase {
 
   public void testInclusion1() {
     Subject subject = new Subject();
-    assertEquals(Subject.Value.Unknown, subject.passInclusion1());
+    assertEquals(Value.Unknown, subject.passInclusion1());
 
     subject.setMenoStatus("1");
-    assertEquals(Subject.Value.No, subject.passInclusion1());
+    assertEquals(Value.No, subject.passInclusion1());
 
     subject.setMenoStatus("2");
-    assertEquals(Subject.Value.Yes, subject.passInclusion1());
+    assertEquals(Value.Yes, subject.passInclusion1());
 
     subject.setMenoStatus(null);
     subject.setAge("49");
-    assertEquals(Subject.Value.No, subject.passInclusion1());
+    assertEquals(Value.No, subject.passInclusion1());
 
     subject.setAge("51");
-    assertEquals(Subject.Value.Yes, subject.passInclusion1());    
+    assertEquals(Value.Yes, subject.passInclusion1());    
   }
 
   public void testInclusion2a() {
     Subject subject = new Subject();
-    assertEquals(Subject.Value.Unknown, subject.passInclusion2a());
+    assertEquals(Value.Unknown, subject.passInclusion2a());
 
     subject.setMetastatic("0");
-    assertEquals(Subject.Value.Yes, subject.passInclusion2a());
+    assertEquals(Value.Yes, subject.passInclusion2a());
 
     subject.setMetastatic("1");
-    assertEquals(Subject.Value.No, subject.passInclusion2a());
+    assertEquals(Value.No, subject.passInclusion2a());
 
     subject.setMetastatic("SpongeBob");
-    assertEquals(Subject.Value.Unknown, subject.passInclusion2a());
+    assertEquals(Value.Unknown, subject.passInclusion2a());
   }
 
   public void testInclusion2b() {
     Subject subject = new Subject();
-    assertEquals(Subject.Value.Yes, subject.passInclusion2b());
+    assertEquals(Value.Yes, subject.passInclusion2b());
 
     subject.setPriorHistory("0");
     subject.setPriorDcis("0");
-    assertEquals(Subject.Value.Yes, subject.passInclusion2b());
+    assertEquals(Value.Yes, subject.passInclusion2b());
 
     subject.setPriorHistory("1");
     subject.setPriorDcis("0");
-    assertEquals(Subject.Value.No, subject.passInclusion2b());
+    assertEquals(Value.No, subject.passInclusion2b());
 
     subject.setPriorHistory("0");
     subject.setPriorDcis("1");
-    assertEquals(Subject.Value.No, subject.passInclusion2b());
+    assertEquals(Value.No, subject.passInclusion2b());
   }
 
   public void testInclusion3() {
     Subject subject = new Subject();
-    assertEquals(Subject.Value.No, subject.passInclusion3());
+    assertEquals(Value.No, subject.passInclusion3());
 
     subject.setErStatus("0");
-    assertEquals(Subject.Value.No, subject.passInclusion3());
+    assertEquals(Value.No, subject.passInclusion3());
 
     subject.setErStatus("1");
-    assertEquals(Subject.Value.Yes, subject.passInclusion3());
+    assertEquals(Value.Yes, subject.passInclusion3());
 
     subject.setErStatus("SpongeBob");
-    assertEquals(Subject.Value.No, subject.passInclusion3());
+    assertEquals(Value.No, subject.passInclusion3());
   }
 
   public void testInclusion4() {
     Subject subject = new Subject();
-    assertEquals(Subject.Value.No, subject.passInclusion4());
+    assertEquals(Value.No, subject.passInclusion4());
 
     subject.setSystemicTher("0");
-    assertEquals(Subject.Value.No, subject.passInclusion4());
+    assertEquals(Value.No, subject.passInclusion4());
 
     subject.setSystemicTher("2");
-    assertEquals(Subject.Value.Yes, subject.passInclusion4());
+    assertEquals(Value.Yes, subject.passInclusion4());
 
     subject.setSystemicTher("SpongeBob");
-    assertEquals(Subject.Value.No, subject.passInclusion4());
+    assertEquals(Value.No, subject.passInclusion4());
   }
 
   public void testInclusion4a() {
     Subject subject = new Subject();
-    assertEquals(Subject.Value.No, subject.passInclusion4a());
+    assertEquals(Value.No, subject.passInclusion4a());
 
     subject.setTimeBtwSurgTamox("200");
     subject.setFirstAdjEndoTher("0");
-    assertEquals(Subject.Value.No, subject.passInclusion4a());
+    assertEquals(Value.No, subject.passInclusion4a());
 
     subject.setTimeBtwSurgTamox("180");
     subject.setFirstAdjEndoTher("0");
-    assertEquals(Subject.Value.No, subject.passInclusion4a());
+    assertEquals(Value.No, subject.passInclusion4a());
 
     subject.setTimeBtwSurgTamox("180");
     subject.setFirstAdjEndoTher("1");
-    assertEquals(Subject.Value.Yes, subject.passInclusion4a());
+    assertEquals(Value.Yes, subject.passInclusion4a());
 
     subject.setTimeBtwSurgTamox("Spongebob");
     subject.setFirstAdjEndoTher("1");
-    assertEquals(Subject.Value.No, subject.passInclusion4a());
+    assertEquals(Value.No, subject.passInclusion4a());
 
     subject.setTimeBtwSurgTamox("< 6 weeks");
     subject.setFirstAdjEndoTher("1");
-    assertEquals(Subject.Value.Yes, subject.passInclusion4a());
+    assertEquals(Value.Yes, subject.passInclusion4a());
 
     subject.setTimeBtwSurgTamox("28-42");
     subject.setFirstAdjEndoTher("1");
-    assertEquals(Subject.Value.Yes, subject.passInclusion4a());
+    assertEquals(Value.Yes, subject.passInclusion4a());
 
   }
 
   public void testInclusion4b() {
     Subject subject = new Subject();
-    assertEquals(Subject.Value.No, subject.passInclusion4b());
+    assertEquals(Value.No, subject.passInclusion4b());
 
     subject.setDuration("1");
-    assertEquals(Subject.Value.No, subject.passInclusion4b());
+    assertEquals(Value.No, subject.passInclusion4b());
 
     subject.setDuration("0");
-    assertEquals(Subject.Value.Yes, subject.passInclusion4b());
+    assertEquals(Value.Yes, subject.passInclusion4b());
 
     subject.setDuration("SpongeBob");
-    assertEquals(Subject.Value.No, subject.passInclusion4b());
+    assertEquals(Value.No, subject.passInclusion4b());
   }
 
   public void testInclusion4c() {
     Subject subject = new Subject();
-    assertEquals(Subject.Value.No, subject.passInclusion4c());
+    assertEquals(Value.No, subject.passInclusion4c());
 
     subject.setTamoxDose("1");
-    assertEquals(Subject.Value.No, subject.passInclusion4c());
+    assertEquals(Value.No, subject.passInclusion4c());
 
     subject.setTamoxDose("0");
-    assertEquals(Subject.Value.Yes, subject.passInclusion4c());
+    assertEquals(Value.Yes, subject.passInclusion4c());
 
     subject.setTamoxDose("SpongeBob");
-    assertEquals(Subject.Value.No, subject.passInclusion4c());
+    assertEquals(Value.No, subject.passInclusion4c());
   }
 
   public void testInclusion5() {
     Subject subject = new Subject();
-    assertEquals(Subject.Value.Yes, subject.passInclusion5());
+    assertEquals(Value.Yes, subject.passInclusion5());
 
     subject.setChemotherapy("0");
-    assertEquals(Subject.Value.Yes, subject.passInclusion5());
+    assertEquals(Value.Yes, subject.passInclusion5());
 
     subject.setChemotherapy("1");
-    assertEquals(Subject.Value.No, subject.passInclusion5());
+    assertEquals(Value.No, subject.passInclusion5());
   }
 
   public void testInclusion6() {
     Subject subject = new Subject();
-    assertEquals(Subject.Value.Yes, subject.passInclusion6());
+    assertEquals(Value.Yes, subject.passInclusion6());
 
     subject.setHormoneTherapy("0");
-    assertEquals(Subject.Value.Yes, subject.passInclusion6());
+    assertEquals(Value.Yes, subject.passInclusion6());
 
     subject.setHormoneTherapy("1");
-    assertEquals(Subject.Value.No, subject.passInclusion6());
+    assertEquals(Value.No, subject.passInclusion6());
   }
 
   public void testInclusion7() {
     Subject subject = new Subject();
-    assertEquals(Subject.Value.No, subject.passInclusion7());
+    assertEquals(Value.No, subject.passInclusion7());
 
     subject.setGenoSource("0");
-    assertEquals(Subject.Value.No, subject.passInclusion7());
+    assertEquals(Value.No, subject.passInclusion7());
 
     subject.setTumorSource("1");
-    assertEquals(Subject.Value.Yes, subject.passInclusion7());
+    assertEquals(Value.Yes, subject.passInclusion7());
 
     subject.setGenoSource("1");
     subject.setBloodSource("3");
-    assertEquals(Subject.Value.No, subject.passInclusion7());
+    assertEquals(Value.No, subject.passInclusion7());
 
     subject.setGenoSource("1");
     subject.setBloodSource("2");
-    assertEquals(Subject.Value.Yes, subject.passInclusion7());
+    assertEquals(Value.Yes, subject.passInclusion7());
   }
 
   public void testInclusion8() {
     Subject subject = new Subject();
-    assertEquals(Subject.Value.Yes, subject.passInclusion8());
+    assertEquals(Value.Yes, subject.passInclusion8());
 
     subject.setFollowup("2");
-    assertEquals(Subject.Value.No, subject.passInclusion8());
+    assertEquals(Value.No, subject.passInclusion8());
 
     subject.setFollowup("1");
-    assertEquals(Subject.Value.Yes, subject.passInclusion8());
+    assertEquals(Value.Yes, subject.passInclusion8());
   }
 
   public void testInclusion9() {
     Subject subject = new Subject();
-    assertEquals(Subject.Value.No, subject.passInclusion9());
+    assertEquals(Value.No, subject.passInclusion9());
 
     subject = makeDefaultSubject();
-    assertEquals(Subject.Value.Yes, subject.passInclusion9());
+    assertEquals(Value.Yes, subject.passInclusion9());
 
     subject.setRs1065852(new VariantAlleles());
-    assertEquals(Subject.Value.No, subject.passInclusion9());
+    assertEquals(Value.No, subject.passInclusion9());
   }
 
   public void testInclude() {
     Subject subject = makeDefaultSubject();
     setPhenotypes(subject);
-    assertEquals(Subject.Value.Yes, subject.include());
+    assertEquals(Value.Yes, subject.include());
 
     subject.setFollowup("2");
-    assertEquals(Subject.Value.No, subject.include());
+    assertEquals(Value.No, subject.include());
   }
 
   public void testIncludeWo4a() {
     Subject subject = makeDefaultSubject();
     setPhenotypes(subject);
-    assertEquals(Subject.Value.Yes, subject.includeWo4a());
+    assertEquals(Value.Yes, subject.includeWo4a());
 
     subject.setTimeBtwSurgTamox("200");    
-    assertEquals(Subject.Value.Yes, subject.includeWo4a());
+    assertEquals(Value.Yes, subject.includeWo4a());
 
     subject.setFollowup("2");
-    assertEquals(Subject.Value.No, subject.includeWo4a());
+    assertEquals(Value.No, subject.includeWo4a());
   }
 
   private void setPhenotypes(Subject subject) {
@@ -320,17 +321,17 @@ public class SubjectTest extends TestCase {
   }
 
   private void weaksToNo(Subject subject) {
-    subject.setHasCimetidine(Subject.Value.No);
-    subject.setHasSertraline(Subject.Value.No);
-    subject.setHasCitalopram(Subject.Value.No);
+    subject.setHasCimetidine(Value.No);
+    subject.setHasSertraline(Value.No);
+    subject.setHasCitalopram(Value.No);
   }
 
   private void potentToNo(Subject subject) {
-    subject.setHasParoxetine(Subject.Value.No);
-    subject.setHasFluoxetine(Subject.Value.No);
-    subject.setHasQuinidine(Subject.Value.No);
-    subject.setHasBuproprion(Subject.Value.No);
-    subject.setHasDuloxetine(Subject.Value.No);
+    subject.setHasParoxetine(Value.No);
+    subject.setHasFluoxetine(Value.No);
+    subject.setHasQuinidine(Value.No);
+    subject.setHasBuproprion(Value.No);
+    subject.setHasDuloxetine(Value.No);
   }
 
   private Subject makeDefaultSubject() {

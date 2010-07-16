@@ -1,4 +1,7 @@
 import org.apache.commons.lang.StringUtils;
+import org.apache.log4j.Logger;
+import util.ItpcUtils;
+import util.Value;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -10,6 +13,7 @@ import java.util.regex.Pattern;
  * Time: 8:16:01 AM
  */
 public class Subject {
+  private static final Logger logger = Logger.getLogger(Subject.class);
   private static final Pattern sf_alleleRegex = Pattern.compile("\\*\\d+");
 
   private String m_subjectId = null;
@@ -74,8 +78,13 @@ public class Subject {
     m_genotypeAmplichip = genotypeAmplichip;
   }
 
-  public void setGenotypeAmplichip(String alleles) throws Exception {
-    this.setGenotypeAmplichip(processAmplichip(alleles));
+  public void setGenotypeAmplichip(String alleles) {
+    try {
+      this.setGenotypeAmplichip(processAmplichip(alleles));
+    }
+    catch (Exception ex) {
+      logger.warn("Cannot parse amplichip genotype: " + alleles);
+    }
   }
 
   public Genotype getGenotypeFinal() {
@@ -489,7 +498,7 @@ public class Subject {
   }
 
   public Value passInclusion1() {
-    if (!isBlank(this.getMenoStatus())) {
+    if (!ItpcUtils.isBlank(this.getMenoStatus())) {
       if (this.getMenoStatus().equals("2")) {
         return Value.Yes;
       }
@@ -498,7 +507,7 @@ public class Subject {
       }
     }
     else {
-      if (!isBlank(this.getAge())) {
+      if (!ItpcUtils.isBlank(this.getAge())) {
         try {
           Float ageFloat = Float.parseFloat(this.getAge());
           if (ageFloat>=50f) {
@@ -549,7 +558,7 @@ public class Subject {
   }
 
   public Value passInclusion4() {
-    if (!isBlank(this.getSystemicTher()) && this.getSystemicTher().equals("2")) {
+    if (!ItpcUtils.isBlank(this.getSystemicTher()) && this.getSystemicTher().equals("2")) {
       return Value.Yes;
     }
     else {
@@ -568,7 +577,7 @@ public class Subject {
       }
     }
     catch (NumberFormatException ex) {
-      if (!isBlank(this.getFirstAdjEndoTher()) && !isBlank(this.getTimeBtwSurgTamox())) {
+      if (!ItpcUtils.isBlank(this.getFirstAdjEndoTher()) && !ItpcUtils.isBlank(this.getTimeBtwSurgTamox())) {
         if (this.getFirstAdjEndoTher().equals("1")
             && (this.getTimeBtwSurgTamox().equalsIgnoreCase("< 6 weeks")
             || this.getTimeBtwSurgTamox().equalsIgnoreCase("28-42"))) {
@@ -849,13 +858,5 @@ public class Subject {
     m_followup = followup;
   }
 
-  enum Value {Unknown, Yes, No}
   enum Deletion {Unknown, None, Hetero, Homo}
-
-  protected boolean isBlank(String string) {
-    return
-        string == null
-            || StringUtils.isBlank(string)
-            || string.equalsIgnoreCase("na");
-  }
 }

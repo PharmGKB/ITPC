@@ -35,6 +35,7 @@
  */
 import java.io.File;
 import junit.framework.TestCase;
+import util.Value;
 
 
 /**
@@ -46,7 +47,7 @@ public class ItpcSheetTest extends TestCase {
   File file = null;
 
   public void setUp() throws Exception {
-    file = new File("/Users/whaleyr/Documents/ITPC/20100504Data/combined.xls");
+    file = new File("/Users/whaleyr/Documents/Workbench/ItpcParser/test/sample.data.xls");
   }
 
   public void testParseColumnIndexes() throws Exception {
@@ -120,5 +121,46 @@ public class ItpcSheetTest extends TestCase {
     assertTrue(sheet.incDnaCollectionIdx>=0);
     assertTrue(sheet.incFollowupIdx>=0);
     assertTrue(sheet.incGenoDataAvailIdx>=0);
+  }
+
+  public void testNext() throws Exception {
+    ItpcSheet sheet = new ItpcSheet(file);
+
+    assertTrue(sheet.hasNext());
+
+    Subject subject = sheet.next();
+    assertNotNull(subject);
+
+    assertEquals("ID1", subject.getSubjectId());
+    String subject1 = subject.getSubjectId();
+    assertEquals("999", subject.getProjectSite());
+
+    assertEquals("Unknown/Unknown",subject.getGenotypePgkb().toString());
+    assertEquals("*1/*1",subject.getGenotypeFinal().toString());
+
+    assertEquals("EM/EM",subject.getGenotypeFinal().getMetabolizerStatus());
+
+    assertEquals(Value.Unknown, subject.getWeak());
+    assertEquals(Value.Unknown, subject.getPotent());
+
+    assertEquals(Value.Yes, subject.passInclusion1());
+    assertEquals(Value.Yes, subject.passInclusion2a());
+    assertEquals(Value.Yes, subject.passInclusion2b());
+    assertEquals(Value.Yes, subject.passInclusion3());
+    assertEquals(Value.No, subject.passInclusion4());
+    assertEquals(Value.No, subject.passInclusion4a());
+    assertEquals(Value.Yes, subject.passInclusion4b());
+    assertEquals(Value.Yes, subject.passInclusion4c());
+    assertEquals(Value.Yes, subject.passInclusion5());
+    assertEquals(Value.Yes, subject.passInclusion6());
+    assertEquals(Value.Yes, subject.passInclusion7());
+    assertEquals(Value.Yes, subject.passInclusion8());
+    assertEquals(Value.Yes, subject.passInclusion9());
+    assertEquals(Value.No, subject.include());
+
+    assertTrue(sheet.hasNext());
+    subject = sheet.next();
+    assertFalse(subject1.equals(subject.getSubjectId()));
+    
   }
 }

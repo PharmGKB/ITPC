@@ -36,20 +36,23 @@
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
+import java.util.Iterator;
 import java.util.List;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.usermodel.WorkbookFactory;
+import util.ItpcUtils;
 import util.PoiWorksheetIterator;
+import util.Value;
 
 
 /**
  * Created by IntelliJ IDEA. User: whaleyr Date: Jun 18, 2010 Time: 10:07:11 AM To change this template use File |
  * Settings | File Templates.
  */
-public class ItpcSheet {
+public class ItpcSheet implements Iterator {
   public static final String SHEET_NAME = "Combined_Data";
 
   private File m_excelFile = null;
@@ -329,8 +332,80 @@ public class ItpcSheet {
   }
 
   public Subject next() {
+    return parseSubject(this.getSampleIterator().next());
+  }
+
+  public void remove() {
+    throw new UnsupportedOperationException("ItpcSheet does not support removing Subjects");
+  }
+
+  protected Subject parseSubject(List<String> fields) {
     Subject subject = new Subject();
 
+    subject.setSubjectId(fields.get(subjectId));
+    subject.setProjectSite(fields.get(projectSiteIdx));
+    subject.setAge(fields.get(ageIdx));
+    subject.setMetastatic(fields.get(metastaticIdx));
+    subject.setMenoStatus(fields.get(menoStatusIdx));
+    subject.setErStatus(fields.get(erStatusIdx));
+    subject.setDuration(fields.get(durationIdx));
+    subject.setTamoxDose(fields.get(tamoxDoseIdx));
+    subject.setTumorSource(fields.get(tumorSourceIdx));
+    subject.setBloodSource(fields.get(bloodSourceIdx));
+    subject.setPriorHistory(fields.get(priorHistoryIdx));
+    subject.setPriorDcis(fields.get(priorDcisIdx));
+    subject.setChemotherapy(fields.get(chemoIdx));
+    subject.setHormoneTherapy(fields.get(hormoneIdx));
+    subject.setSystemicTher(fields.get(systemicTherIdx));
+    subject.setFollowup(fields.get(followupIdx));
+    subject.setTimeBtwSurgTamox(fields.get(timeBtwSurgTamoxIdx));
+    subject.setFirstAdjEndoTher(fields.get(firstAdjEndoTherIdx));
+
+    if (!StringUtils.isBlank(fields.get(genoSourceIdx1)) && !fields.get(genoSourceIdx1).equals("NA")) {
+      subject.setGenoSource(fields.get(genoSourceIdx1));
+    }
+    else if (!StringUtils.isBlank(fields.get(genoSourceIdx2)) && !fields.get(genoSourceIdx2).equals("NA")) {
+      subject.setGenoSource(fields.get(genoSourceIdx2));
+    }
+    else if (!StringUtils.isBlank(fields.get(genoSourceIdx3)) && !fields.get(genoSourceIdx3).equals("NA")) {
+      subject.setGenoSource(fields.get(genoSourceIdx3));
+    }
+
+    subject.setHasFluoxetine(translateDrugFieldToValue(fields.get(fluoxetineCol)));
+    subject.setHasParoxetine(translateDrugFieldToValue(fields.get(paroxetineCol)));
+    subject.setHasQuinidine(translateDrugFieldToValue(fields.get(quinidienCol)));
+    subject.setHasBuproprion(translateDrugFieldToValue(fields.get(buproprionCol)));
+    subject.setHasDuloxetine(translateDrugFieldToValue(fields.get(duloxetineCol)));
+    subject.setHasCimetidine(translateDrugFieldToValue(fields.get(cimetidineCol)));
+    subject.setHasSertraline(translateDrugFieldToValue(fields.get(sertralineCol)));
+    subject.setHasCitalopram(translateDrugFieldToValue(fields.get(citalopramCol)));
+
+    subject.setRs4986774(new VariantAlleles(fields.get(rs4986774idx)));
+    subject.setRs1065852(new VariantAlleles(fields.get(rs1065852idx)));
+    subject.setRs3892097(new VariantAlleles(fields.get(rs3892097idx)));
+    subject.setRs5030655(new VariantAlleles(fields.get(rs5030655idx)));
+    subject.setRs16947(new VariantAlleles(fields.get(rs16947idx)));
+    subject.setRs28371706(new VariantAlleles(fields.get(rs28371706idx)));
+    subject.setRs28371725(new VariantAlleles(fields.get(rs28371725idx)));
+    subject.setDeletion(fields.get(star5idx));
+
+    subject.setGenotypeAmplichip(fields.get(amplichipidx));
+
     return subject;
+  }
+
+  private Value translateDrugFieldToValue(String field) {
+    if (ItpcUtils.isBlank(field)) {
+      return Value.Unknown;
+    }
+    else if (field.equals("1")) {
+      return Value.Yes;
+    }
+    else if (field.equals("0")) {
+      return Value.No;
+    }
+    else {
+      return Value.Unknown;
+    }
   }
 }
