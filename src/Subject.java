@@ -12,15 +12,6 @@ import java.util.regex.Pattern;
 public class Subject {
   private static final Pattern sf_alleleRegex = Pattern.compile("\\*\\d+");
 
-  public static final String PAROXETINE = "Paroxetine";
-  public static final String FLUOXETINE = "Fluoxetine";
-  public static final String QUINIDINE = "Quinidine";
-  public static final String BUPROPION = "Buproprion";
-  public static final String DULOXETINE = "Duloxetine";
-  public static final String CIMETIDINE = "Cimetidine";
-  public static final String SERTRALINE = "Sertraline";
-  public static final String CITALOPRAM = "Citalopram";
-
   private String m_subjectId = null;
   private String m_projectSite = null;
   private String m_age = null;
@@ -32,7 +23,6 @@ public class Subject {
   private String m_tumorSource = null;
   private String m_bloodSource = null;
   private String m_priorHistory = null;
-  private String m_priorSites = null;
   private String m_priorDcis = null;
   private String m_chemotherapy = null;
   private String m_hormoneTherapy = null;
@@ -41,8 +31,6 @@ public class Subject {
   private String m_timeBtwSurgTamox = null;
   private String m_firstAdjEndoTher = null;
   private String m_genoSource = null;
-  private String m_genoSource2 = null;
-  private String m_genoSource3 = null;
   private Deletion m_deletion = Deletion.Unknown;
 
   private Value m_hasParoxetine = Value.Unknown;
