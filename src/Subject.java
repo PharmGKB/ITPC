@@ -1,3 +1,5 @@
+import org.apache.commons.lang.StringUtils;
+
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -32,13 +34,13 @@ public class Subject {
   private String m_priorHistory = null;
   private String m_priorSites = null;
   private String m_priorDcis = null;
-  private String m_chemo = null;
-  private String m_hormone = null;
+  private String m_chemotherapy = null;
+  private String m_hormoneTherapy = null;
   private String m_systemicTher = null;
   private String m_followup = null;
   private String m_timeBtwSurgTamox = null;
   private String m_firstAdjEndoTher = null;
-  private String m_genoSource1 = null;
+  private String m_genoSource = null;
   private String m_genoSource2 = null;
   private String m_genoSource3 = null;
   private Deletion m_deletion = Deletion.Unknown;
@@ -498,6 +500,328 @@ public class Subject {
     return alleleClean;
   }
 
+  public Value passInclusion1() {
+    if (!isBlank(this.getMenoStatus())) {
+      if (this.getMenoStatus().equals("2")) {
+        return Value.Yes;
+      }
+      else {
+        return Value.No;
+      }
+    }
+    else {
+      if (!isBlank(this.getAge())) {
+        try {
+          Float ageFloat = Float.parseFloat(this.getAge());
+          if (ageFloat>=50f) {
+            return Value.Yes;
+          }
+          else {
+            return Value.No;
+          }
+        } catch (NumberFormatException ex) {
+          return Value.Unknown;
+        }
+      }
+      else {
+        return Value.Unknown;
+      }
+    }
+  }
+
+  public Value passInclusion2a() {
+    if (this.getMetastatic() != null && this.getMetastatic().equals("0")) {
+      return Value.Yes;
+    }
+    else if (this.getMetastatic() != null && this.getMetastatic().equals("1")) {
+      return Value.No;
+    }
+    else {
+      return Value.Unknown;
+    }
+  }
+
+  public Value passInclusion2b() {
+    if ((this.getPriorHistory() == null || this.getPriorHistory().equals("0"))
+        && (this.getPriorDcis() == null || !this.getPriorDcis().equals("1"))) {
+      return Value.Yes;
+    }
+    else {
+      return Value.No;
+    }
+  }
+
+  public Value passInclusion3() {
+    if (this.getErStatus() != null && this.getErStatus().equals("1")) {
+      return Value.Yes;
+    }
+    else {
+      return Value.No;
+    }
+  }
+
+  public Value passInclusion4() {
+    if (!isBlank(this.getSystemicTher()) && this.getSystemicTher().equals("2")) {
+      return Value.Yes;
+    }
+    else {
+      return Value.No;
+    }
+  }
+
+  public Value passInclusion4a() {
+    try {
+      Integer daysBetween = Integer.parseInt(this.getTimeBtwSurgTamox());
+      if (daysBetween<182 && this.getFirstAdjEndoTher().equals("1")) {
+        return Value.Yes;
+      }
+      else {
+        return Value.No;
+      }
+    }
+    catch (NumberFormatException ex) {
+      if (!isBlank(this.getFirstAdjEndoTher()) && !isBlank(this.getTimeBtwSurgTamox())) {
+        if (this.getFirstAdjEndoTher().equals("1")
+            && (this.getTimeBtwSurgTamox().equalsIgnoreCase("< 6 weeks")
+            || this.getTimeBtwSurgTamox().equalsIgnoreCase("28-42"))) {
+          return Value.Yes;
+        }
+        else {
+          return Value.No;
+        }
+      }
+      else {
+        return Value.No;
+      }
+    }
+  }
+
+  public Value passInclusion4b() {
+    if (this.getDuration() != null && this.getDuration().equals("0")) {
+      return Value.Yes;
+    }
+    else {
+      return Value.No;
+    }
+  }
+
+  public Value passInclusion4c() {
+    if (this.getTamoxDose() != null && this.getTamoxDose().equals("0")) {
+      return Value.Yes;
+    }
+    else {
+      return Value.No;
+    }
+  }
+
+  public Value passInclusion5() {
+    if (this.getChemotherapy() == null || !this.getChemotherapy().equals("1")) {
+      return Value.Yes;
+    }
+    else {
+      return Value.No;
+    }
+  }
+
+  public Value passInclusion6() {
+    if (this.getHormoneTherapy() == null || !this.getHormoneTherapy().equals("1")) {
+      return Value.Yes;
+    }
+    else {
+      return Value.No;
+    }
+  }
+
+  public Value passInclusion7() {
+    if (this.getGenoSource() != null && (
+        (this.getTumorSource()!=null && (this.getGenoSource().equals("0") || this.getGenoSource().equals("3") || this.getGenoSource().equals("4")) && this.getTumorSource().equals("1"))
+        || ((this.getGenoSource().equals("1") || this.getGenoSource().equals("2")) && this.getBloodSource()!=null && (this.getBloodSource().equals("1") || this.getBloodSource().equals("2") || this.getBloodSource().equals("7")))
+        )
+        ) {
+      return Value.Yes;
+    }
+    else {
+      return Value.No;
+    }
+  }
+
+  public Value passInclusion8() {
+    if (this.getFollowup() == null || !this.getFollowup().equals("2")) {
+      return Value.Yes;
+    }
+    else {
+      return Value.No;
+    }
+  }
+
+  public Value passInclusion9() {
+    if (!this.getGenotypeFinal().isUncertain()) {
+      return Value.Yes;
+    }
+    else {
+      return Value.No;
+    }
+  }
+
+  public String getMenoStatus() {
+    return m_menoStatus;
+  }
+
+  public void setMenoStatus(String menoStatus) {
+    m_menoStatus = menoStatus;
+  }
+
+  public String getSubjectId() {
+    return m_subjectId;
+  }
+
+  public void setSubjectId(String subjectId) {
+    m_subjectId = subjectId;
+  }
+
+  public String getProjectSite() {
+    return m_projectSite;
+  }
+
+  public void setProjectSite(String projectSite) {
+    m_projectSite = projectSite;
+  }
+
+  public String getAge() {
+    return m_age;
+  }
+
+  public void setAge(String age) {
+    m_age = age;
+  }
+
+  public String getMetastatic() {
+    return m_metastatic;
+  }
+
+  public void setMetastatic(String metastatic) {
+    m_metastatic = metastatic;
+  }
+
+  public String getPriorHistory() {
+    return m_priorHistory;
+  }
+
+  public void setPriorHistory(String priorHistory) {
+    m_priorHistory = priorHistory;
+  }
+
+  public String getPriorDcis() {
+    return m_priorDcis;
+  }
+
+  public void setPriorDcis(String priorDcis) {
+    m_priorDcis = priorDcis;
+  }
+
+  public String getErStatus() {
+    return m_erStatus;
+  }
+
+  public void setErStatus(String erStatus) {
+    m_erStatus = erStatus;
+  }
+
+  public String getSystemicTher() {
+    return m_systemicTher;
+  }
+
+  public void setSystemicTher(String systemicTher) {
+    m_systemicTher = systemicTher;
+  }
+
+  public String getTimeBtwSurgTamox() {
+    return m_timeBtwSurgTamox;
+  }
+
+  public void setTimeBtwSurgTamox(String timeBtwSurgTamox) {
+    m_timeBtwSurgTamox = timeBtwSurgTamox;
+  }
+
+  public String getFirstAdjEndoTher() {
+    return m_firstAdjEndoTher;
+  }
+
+  public void setFirstAdjEndoTher(String firstAdjEndoTher) {
+    m_firstAdjEndoTher = firstAdjEndoTher;
+  }
+
+  public String getDuration() {
+    return m_duration;
+  }
+
+  public void setDuration(String duration) {
+    m_duration = duration;
+  }
+
+  public String getTamoxDose() {
+    return m_tamoxDose;
+  }
+
+  public void setTamoxDose(String tamoxDose) {
+    m_tamoxDose = tamoxDose;
+  }
+
+  public String getChemotherapy() {
+    return m_chemotherapy;
+  }
+
+  public void setChemotherapy(String chemotherapy) {
+    m_chemotherapy = chemotherapy;
+  }
+
+  public String getHormoneTherapy() {
+    return m_hormoneTherapy;
+  }
+
+  public void setHormoneTherapy(String hormoneTherapy) {
+    m_hormoneTherapy = hormoneTherapy;
+  }
+
+  public String getTumorSource() {
+    return m_tumorSource;
+  }
+
+  public void setTumorSource(String tumorSource) {
+    m_tumorSource = tumorSource;
+  }
+
+  public String getBloodSource() {
+    return m_bloodSource;
+  }
+
+  public void setBloodSource(String bloodSource) {
+    m_bloodSource = bloodSource;
+  }
+
+  public String getGenoSource() {
+    return m_genoSource;
+  }
+
+  public void setGenoSource(String genoSource) {
+    m_genoSource = genoSource;
+  }
+
+  public String getFollowup() {
+    return m_followup;
+  }
+
+  public void setFollowup(String followup) {
+    m_followup = followup;
+  }
+
   enum Value {Unknown, Yes, No}
   enum Deletion {Unknown, None, Hetero, Homo}
+
+  protected boolean isBlank(String string) {
+    return
+        string == null
+            || StringUtils.isBlank(string)
+            || string.equalsIgnoreCase("na");
+  }
 }
