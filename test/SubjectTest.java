@@ -10,11 +10,10 @@ public class SubjectTest extends TestCase {
   public void testGetScore() {
     Subject subject = new Subject();
 
-    Genotype genotype = new Genotype("*1/*1");
-
     assertNull(subject.getScore());
 
-    subject.setGenotypeFinal(genotype);
+    Genotype genotype = new Genotype("*1/*1");
+    subject.setGenotypePgkb(genotype);
 
     assertNull(subject.getScore());
 
@@ -29,7 +28,7 @@ public class SubjectTest extends TestCase {
     assertEquals(1.5f, subject.getScore());
 
     Genotype unknownGenotype = new Genotype("Unknown/*1");
-    subject.setGenotypeFinal(unknownGenotype);
+    subject.setGenotypePgkb(unknownGenotype);
 
     assertNull(subject.getScore());
   }

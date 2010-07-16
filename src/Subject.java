@@ -89,7 +89,7 @@ public class Subject {
   }
 
   public Genotype getGenotypeFinal() {
-    if (m_genotypeAmplichip != null && !m_genotypeAmplichip.hasData()) {
+    if (m_genotypeAmplichip != null && m_genotypeAmplichip.hasData()) {
       return m_genotypeAmplichip;
     }
     else {
