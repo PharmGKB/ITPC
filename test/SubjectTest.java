@@ -280,6 +280,30 @@ public class SubjectTest extends TestCase {
     assertEquals(Subject.Value.No, subject.passInclusion9());
   }
 
+  public void testInclude() {
+    Subject subject = makeDefaultSubject();
+    subject.setMenoStatus("2");
+    subject.setMetastatic("0");
+    subject.setPriorHistory("0");
+    subject.setPriorDcis("0");
+    subject.setErStatus("1");
+    subject.setSystemicTher("2");
+    subject.setTimeBtwSurgTamox("180");
+    subject.setFirstAdjEndoTher("1");
+    subject.setDuration("0");
+    subject.setTamoxDose("0");
+    subject.setChemotherapy("0");
+    subject.setHormoneTherapy("0");
+    subject.setGenoSource("1");
+    subject.setBloodSource("2");
+    subject.setFollowup("1");
+    
+    assertEquals(Subject.Value.Yes, subject.include());
+
+    subject.setFollowup("2");
+    assertEquals(Subject.Value.No, subject.include());
+  }
+
   private void weaksToNo(Subject subject) {
     subject.setHasCimetidine(Subject.Value.No);
     subject.setHasSertraline(Subject.Value.No);

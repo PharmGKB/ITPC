@@ -663,6 +663,27 @@ public class Subject {
     }
   }
 
+  public Value include() {
+    if (passInclusion1() == Value.Yes
+        && passInclusion2a() == Value.Yes
+        && passInclusion2b() == Value.Yes
+        && passInclusion3() == Value.Yes
+        && passInclusion4() == Value.Yes
+        && passInclusion4a() == Value.Yes
+        && passInclusion4b() == Value.Yes
+        && passInclusion4c() == Value.Yes
+        && passInclusion5() == Value.Yes
+        && passInclusion6() == Value.Yes
+        && passInclusion7() == Value.Yes
+        && passInclusion8() == Value.Yes
+        && passInclusion9() == Value.Yes) {
+      return Value.Yes;
+    }
+    else {
+      return Value.No;
+    }
+  }
+
   public String getMenoStatus() {
     return m_menoStatus;
   }
