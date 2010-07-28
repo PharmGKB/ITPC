@@ -35,6 +35,7 @@
  */
 import java.io.File;
 import junit.framework.TestCase;
+import org.apache.poi.ss.usermodel.Row;
 import util.Value;
 
 
@@ -130,6 +131,7 @@ public class ItpcSheetTest extends TestCase {
 
     Subject subject = sheet.next();
     assertNotNull(subject);
+    assertEquals(2,sheet.getCurrentRowIndex());
 
     assertEquals("ID1", subject.getSubjectId());
     String subject1 = subject.getSubjectId();
@@ -160,7 +162,10 @@ public class ItpcSheetTest extends TestCase {
 
     assertTrue(sheet.hasNext());
     subject = sheet.next();
+    assertEquals(3,sheet.getCurrentRowIndex());
     assertFalse(subject1.equals(subject.getSubjectId()));
-    
+
+    Row row = sheet.getCurrentRow();
+    assertEquals(subject.getSubjectId(), row.getCell(sheet.subjectId).getStringCellValue());
   }
 }

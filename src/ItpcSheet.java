@@ -38,11 +38,12 @@ import java.io.FileInputStream;
 import java.io.InputStream;
 import java.util.Iterator;
 import java.util.List;
+import org.apache.log4j.Logger;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
-import org.apache.poi.ss.usermodel.Sheet;
-import org.apache.poi.ss.usermodel.Workbook;
-import org.apache.poi.ss.usermodel.WorkbookFactory;
+import org.apache.poi.ss.usermodel.*;
+import org.apache.poi.ss.util.CellReference;
+import util.ExcelUtils;
 import util.ItpcUtils;
 import util.PoiWorksheetIterator;
 import util.Value;
@@ -54,8 +55,10 @@ import util.Value;
  */
 public class ItpcSheet implements Iterator {
   public static final String SHEET_NAME = "Combined_Data";
+  private static final Logger sf_logger = Logger.getLogger(ItpcSheet.class);
 
   private Sheet m_dataSheet = null;
+  private int m_rowIndex = -1;
 
   protected int subjectId = -1;
   protected int projectSiteIdx = -1;
@@ -163,9 +166,9 @@ public class ItpcSheet implements Iterator {
       parseColumnIndexes();
 
       PoiWorksheetIterator sampleIterator = new PoiWorksheetIterator(m_dataSheet);
-      sampleIterator.next(); // skip header row
-      sampleIterator.next(); // skip legend row
       this.setSampleIterator(sampleIterator);
+      this.next(); // skip header row
+      this.next(); // skip legend row
     }
     catch (Exception ex) {
       throw new Exception("Error initializing ITPC Sheet", ex);
@@ -322,6 +325,7 @@ public class ItpcSheet implements Iterator {
   }
 
   public Subject next() {
+    rowIndexPlus();
     return parseSubject(this.getSampleIterator().next());
   }
 
@@ -380,6 +384,7 @@ public class ItpcSheet implements Iterator {
     subject.setDeletion(fields.get(star5idx));
 
     subject.setGenotypeAmplichip(fields.get(amplichipidx));
+    subject.setCuratorComment(fields.get(callCommentsIdx));
 
     return subject;
   }
@@ -397,5 +402,47 @@ public class ItpcSheet implements Iterator {
     else {
       return Value.Unknown;
     }
+  }
+
+  public int getCurrentRowIndex() {
+    return m_rowIndex;
+  }
+
+  private void setRowIndex(int i) {
+    m_rowIndex = i;
+  }
+
+  private void rowIndexPlus() {
+    m_rowIndex++;
+  }
+
+  public Row getCurrentRow() {
+    return m_dataSheet.getRow(this.getCurrentRowIndex());
+  }
+
+  public Sheet getExcelSheet() {
+    return m_dataSheet;
+  }
+
+  public void writeSubjectCalculatedColumns(Subject subject) {
+    Row row = this.getCurrentRow();
+
+    // RMW: writeCell(row, allele1idx, subject.getGenotypePgkb().get(0));
+    ExcelUtils.writeCell(row, allele1idx, "TEST");
+    ExcelUtils.writeCell(row, allele2idx, subject.getGenotypePgkb().get(1));
+    ExcelUtils.writeCell(row, allele1finalIdx, subject.getGenotypeFinal().get(0));
+    ExcelUtils.writeCell(row, allele2finalIdx, subject.getGenotypeFinal().get(1));
+    ExcelUtils.writeCell(row, callCommentsIdx, subject.getCuratorComment());
+    ExcelUtils.writeCell(row, genotypeIdx, subject.getGenotypeFinal().getMetabolizerStatus());
+    ExcelUtils.writeCell(row, weakIdx, subject.getWeak().toString());
+    ExcelUtils.writeCell(row, potentIdx, subject.getPotent().toString());
+    if (subject.getScore()==null) {
+      ExcelUtils.writeCell(row, scoreIdx, Value.Unknown.toString());
+    }
+    else {
+      ExcelUtils.writeCell(row, scoreIdx, subject.getScore());
+    }
+    ExcelUtils.writeCell(row, metabStatusIdx, subject.getGenotypeFinal().getMetabolizerStatus());
+    ExcelUtils.writeCell(row, incAgeIdx, subject.passInclusion1().toString());
   }
 }

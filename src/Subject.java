@@ -1,8 +1,6 @@
-import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import util.ItpcUtils;
 import util.Value;
-
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -35,6 +33,7 @@ public class Subject {
   private String m_timeBtwSurgTamox = null;
   private String m_firstAdjEndoTher = null;
   private String m_genoSource = null;
+  private String m_curatorComment = null;
   private Deletion m_deletion = Deletion.Unknown;
 
   private Value m_hasParoxetine = Value.Unknown;
@@ -208,6 +207,40 @@ public class Subject {
     }
 
     return score;
+  }
+
+  public String getMetabolizerGroup() {
+    Float score = this.getScore();
+    if (score>=4.0) {
+      return "Ultrarapid one";
+    }
+    else if (score>=3.5) {
+      return "Ultrarapid two";
+    }
+    else if (score>=3.0) {
+      return "Ultrarapid three";
+    }
+    else if (score>=2.5) {
+      return "Extensive one";
+    }
+    else if (score>=2.0) {
+      return "Extensive two";
+    }
+    else if (score>=1.5) {
+      return "Intermediate one";
+    }
+    else if (score>=1.0) {
+      return "Intermediate two";
+    }
+    else if (score>=0.5) {
+      return "Intermediate three";
+    }
+    else if (score==0.0) {
+      return "Poor";
+    }
+    else {
+      return "Uncategorized";
+    }
   }
 
   public Value hasParoxetine() {
@@ -856,6 +889,14 @@ public class Subject {
 
   public void setFollowup(String followup) {
     m_followup = followup;
+  }
+
+  public String getCuratorComment() {
+    return m_curatorComment;
+  }
+
+  public void setCuratorComment(String curatorComment) {
+    m_curatorComment = curatorComment;
   }
 
   enum Deletion {Unknown, None, Hetero, Homo}

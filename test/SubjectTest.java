@@ -22,11 +22,13 @@ public class SubjectTest extends TestCase {
     potentToNo(subject);
 
     assertEquals(2f, subject.getScore());
+    assertEquals("Extensive two", subject.getMetabolizerGroup());
 
     subject.setHasCimetidine(Value.Yes);
     subject.setHasParoxetine(Value.Yes);
 
     assertEquals(1.5f, subject.getScore());
+    assertEquals("Intermediate one", subject.getMetabolizerGroup());
 
     Genotype unknownGenotype = new Genotype("Unknown/*1");
     subject.setGenotypePgkb(unknownGenotype);
