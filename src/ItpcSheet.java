@@ -444,5 +444,18 @@ public class ItpcSheet implements Iterator {
     }
     ExcelUtils.writeCell(row, metabStatusIdx, subject.getGenotypeFinal().getMetabolizerStatus());
     ExcelUtils.writeCell(row, incAgeIdx, subject.passInclusion1().toString());
+    ExcelUtils.writeCell(row, incNonmetaIdx, subject.passInclusion2a().toString());
+    ExcelUtils.writeCell(row, incPriorHistIdx, subject.passInclusion2b().toString());
+    ExcelUtils.writeCell(row, incErPosIdx, subject.passInclusion3().toString());
+    ExcelUtils.writeCell(row, incSysTherIdx, subject.passInclusion4().toString());
+    ExcelUtils.writeCell(row, incAdjTamoxIdx, subject.passInclusion4a().toString());
+    ExcelUtils.writeCell(row, incDurationIdx, subject.passInclusion4b().toString());
+    ExcelUtils.writeCell(row, incTamoxDoseIdx, subject.passInclusion4c().toString());
+    ExcelUtils.writeCell(row, incChemoIdx, subject.passInclusion5().toString());
+    ExcelUtils.writeCell(row, incHormoneIdx, subject.passInclusion6().toString());
+    ExcelUtils.writeCell(row, incDnaCollectionIdx, subject.passInclusion7().toString());
+    ExcelUtils.writeCell(row, incFollowupIdx, subject.passInclusion8().toString());
+    ExcelUtils.writeCell(row, incGenoDataAvailIdx, subject.passInclusion9().toString());
+    ExcelUtils.writeCell(row, includeIdx, subject.include().toString());
   }
 }
