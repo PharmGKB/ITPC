@@ -39,15 +39,11 @@ package util;
 import java.math.BigDecimal;
 import java.math.MathContext;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import org.apache.commons.lang.StringUtils;
 import org.apache.poi.hssf.util.HSSFColor;
-import org.apache.poi.ss.usermodel.Cell;
-import org.apache.poi.ss.usermodel.CellStyle;
-import org.apache.poi.ss.usermodel.Font;
-import org.apache.poi.ss.usermodel.Row;
-import org.apache.poi.ss.usermodel.Sheet;
-import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.ss.usermodel.*;
 
 
 /**
@@ -189,15 +185,40 @@ public class POIUtils {
   }
 
 
-  public static CellStyle getTitleStyle(Workbook workbook) {
-    CellStyle style = workbook.createCellStyle();
-    style.setFillForegroundColor(HSSFColor.GREY_25_PERCENT.index);
-    style.setFillPattern(CellStyle.SOLID_FOREGROUND);
-    Font font = workbook.createFont();
-    font.setColor(HSSFColor.BLACK.index);
-    font.setBoldweight(Font.BOLDWEIGHT_BOLD);
-    style.setFont(font);
+  public static CellStyle getTitleStyle(Workbook wb) {
+    CellStyle style = wb.createCellStyle();
+
+    style.setBorderBottom(CellStyle.BORDER_THIN);
+    style.setBottomBorderColor(IndexedColors.BLACK.getIndex());
+    style.setBorderLeft(CellStyle.BORDER_THIN);
+    style.setLeftBorderColor(IndexedColors.BLACK.getIndex());
+    style.setBorderTop(CellStyle.BORDER_THIN);
+    style.setTopBorderColor(IndexedColors.BLACK.getIndex());
+    style.setBorderRight(CellStyle.BORDER_THIN);
+    style.setRightBorderColor(IndexedColors.BLACK.getIndex());
+
+    style.setAlignment(CellStyle.ALIGN_CENTER);
+    style.setWrapText(true);
+
     return style;
+  }
+
+  public static void styleTitleCells(Row headerRow) {
+    CellStyle style = POIUtils.getTitleStyle(headerRow.getSheet().getWorkbook());
+
+    Iterator<Cell> headerCells = headerRow.cellIterator();
+
+    while (headerCells.hasNext()) {
+      Cell headerCell=headerCells.next();
+      headerCell.setCellStyle(style);
+    }
+  }
+
+  public static CellStyle getScoreStyle(Workbook wb) {
+    CellStyle scoreStyle = wb.createCellStyle();
+    DataFormat scoreFormat = wb.createDataFormat();
+    scoreStyle.setDataFormat(scoreFormat.getFormat("0.0"));
+    return scoreStyle;
   }
 
   /**

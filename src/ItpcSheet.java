@@ -33,20 +33,14 @@
 
  ----- END LICENSE BLOCK -----
  */
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.InputStream;
+import java.io.*;
 import java.util.Iterator;
 import java.util.List;
 import org.apache.log4j.Logger;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.poi.ss.usermodel.*;
-import org.apache.poi.ss.util.CellReference;
-import util.ExcelUtils;
-import util.ItpcUtils;
-import util.PoiWorksheetIterator;
-import util.Value;
+import util.*;
 
 
 /**
@@ -56,6 +50,8 @@ import util.Value;
 public class ItpcSheet implements Iterator {
   public static final String SHEET_NAME = "Combined_Data";
   private static final Logger sf_logger = Logger.getLogger(ItpcSheet.class);
+
+  private File inputFile = null;
 
   private Sheet m_dataSheet = null;
   private int m_rowIndex = -1;
@@ -151,10 +147,12 @@ public class ItpcSheet implements Iterator {
       throw new Exception("File not in right format: " + file);
     }
 
+    inputFile = file;
     InputStream inputFileStream = null;
+    sf_logger.info("Using input file: " + inputFile);
 
     try {
-      inputFileStream = new FileInputStream(file);
+      inputFileStream = new FileInputStream(inputFile);
       Workbook inputWorkbook = WorkbookFactory.create(inputFileStream);
       Sheet inputSheet = inputWorkbook.getSheet(SHEET_NAME);
       if (inputSheet == null) {
@@ -181,10 +179,18 @@ public class ItpcSheet implements Iterator {
   }
 
   protected void parseColumnIndexes() throws Exception {
-    List<String> headers = new PoiWorksheetIterator(m_dataSheet).next();
+    if (sf_logger.isDebugEnabled()) {
+      sf_logger.debug("Parsing column indexes and headings");
+    }
 
-    int idx = 0;
-    for (String header : headers) {
+    Row headerRow = m_dataSheet.getRow(0);
+    Iterator<Cell> headerCells = headerRow.cellIterator();
+
+    while(headerCells.hasNext()) {
+      Cell headerCell = headerCells.next();
+      String header = headerCell.getStringCellValue();
+      int idx = headerCell.getColumnIndex();
+
       if (StringUtils.isNotEmpty(header)) {
         header = header.trim().toLowerCase();
       }
@@ -278,38 +284,70 @@ public class ItpcSheet implements Iterator {
       } else if (header.contains("amplichip call")) {
         amplichipidx = idx;
       }
-
-      // new columns to add to the end of the template
-      int startPgkbColsIdx = projectNotesIdx+1;
-      allele1idx = startPgkbColsIdx;
-      allele2idx = startPgkbColsIdx + 1;
-      allele1finalIdx = startPgkbColsIdx + 2;
-      allele2finalIdx = startPgkbColsIdx + 3;
-      callCommentsIdx = startPgkbColsIdx + 4;
-      scoreIdx = startPgkbColsIdx + 5;
-      genotypeIdx = startPgkbColsIdx + 6;
-      weakIdx = startPgkbColsIdx + 7;
-      potentIdx = startPgkbColsIdx + 8;
-      metabStatusIdx = startPgkbColsIdx + 9;
-
-      incAgeIdx = startPgkbColsIdx + 10;
-      incNonmetaIdx = startPgkbColsIdx + 11;
-      incPriorHistIdx = startPgkbColsIdx + 12;
-      incErPosIdx = startPgkbColsIdx + 13;
-      incSysTherIdx = startPgkbColsIdx + 14;
-      incAdjTamoxIdx = startPgkbColsIdx + 15;
-      incDurationIdx = startPgkbColsIdx + 16;
-      incTamoxDoseIdx = startPgkbColsIdx + 17;
-      incChemoIdx = startPgkbColsIdx + 18;
-      incHormoneIdx = startPgkbColsIdx + 19;
-      incDnaCollectionIdx = startPgkbColsIdx + 20;
-      incFollowupIdx = startPgkbColsIdx + 21;
-      incGenoDataAvailIdx = startPgkbColsIdx + 22;
-
-      includeIdx = startPgkbColsIdx + 23;
-
-      idx++;
     }
+
+    // new columns to add to the end of the template
+    int startPgkbColsIdx = projectNotesIdx+1;
+    allele1idx = startPgkbColsIdx;
+    allele2idx = startPgkbColsIdx + 1;
+    allele1finalIdx = startPgkbColsIdx + 2;
+    allele2finalIdx = startPgkbColsIdx + 3;
+    callCommentsIdx = startPgkbColsIdx + 4;
+    scoreIdx = startPgkbColsIdx + 5;
+    genotypeIdx = startPgkbColsIdx + 6;
+    weakIdx = startPgkbColsIdx + 7;
+    potentIdx = startPgkbColsIdx + 8;
+    metabStatusIdx = startPgkbColsIdx + 9;
+
+    incAgeIdx = startPgkbColsIdx + 10;
+    incNonmetaIdx = startPgkbColsIdx + 11;
+    incPriorHistIdx = startPgkbColsIdx + 12;
+    incErPosIdx = startPgkbColsIdx + 13;
+    incSysTherIdx = startPgkbColsIdx + 14;
+    incAdjTamoxIdx = startPgkbColsIdx + 15;
+    incDurationIdx = startPgkbColsIdx + 16;
+    incTamoxDoseIdx = startPgkbColsIdx + 17;
+    incChemoIdx = startPgkbColsIdx + 18;
+    incHormoneIdx = startPgkbColsIdx + 19;
+    incDnaCollectionIdx = startPgkbColsIdx + 20;
+    incFollowupIdx = startPgkbColsIdx + 21;
+    incGenoDataAvailIdx = startPgkbColsIdx + 22;
+
+    includeIdx = startPgkbColsIdx + 23;
+
+    writeCellTitles(headerRow);
+
+    POIUtils.styleTitleCells(headerRow);
+  }
+
+  private void writeCellTitles(Row headerRow) {
+    ExcelUtils.writeCell(headerRow, allele1idx, "CYP2D6 Allele 1 (PharmGKB)");
+    ExcelUtils.writeCell(headerRow, allele2idx, "CYP2D6 Allele 2 (PharmGKB)");
+    ExcelUtils.writeCell(headerRow, allele1finalIdx, "CYP2D6 Allele 1 (Final)");
+    ExcelUtils.writeCell(headerRow, allele2finalIdx, "CYP2D6 Allele 2 (Final)");
+    ExcelUtils.writeCell(headerRow, callCommentsIdx, "Curator comments on calls");
+    ExcelUtils.writeCell(headerRow, scoreIdx, "Drug and CYP2D6 Genotype Score");
+
+    ExcelUtils.writeCell(headerRow, genotypeIdx, "Genotype (PharmGKB)");
+    ExcelUtils.writeCell(headerRow, weakIdx, "Weak Drug (PharmGKB)");
+    ExcelUtils.writeCell(headerRow, potentIdx, "Potent Drug (PharmGKB)");
+    ExcelUtils.writeCell(headerRow, metabStatusIdx, "Metabolizer Status (PharmGKB)");
+
+    ExcelUtils.writeCell(headerRow, incAgeIdx, "Inc 1\nPostmenopausal");
+    ExcelUtils.writeCell(headerRow, incNonmetaIdx, "Inc 2a\nNon-metastatic invasive cancer");
+    ExcelUtils.writeCell(headerRow, incPriorHistIdx, "Inc 2b\nNo prior history of contralateral breast cancer");
+    ExcelUtils.writeCell(headerRow, incErPosIdx, "Inc 3\nER Positive");
+    ExcelUtils.writeCell(headerRow, incSysTherIdx, "Inc 4\nSystemic therapy prior to surgery");
+    ExcelUtils.writeCell(headerRow, incAdjTamoxIdx, "Inc 4a\nAdjuvant tamoxifen initiated within 6 months");
+    ExcelUtils.writeCell(headerRow, incDurationIdx, "Inc 4b\nTamoxifen duration intended 5 years");
+    ExcelUtils.writeCell(headerRow, incTamoxDoseIdx, "Inc 4c\nTamoxifen dose intended 20mg/day");
+    ExcelUtils.writeCell(headerRow, incChemoIdx, "Inc 5\nNo adjuvant chemotherapy");
+    ExcelUtils.writeCell(headerRow, incHormoneIdx, "Inc 6\nNo additional adjuvant hormonal therapy");
+    ExcelUtils.writeCell(headerRow, incDnaCollectionIdx, "Inc 7\nTiming of DNA Collection");
+    ExcelUtils.writeCell(headerRow, incFollowupIdx, "Inc 8\nAdequate follow-up");
+    ExcelUtils.writeCell(headerRow, incGenoDataAvailIdx, "Inc 9\nCYP2D6 genotype data available for assessment of *3, *4, *10, and *41");
+
+    ExcelUtils.writeCell(headerRow, includeIdx, "Include");
   }
 
   private PoiWorksheetIterator getSampleIterator() {
@@ -408,10 +446,6 @@ public class ItpcSheet implements Iterator {
     return m_rowIndex;
   }
 
-  private void setRowIndex(int i) {
-    m_rowIndex = i;
-  }
-
   private void rowIndexPlus() {
     m_rowIndex++;
   }
@@ -420,15 +454,10 @@ public class ItpcSheet implements Iterator {
     return m_dataSheet.getRow(this.getCurrentRowIndex());
   }
 
-  public Sheet getExcelSheet() {
-    return m_dataSheet;
-  }
-
   public void writeSubjectCalculatedColumns(Subject subject) {
     Row row = this.getCurrentRow();
 
-    // RMW: writeCell(row, allele1idx, subject.getGenotypePgkb().get(0));
-    ExcelUtils.writeCell(row, allele1idx, "TEST");
+    ExcelUtils.writeCell(row, allele1idx, subject.getGenotypePgkb().get(0));
     ExcelUtils.writeCell(row, allele2idx, subject.getGenotypePgkb().get(1));
     ExcelUtils.writeCell(row, allele1finalIdx, subject.getGenotypeFinal().get(0));
     ExcelUtils.writeCell(row, allele2finalIdx, subject.getGenotypeFinal().get(1));
@@ -457,5 +486,16 @@ public class ItpcSheet implements Iterator {
     ExcelUtils.writeCell(row, incFollowupIdx, subject.passInclusion8().toString());
     ExcelUtils.writeCell(row, incGenoDataAvailIdx, subject.passInclusion9().toString());
     ExcelUtils.writeCell(row, includeIdx, subject.include().toString());
+  }
+
+  public File saveOutput() throws IOException {
+    File outputFile = ItpcUtils.getOutputFile(inputFile);
+    sf_logger.info("Writing output to: " + outputFile);
+
+    FileOutputStream statsOut = new FileOutputStream(outputFile);
+    m_dataSheet.getWorkbook().write(statsOut);
+    IOUtils.closeQuietly(statsOut);
+
+    return outputFile;
   }
 }

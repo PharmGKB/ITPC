@@ -21,8 +21,8 @@ public class ParserTest extends TestCase {
       assertTrue(parser.dataSheet.getCurrentRowIndex()>0);
     }
     catch (Exception ex) {
-      fail("Exception while parsing file\n" + ex.getMessage());
       ex.printStackTrace();
+      fail("Exception while parsing file\n" + ex.getMessage());
     }
   }
 

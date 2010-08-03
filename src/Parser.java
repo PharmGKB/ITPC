@@ -32,10 +32,15 @@ public class Parser {
     }
 
     dataSheet = new ItpcSheet(getFileInput());
+    int sampleCount = 0;
     while (dataSheet.hasNext()) {
       Subject subject = dataSheet.next();
       dataSheet.writeSubjectCalculatedColumns(subject);
+      sampleCount++;
     }
+    sf_logger.info("Parsed " + sampleCount + " samples");
+
+    dataSheet.saveOutput();
   }
 
   protected void parseArgs(String[] args) throws Exception {
