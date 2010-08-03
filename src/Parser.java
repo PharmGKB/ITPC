@@ -32,13 +32,20 @@ public class Parser {
     }
 
     dataSheet = new ItpcSheet(getFileInput());
+    GenotypeSummary genotypeSummary = new GenotypeSummary();
+
     int sampleCount = 0;
     while (dataSheet.hasNext()) {
       Subject subject = dataSheet.next();
       dataSheet.writeSubjectCalculatedColumns(subject);
+
+      genotypeSummary.addSubject(subject);
+
       sampleCount++;
     }
     sf_logger.info("Parsed " + sampleCount + " samples");
+
+    genotypeSummary.writeToWorkbook(dataSheet.getWorkbook());
 
     dataSheet.saveOutput();
   }

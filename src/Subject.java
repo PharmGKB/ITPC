@@ -211,7 +211,10 @@ public class Subject {
 
   public String getMetabolizerGroup() {
     Float score = this.getScore();
-    if (score>=4.0) {
+    if (score == null) {
+      return "Uncategorized";
+    }
+    else if (score>=4.0) {
       return "Ultrarapid one";
     }
     else if (score>=3.5) {

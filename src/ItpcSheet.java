@@ -293,10 +293,10 @@ public class ItpcSheet implements Iterator {
     allele1finalIdx = startPgkbColsIdx + 2;
     allele2finalIdx = startPgkbColsIdx + 3;
     callCommentsIdx = startPgkbColsIdx + 4;
-    scoreIdx = startPgkbColsIdx + 5;
-    genotypeIdx = startPgkbColsIdx + 6;
-    weakIdx = startPgkbColsIdx + 7;
-    potentIdx = startPgkbColsIdx + 8;
+    genotypeIdx = startPgkbColsIdx + 5;
+    weakIdx = startPgkbColsIdx + 6;
+    potentIdx = startPgkbColsIdx + 7;
+    scoreIdx = startPgkbColsIdx + 8;
     metabStatusIdx = startPgkbColsIdx + 9;
 
     incAgeIdx = startPgkbColsIdx + 10;
@@ -471,7 +471,7 @@ public class ItpcSheet implements Iterator {
     else {
       ExcelUtils.writeCell(row, scoreIdx, subject.getScore());
     }
-    ExcelUtils.writeCell(row, metabStatusIdx, subject.getGenotypeFinal().getMetabolizerStatus());
+    ExcelUtils.writeCell(row, metabStatusIdx, subject.getMetabolizerGroup());
     ExcelUtils.writeCell(row, incAgeIdx, subject.passInclusion1().toString());
     ExcelUtils.writeCell(row, incNonmetaIdx, subject.passInclusion2a().toString());
     ExcelUtils.writeCell(row, incPriorHistIdx, subject.passInclusion2b().toString());
@@ -497,5 +497,9 @@ public class ItpcSheet implements Iterator {
     IOUtils.closeQuietly(statsOut);
 
     return outputFile;
+  }
+
+  public Workbook getWorkbook() {
+    return m_dataSheet.getWorkbook();
   }
 }
