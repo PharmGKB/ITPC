@@ -185,4 +185,28 @@ public class Genotype extends StringPair {
   private float priority(String allele) {
     return priorityMap.get(metabMap.get(allele));
   }
+
+  public boolean is(Metabolizer status1, Metabolizer status2) {
+    if (status1 != null && status2 != null) {
+      if (status1 == status2) {
+        return count(status1)==2;
+      }
+      else {
+        return (count(status1) == 1 && count(status2)==1);
+      }
+    }
+    return false;
+  }
+
+  protected int count(Metabolizer status) {
+    int count = 0;
+    for (String element : getStrings()) {
+      if (metabMap.get(element) == status) count++;
+    }
+    return count;
+  }
+
+  public boolean isUnknown() {
+    return contains("Unknown");
+  }
 }

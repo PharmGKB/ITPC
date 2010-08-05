@@ -22,6 +22,11 @@ public abstract class StringPair {
     m_strings = strings;
   }
 
+  /**
+   * Determines whether the given String is a valid value for this StringPair
+   * @param string a String to possibly add to this StringPair
+   * @return true if string is valid, false otherwise
+   */
   public abstract boolean isValid(String string);
 
   public void addString(String string) {

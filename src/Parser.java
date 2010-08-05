@@ -33,6 +33,7 @@ public class Parser {
 
     dataSheet = new ItpcSheet(getFileInput());
     GenotypeSummary genotypeSummary = new GenotypeSummary();
+    MetabStatusSummary metabSummary = new MetabStatusSummary();
 
     int sampleCount = 0;
     while (dataSheet.hasNext()) {
@@ -40,12 +41,14 @@ public class Parser {
       dataSheet.writeSubjectCalculatedColumns(subject);
 
       genotypeSummary.addSubject(subject);
+      metabSummary.addSubject(subject);
 
       sampleCount++;
     }
     sf_logger.info("Parsed " + sampleCount + " samples");
 
     genotypeSummary.writeToWorkbook(dataSheet.getWorkbook());
+    metabSummary.writeToWorkbook(dataSheet.getWorkbook());
 
     dataSheet.saveOutput();
   }
