@@ -220,7 +220,7 @@ public class ItpcSheet implements Iterator {
         priorSitesIdx = idx;
       } else if (header.contains("prior invasive breast cancer or dcis")) {
         priorDcisIdx = idx;
-      } else if (header.contains("chemotherapy")) {
+      } else if (header.contains("chemotherapy (existing column)")) {
         chemoIdx = idx;
       } else if (header.contains("additional hormone or other treatment after breast surgery? (new column)")) {
         hormoneIdx = idx;

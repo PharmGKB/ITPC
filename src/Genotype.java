@@ -144,12 +144,17 @@ public class Genotype extends StringPair {
   }
 
   protected static String getText(Metabolizer value) {
-    switch (value) {
-      case IM: return "IM";
-      case PM: return "PM";
-      case EM: return "EM";
-      case UM: return "UM";
-      default: return "Unknown";
+    if (value == null) {
+      return "Unknown";
+    }
+    else {
+      switch (value) {
+        case IM: return "IM";
+        case PM: return "PM";
+        case EM: return "EM";
+        case UM: return "UM";
+        default: return "Unknown";
+      }
     }
   }
 

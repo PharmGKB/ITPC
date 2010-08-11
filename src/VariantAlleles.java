@@ -35,6 +35,8 @@
  */
 
 import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
 
 import util.StringPair;
 
@@ -44,6 +46,15 @@ import util.StringPair;
  * User: Ryan Whaley
  */
 public class VariantAlleles extends StringPair {
+
+  private static final Set<String> validAlleles = new HashSet<String>();
+  static {
+    validAlleles.add("a");
+    validAlleles.add("t");
+    validAlleles.add("g");
+    validAlleles.add("c");
+    validAlleles.add("-");
+  }
 
   public VariantAlleles() {}
 
@@ -61,11 +72,7 @@ public class VariantAlleles extends StringPair {
   }
 
   public boolean isValid(String string) {
-    return (string.equals("a")
-        || string.equals("t")
-        || string.equals("g")
-        || string.equals("c")
-        || string.equals("-"));
+    return validAlleles.contains(string);
   }
 
 }

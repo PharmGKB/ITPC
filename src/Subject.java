@@ -197,9 +197,15 @@ public class Subject {
   public Float getScore() {
     Float score = null;
 
-    if (!this.getGenotypeFinal().isUncertain() && this.getWeak() != Value.Unknown) {
-      Float genoScore = this.getGenotypeFinal().getScore();
-      Float weakPenalty = this.getWeak()==Value.Yes ? -0.5f : 0f;
+    if (getPotent()==Value.Yes) {
+      score = 0f;
+    }
+    else if (!getGenotypeFinal().isUncertain()
+             && ((getWeak()!=Value.Unknown && getPotent()!=Value.Unknown)
+                 || getGenotypeFinal().getMetabolizerStatus().equals("PM/PM"))) 
+    {
+      Float genoScore = getGenotypeFinal().getScore();
+      Float weakPenalty = getWeak()==Value.Yes ? -0.5f : 0f;
 
       score = genoScore + weakPenalty;
 

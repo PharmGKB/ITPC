@@ -38,7 +38,7 @@ public class ExcelUtils {
 
         StringBuilder sb = new StringBuilder();
         sb.append("Changed value: ")
-            .append(CellReference.convertNumToColString(cell.getColumnIndex()+1))
+            .append(CellReference.convertNumToColString(cell.getColumnIndex()))
             .append(cell.getRowIndex()+1)
             .append(" = ")
             .append(existingValue)
@@ -78,7 +78,7 @@ public class ExcelUtils {
 
         StringBuilder sb = new StringBuilder();
         sb.append("Changed value: ")
-            .append(CellReference.convertNumToColString(cell.getColumnIndex()+1))
+            .append(CellReference.convertNumToColString(cell.getColumnIndex()))
             .append(cell.getRowIndex()+1)
             .append(" = ")
             .append(existingValue)

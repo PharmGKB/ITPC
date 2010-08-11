@@ -18,10 +18,6 @@ public abstract class StringPair {
     return m_strings;
   }
 
-  public void setStrings(List<String> strings) {
-    m_strings = strings;
-  }
-
   /**
    * Determines whether the given String is a valid value for this StringPair
    * @param string a String to possibly add to this StringPair
@@ -30,7 +26,12 @@ public abstract class StringPair {
   public abstract boolean isValid(String string);
 
   public void addString(String string) {
-    if (isValid(string)) m_strings.add(string);
+    if (isValid(string)) {
+      m_strings.add(string);
+    }
+    else {
+      m_strings.add(UNKNOWN);
+    }
     Collections.sort(m_strings, String.CASE_INSENSITIVE_ORDER);
   }
 

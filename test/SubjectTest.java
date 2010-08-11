@@ -13,10 +13,14 @@ public class SubjectTest extends TestCase {
 
     assertNull(subject.getScore());
 
+    /* Getting a score when genotype data is available but inhibitor information is not should be null */
+
     Genotype genotype = new Genotype("*1/*1");
     subject.setGenotypePgkb(genotype);
 
     assertNull(subject.getScore());
+
+    /* First successful test, genotype and drug information is all available */
 
     weaksToNo(subject);
     potentToNo(subject);
@@ -24,16 +28,28 @@ public class SubjectTest extends TestCase {
     assertEquals(2f, subject.getScore());
     assertEquals("Extensive two", subject.getMetabolizerGroup());
 
+    /* Test where a subject has both a potent and a weak inhibitor, Potents should always make score 0 */
+
     subject.setHasCimetidine(Value.Yes);
     subject.setHasParoxetine(Value.Yes);
 
-    assertEquals(1.5f, subject.getScore());
-    assertEquals("Intermediate one", subject.getMetabolizerGroup());
+    assertEquals(0f, subject.getScore());
+    assertEquals("Poor", subject.getMetabolizerGroup());
+
+    /* Keeps the inhibitor information but tries an unknown genotype
+     * The rule states that Potents always cause 0 score, even if genotype is unknown */
 
     Genotype unknownGenotype = new Genotype("Unknown/*1");
     subject.setGenotypePgkb(unknownGenotype);
 
-    assertNull(subject.getScore());
+    assertEquals(0f, subject.getScore());
+
+    /* Test to see if PM/PM with unknown inhibitors returns the correct values */
+
+    subject = new Subject();
+    subject.setGenotypePgkb(new Genotype("*3/*3"));
+    assertEquals(0f, subject.getScore());
+    assertEquals("Poor", subject.getMetabolizerGroup());
   }
 
   public void testCalculateGenotypePgkb() {
