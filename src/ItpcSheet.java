@@ -317,7 +317,7 @@ public class ItpcSheet implements Iterator {
 
     writeCellTitles(headerRow);
 
-    POIUtils.styleTitleCells(headerRow);
+    POIUtils.styleTitleCells(headerRow, startPgkbColsIdx);
   }
 
   private void writeCellTitles(Row headerRow) {

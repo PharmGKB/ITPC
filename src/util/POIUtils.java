@@ -203,14 +203,22 @@ public class POIUtils {
     return style;
   }
 
-  public static void styleTitleCells(Row headerRow) {
+  /**
+   * Styles the given row with the Title Style specified in <code>getTitleStyle</code>. The <code>startIndex</code>
+   * parameter specifies which column column to start applying the style on (0 = all columns) inclusively.
+   * @param headerRow an Excel Row
+   * @param startIndex the index of the column to start applying the style on
+   */
+  public static void styleTitleCells(Row headerRow, int startIndex) {
     CellStyle style = POIUtils.getTitleStyle(headerRow.getSheet().getWorkbook());
 
     Iterator<Cell> headerCells = headerRow.cellIterator();
 
     while (headerCells.hasNext()) {
       Cell headerCell=headerCells.next();
-      headerCell.setCellStyle(style);
+      if (headerCell.getColumnIndex()>=startIndex) {
+        headerCell.setCellStyle(style);
+      }
     }
   }
 
