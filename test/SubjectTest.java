@@ -84,6 +84,91 @@ public class SubjectTest extends TestCase {
     assertEquals("*1/*5",subject.getGenotypePgkb().toString());
   }
 
+  public void testStarFour() {
+    Subject subject = makeDefaultSubject();
+
+    subject.setRs1065852(new VariantAlleles("t/t"));
+    subject.setRs3892097(new VariantAlleles("a/a"));
+
+    assertEquals("*4/*4", subject.getGenotypePgkb().toString());
+
+    subject = makeDefaultSubject();
+
+    subject.setRs1065852(new VariantAlleles("c/t"));
+    subject.setRs3892097(new VariantAlleles("g/a"));
+
+    assertEquals("*1/*4", subject.getGenotypePgkb().toString());
+
+    subject = makeDefaultSubject();
+    subject.setRs1065852(new VariantAlleles("c/t"));
+    subject.setRs3892097(new VariantAlleles("g/a"));
+    subject.setRs16947(new VariantAlleles("c/t"));
+    assertEquals("*1/*4", subject.getGenotypePgkb().toString());
+
+    subject = makeDefaultSubject();
+    subject.setRs1065852(new VariantAlleles("c/t"));
+    subject.setRs3892097(new VariantAlleles("g/a"));
+    subject.setRs16947(new VariantAlleles("t/t"));
+    assertEquals("*2/*4", subject.getGenotypePgkb().toString());
+  }
+
+  public void testStarTwo() {
+    Subject subject = makeDefaultSubject();
+    assertEquals("*1/*1", subject.getGenotypePgkb().toString());
+
+    subject.setRs16947(new VariantAlleles("c/t"));
+    assertEquals("*1/*2", subject.getGenotypePgkb().toString());
+
+    subject = makeDefaultSubject();
+    subject.setRs16947(new VariantAlleles("t/t"));
+    assertEquals("*2/*2", subject.getGenotypePgkb().toString());
+  }
+
+  public void testStarSeventeen() {
+    Subject subject = makeDefaultSubject();
+    subject.setRs16947(new VariantAlleles("c/t"));
+    subject.setRs28371706(new VariantAlleles("c/t"));
+    assertEquals("*1/*17", subject.getGenotypePgkb().toString());
+
+    makeDefaultSubject();
+    subject.setRs16947(new VariantAlleles("t/t"));
+    subject.setRs28371706(new VariantAlleles("c/t"));
+    assertEquals("*2/*17", subject.getGenotypePgkb().toString());
+
+    makeDefaultSubject();
+    subject.setRs16947(new VariantAlleles("t/t"));
+    subject.setRs28371706(new VariantAlleles("t/t"));
+    assertEquals("*17/*17", subject.getGenotypePgkb().toString());
+  }
+
+  public void testStarFortyone() {
+    Subject subject = makeDefaultSubject();
+    subject.setRs16947(new VariantAlleles("c/t"));
+    subject.setRs28371725(new VariantAlleles("g/a"));
+    assertEquals("*1/*41", subject.getGenotypePgkb().toString());
+
+    subject = makeDefaultSubject();
+    subject.setRs16947(new VariantAlleles("t/t"));
+    subject.setRs28371725(new VariantAlleles("g/a"));
+    assertEquals("*2/*41", subject.getGenotypePgkb().toString());
+
+    subject = makeDefaultSubject();
+    subject.setRs16947(new VariantAlleles("t/t"));
+    subject.setRs28371725(new VariantAlleles("a/a"));
+    assertEquals("*41/*41", subject.getGenotypePgkb().toString());
+  }
+
+  public void testStarTen() {
+    Subject subject = makeDefaultSubject();
+    subject.setRs1065852(new VariantAlleles("c/t"));
+    assertEquals("*1/*10", subject.getGenotypePgkb().toString());
+
+    subject = makeDefaultSubject();
+    subject.setRs16947(new VariantAlleles("c/t"));
+    subject.setRs1065852(new VariantAlleles("c/t"));
+    assertEquals("*2/*10", subject.getGenotypePgkb().toString());
+  }
+
   public void testSetGenotypeAmplichip() {
     Subject subject = makeDefaultSubject();
     try {

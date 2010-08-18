@@ -14,6 +14,13 @@ import org.apache.poi.ss.util.CellReference;
 public class ExcelUtils {
   private static Logger sf_logger = Logger.getLogger(ExcelUtils.class);
 
+  public static String getAddress(Cell cell) {
+    StringBuilder sb = new StringBuilder();
+    sb.append(CellReference.convertNumToColString(cell.getColumnIndex()));
+    sb.append(cell.getRowIndex()+1);
+    return sb.toString();
+  }
+
   public static void writeCell(Row row, int idx, String value) {
     Cell cell = row.getCell(idx);
     if (cell == null) {

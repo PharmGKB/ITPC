@@ -384,13 +384,14 @@ public class Subject {
       if (this.getRs3892097().hasData() && this.getRs4986774().hasData() && (this.getRs5030655().hasData() || (this.getRs1065852().is("t","c") && !this.getRs5030655().hasData())) && deletionDetectable()) {
 
         // *2
-        if (this.getRs16947().hasData() && this.getRs28371706().count("c")>0 && this.getRs28371725().count("g")>0 && this.getRs1065852().hasData()) {
-          if (this.getRs16947().count("t")>0 && this.getRs28371706().count("t")<2 && this.getRs28371725().count("a")<2) {
+        if (getRs16947().hasData() && getRs28371706().hasData() && getRs28371725().hasData()
+            && getRs16947().count("t") > getRs28371706().count("t")
+            && getRs16947().count("t") > getRs28371725().count("a")
+            && !(getRs16947().count("t") <= getRs1065852().count("t") && getRs16947().count("t") <= getRs3892097().count("a"))) {
+          geno.addString("*2");
+          if (!geno.isHeteroDeletion() &&
+              (getRs16947().is("t","t") && getRs28371706().is("c","c") && getRs28371725().is("g","g"))) {
             geno.addString("*2");
-            if (!geno.isHeteroDeletion() &&
-                (this.getRs16947().is("t","t") && this.getRs28371706().is("c","c") && this.getRs28371725().is("g","g"))) {
-              geno.addString("*2");
-            }
           }
         }
 

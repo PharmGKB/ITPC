@@ -1,7 +1,10 @@
 import org.apache.commons.lang.StringUtils;
+import org.apache.log4j.Logger;
 import util.StringPair;
 
 import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * Created by IntelliJ IDEA.
@@ -11,6 +14,8 @@ import java.util.*;
  */
 public class Genotype extends StringPair {
   public enum Metabolizer {Unknown, PM, IM, EM, UM}
+  private static final Pattern sf_numberPattern = Pattern.compile("\\D*(\\d+)\\D*");
+  private static final Logger sf_logger = Logger.getLogger(Genotype.class);
 
   private static final Map<String,Metabolizer> metabMap = new HashMap<String,Metabolizer>();
   static {
@@ -86,14 +91,14 @@ public class Genotype extends StringPair {
     if (string != null && string.contains("/")) {
       String[] tokens = string.split("/");
       for (String token : tokens) {
-        this.addString(token);
+        addString(token);
       }
     }
   }
 
   public Genotype(String s1, String s2) {
-    this.addString(s1);
-    this.addString(s2);
+    addString(s1);
+    addString(s2);
   }
 
   public boolean isValid(String string) {
@@ -140,6 +145,41 @@ public class Genotype extends StringPair {
         removeString(removeAllele);
         super.addString(string);
       }
+    }
+    reorder();
+  }
+
+  protected void reorder() {
+    if (getStrings().size()==2) {
+
+      try {
+        Integer int0, int1;
+        Matcher matcher = sf_numberPattern.matcher(getStrings().get(0));
+        if (matcher.find()) {
+          int0 = Integer.parseInt(matcher.group(1));
+        }
+        else {
+          return;
+        }
+
+        matcher.reset(getStrings().get(1));
+        if (matcher.find()) {
+          int1 = Integer.parseInt(matcher.group(1));
+        }
+        else {
+          return;
+        }
+
+        if (int0>int1) {
+          Collections.reverse(getStrings());
+        }
+      }
+      catch (Exception ex) {
+        if (sf_logger.isDebugEnabled()) {
+          sf_logger.debug("Error reordering: " + getStrings());
+        }
+      }
+
     }
   }
 
