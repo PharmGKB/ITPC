@@ -1,7 +1,7 @@
 import org.apache.log4j.Logger;
 import util.CliHelper;
 
-import java.io.File;
+import java.io.*;
 
 /**
  * Created by IntelliJ IDEA.
@@ -34,16 +34,23 @@ public class Parser {
     dataSheet = new ItpcSheet(getFileInput());
     GenotypeSummary genotypeSummary = new GenotypeSummary();
     MetabStatusSummary metabSummary = new MetabStatusSummary();
+    NonFourSummary nonFourSummary = new NonFourSummary();
 
     int sampleCount = 0;
     while (dataSheet.hasNext()) {
-      Subject subject = dataSheet.next();
-      dataSheet.writeSubjectCalculatedColumns(subject);
+      try {
+        Subject subject = dataSheet.next();
+        dataSheet.writeSubjectCalculatedColumns(subject);
 
-      genotypeSummary.addSubject(subject);
-      metabSummary.addSubject(subject);
+        genotypeSummary.addSubject(subject);
+        metabSummary.addSubject(subject);
+        nonFourSummary.addSubject(subject);
 
-      sampleCount++;
+        sampleCount++;
+      }
+      catch (Exception ex) {
+        throw new Exception("Exception on line "+dataSheet.getCurrentRowIndex(), ex);
+      }
     }
     sf_logger.info("Parsed " + sampleCount + " samples");
 
