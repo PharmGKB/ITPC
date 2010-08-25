@@ -3,6 +3,8 @@ package summary;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
+import org.pharmgkb.Genotype;
+import org.pharmgkb.Subject;
 import util.Value;
 
 /**
@@ -10,7 +12,7 @@ import util.Value;
  * User: whaleyr
  * Date: Aug 3, 2010
  */
-public class MetabStatusSummary {
+public class MetabStatusSummary extends AbstractSummary {
   private static final String sf_sheetTitle = "Metabolizer Summary";
   private static final String[] metabTable = new String[]{
       "Ultrarapid one (score 4.0)\tUM/UM (score 4)\tno\tno",  // 0
@@ -43,6 +45,10 @@ public class MetabStatusSummary {
 
   public MetabStatusSummary() {
     metabStatusTotals = new int[]{0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0};
+  }
+
+  public String getSheetTitle() {
+    return sf_sheetTitle;
   }
 
   public void addSubject(Subject subject) {
@@ -91,7 +97,7 @@ public class MetabStatusSummary {
         metabStatusTotals[8]++;
       }
 
-      else if (subject.getGenotypeFinal().is(Genotype.Metabolizer.EM,Genotype.Metabolizer.IM) && subject.getWeak() == Value.No) {
+      else if (subject.getGenotypeFinal().is(Genotype.Metabolizer.EM, Genotype.Metabolizer.IM) && subject.getWeak() == Value.No) {
         metabStatusTotals[9]++;
       }
 
@@ -156,15 +162,11 @@ public class MetabStatusSummary {
   }
 
   public void writeToWorkbook(Workbook wb) {
-    int sheetIdx = wb.getSheetIndex(sf_sheetTitle);
-    if (sheetIdx >= 0) {
-      wb.removeSheetAt(sheetIdx);
-    }
-    Sheet sheet = wb.createSheet(sf_sheetTitle);
+    Sheet sheet = getSheet(wb);
 
     Row header = sheet.createRow(0);
-    header.createCell(0).setCellValue("Final CYP2D6 Metabolizer Status and Score");
-    header.createCell(1).setCellValue("Genotype and Genotype Score");
+    header.createCell(0).setCellValue("Final CYP2D6 org.pharmgkb.Metabolizer Status and Score");
+    header.createCell(1).setCellValue("org.pharmgkb.Genotype and org.pharmgkb.Genotype Score");
     header.createCell(2).setCellValue("Weak CYP2D6 Inhibitor Administered");
     header.createCell(3).setCellValue("Potent CYP2D6 Inhibitor Administered");
     header.createCell(4).setCellValue("n");

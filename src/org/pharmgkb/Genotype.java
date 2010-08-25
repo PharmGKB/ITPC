@@ -1,3 +1,5 @@
+package org.pharmgkb;
+
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import util.StringPair;

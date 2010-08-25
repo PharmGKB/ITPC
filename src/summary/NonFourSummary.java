@@ -3,6 +3,7 @@ package summary;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
+import org.pharmgkb.Subject;
 
 import java.io.Serializable;
 import java.util.Map;
@@ -13,7 +14,7 @@ import java.util.TreeMap;
  * User: whaleyr
  * Date: Aug 23, 2010
  */
-public class NonFourSummary {
+public class NonFourSummary extends AbstractSummary {
   private static final String sf_sheetTitle = "Non-4 Alleles";
   private Map<Serializable,Integer> projectNonFourAlleles;
   private Map<Serializable,Integer> projectAllAlleles;
@@ -21,6 +22,10 @@ public class NonFourSummary {
   public NonFourSummary() {
     projectNonFourAlleles = new TreeMap<Serializable,Integer>();
     projectAllAlleles = new TreeMap<Serializable,Integer>();
+  }
+
+  public String getSheetTitle() {
+    return sf_sheetTitle;
   }
 
   public void addSubject(Subject subject) {
@@ -41,11 +46,7 @@ public class NonFourSummary {
   }
 
   public void writeToWorkbook(Workbook wb) {
-    int sheetIdx = wb.getSheetIndex(sf_sheetTitle);
-    if (sheetIdx >= 0) {
-      wb.removeSheetAt(sheetIdx);
-    }
-    Sheet sheet = wb.createSheet(sf_sheetTitle);
+    Sheet sheet = getSheet(wb);
 
     Row header = sheet.createRow(0);
     header.createCell(0).setCellValue("Non-*4 data available by Site");

@@ -1,3 +1,5 @@
+package org.pharmgkb;
+
 import junit.framework.TestCase;
 import util.StringPair;
 

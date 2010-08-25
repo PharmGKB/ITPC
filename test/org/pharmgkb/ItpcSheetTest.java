@@ -1,4 +1,4 @@
-/*
+package org.pharmgkb;/*
  ----- BEGIN LICENSE BLOCK -----
  Version: MPL 1.1/GPL 2.0/LGPL 2.1
 
@@ -34,6 +34,8 @@
  ----- END LICENSE BLOCK -----
  */
 import java.io.File;
+
+import junit.framework.Assert;
 import junit.framework.TestCase;
 import org.apache.poi.ss.usermodel.Row;
 import util.Value;
@@ -131,41 +133,41 @@ public class ItpcSheetTest extends TestCase {
 
     Subject subject = sheet.next();
     assertNotNull(subject);
-    assertEquals(2,sheet.getCurrentRowIndex());
+    Assert.assertEquals(2,sheet.getCurrentRowIndex());
 
-    assertEquals("ID1", subject.getSubjectId());
+    Assert.assertEquals("ID1", subject.getSubjectId());
     String subject1 = subject.getSubjectId();
-    assertEquals("999", subject.getProjectSite());
+    Assert.assertEquals("999", subject.getProjectSite());
 
-    assertEquals("Unknown/Unknown",subject.getGenotypePgkb().toString());
-    assertEquals("*1/*1",subject.getGenotypeFinal().toString());
+    Assert.assertEquals("Unknown/Unknown",subject.getGenotypePgkb().toString());
+    Assert.assertEquals("*1/*1",subject.getGenotypeFinal().toString());
 
-    assertEquals("EM/EM",subject.getGenotypeFinal().getMetabolizerStatus());
+    Assert.assertEquals("EM/EM",subject.getGenotypeFinal().getMetabolizerStatus());
 
-    assertEquals(Value.Unknown, subject.getWeak());
-    assertEquals(Value.Unknown, subject.getPotent());
+    Assert.assertEquals(Value.Unknown, subject.getWeak());
+    Assert.assertEquals(Value.Unknown, subject.getPotent());
 
-    assertEquals(Value.Yes, subject.passInclusion1());
-    assertEquals(Value.Yes, subject.passInclusion2a());
-    assertEquals(Value.Yes, subject.passInclusion2b());
-    assertEquals(Value.Yes, subject.passInclusion3());
-    assertEquals(Value.No, subject.passInclusion4());
-    assertEquals(Value.No, subject.passInclusion4a());
-    assertEquals(Value.Yes, subject.passInclusion4b());
-    assertEquals(Value.Yes, subject.passInclusion4c());
-    assertEquals(Value.Yes, subject.passInclusion5());
-    assertEquals(Value.Yes, subject.passInclusion6());
-    assertEquals(Value.Yes, subject.passInclusion7());
-    assertEquals(Value.Yes, subject.passInclusion8());
-    assertEquals(Value.Yes, subject.passInclusion9());
-    assertEquals(Value.No, subject.include());
+    Assert.assertEquals(Value.Yes, subject.passInclusion1());
+    Assert.assertEquals(Value.Yes, subject.passInclusion2a());
+    Assert.assertEquals(Value.Yes, subject.passInclusion2b());
+    Assert.assertEquals(Value.Yes, subject.passInclusion3());
+    Assert.assertEquals(Value.No, subject.passInclusion4());
+    Assert.assertEquals(Value.No, subject.passInclusion4a());
+    Assert.assertEquals(Value.Yes, subject.passInclusion4b());
+    Assert.assertEquals(Value.Yes, subject.passInclusion4c());
+    Assert.assertEquals(Value.Yes, subject.passInclusion5());
+    Assert.assertEquals(Value.Yes, subject.passInclusion6());
+    Assert.assertEquals(Value.Yes, subject.passInclusion7());
+    Assert.assertEquals(Value.Yes, subject.passInclusion8());
+    Assert.assertEquals(Value.Yes, subject.passInclusion9());
+    Assert.assertEquals(Value.No, subject.include());
 
     assertTrue(sheet.hasNext());
     subject = sheet.next();
-    assertEquals(3,sheet.getCurrentRowIndex());
+    Assert.assertEquals(3,sheet.getCurrentRowIndex());
     assertFalse(subject1.equals(subject.getSubjectId()));
 
     Row row = sheet.getCurrentRow();
-    assertEquals(subject.getSubjectId(), row.getCell(sheet.subjectId).getStringCellValue());
+    Assert.assertEquals(subject.getSubjectId(), row.getCell(sheet.subjectId).getStringCellValue());
   }
 }

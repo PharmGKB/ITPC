@@ -3,6 +3,7 @@ package summary;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
+import org.pharmgkb.Subject;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -12,9 +13,13 @@ import java.util.Map;
  * User: whaleyr
  * Date: Aug 3, 2010
  */
-public class GenotypeSummary {
+public class GenotypeSummary extends AbstractSummary {
   private static final String sf_sheetTitle = "Genotype Summary";
   private Map<String,Integer> countMap = new HashMap<String,Integer>();
+
+  public String getSheetTitle() {
+    return sf_sheetTitle;
+  }
 
   public void addSubject(Subject subject) {
     if (subject != null) {
@@ -33,14 +38,10 @@ public class GenotypeSummary {
   }
 
   public void writeToWorkbook(Workbook wb) {
-    int sheetIdx = wb.getSheetIndex(sf_sheetTitle);
-    if (sheetIdx >= 0) {
-      wb.removeSheetAt(sheetIdx);
-    }
-    Sheet sheet = wb.createSheet(sf_sheetTitle);
+    Sheet sheet = getSheet(wb);
 
     Row header = sheet.createRow(0);
-    header.createCell(0).setCellValue("Genotype");
+    header.createCell(0).setCellValue("org.pharmgkb.Genotype");
     header.createCell(1).setCellValue("Weak");
     header.createCell(2).setCellValue("Potent");
     header.createCell(3).setCellValue("Count");

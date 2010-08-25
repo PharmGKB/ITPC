@@ -1,10 +1,15 @@
 import org.apache.log4j.Logger;
+import org.pharmgkb.ItpcSheet;
+import org.pharmgkb.Subject;
+import summary.AbstractSummary;
 import summary.GenotypeSummary;
 import summary.MetabStatusSummary;
 import summary.NonFourSummary;
 import util.CliHelper;
 
 import java.io.*;
+import java.util.Arrays;
+import java.util.List;
 
 /**
  * Created by IntelliJ IDEA.
@@ -35,9 +40,8 @@ public class Parser {
     }
 
     dataSheet = new ItpcSheet(getFileInput());
-    GenotypeSummary genotypeSummary = new GenotypeSummary();
-    MetabStatusSummary metabSummary = new MetabStatusSummary();
-    NonFourSummary nonFourSummary = new NonFourSummary();
+    List<AbstractSummary> summaries =
+        Arrays.asList(new GenotypeSummary(), new MetabStatusSummary(), new NonFourSummary());
 
     int sampleCount = 0;
     while (dataSheet.hasNext()) {
@@ -45,9 +49,9 @@ public class Parser {
         Subject subject = dataSheet.next();
         dataSheet.writeSubjectCalculatedColumns(subject);
 
-        genotypeSummary.addSubject(subject);
-        metabSummary.addSubject(subject);
-        nonFourSummary.addSubject(subject);
+        for (AbstractSummary summ : summaries) {
+          summ.addSubject(subject);
+        }
 
         sampleCount++;
       }
@@ -57,8 +61,9 @@ public class Parser {
     }
     sf_logger.info("Parsed " + sampleCount + " samples");
 
-    genotypeSummary.writeToWorkbook(dataSheet.getWorkbook());
-    metabSummary.writeToWorkbook(dataSheet.getWorkbook());
+    for (AbstractSummary summ : summaries) {
+      summ.writeToWorkbook(dataSheet.getWorkbook());
+    }
 
     dataSheet.saveOutput();
   }

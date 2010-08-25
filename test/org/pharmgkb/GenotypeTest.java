@@ -1,3 +1,6 @@
+package org.pharmgkb;
+
+import junit.framework.Assert;
 import junit.framework.TestCase;
 
 /**
@@ -46,16 +49,16 @@ public class GenotypeTest extends TestCase {
 
   public void testGetScore() {
     Genotype genotype = new Genotype("*1","*1");
-    assertEquals(2f, genotype.getScore());
+    Assert.assertEquals(2f, genotype.getScore());
 
     genotype = new Genotype("*1","*9");
-    assertEquals(1.5f, genotype.getScore());
+    Assert.assertEquals(1.5f, genotype.getScore());
 
     genotype = new Genotype("*3","*9");
-    assertEquals(0.5f, genotype.getScore());
+    Assert.assertEquals(0.5f, genotype.getScore());
 
     genotype = new Genotype("*1XN","*1XN");
-    assertEquals(4.0f, genotype.getScore());
+    Assert.assertEquals(4.0f, genotype.getScore());
   }
 
   public void testAdd() {
@@ -70,20 +73,20 @@ public class GenotypeTest extends TestCase {
 
   public void testGetMetabolizerStatus() {
     Genotype genotype = new Genotype("*1","*1");
-    assertEquals("EM/EM", genotype.getMetabolizerStatus());
+    Assert.assertEquals("EM/EM", genotype.getMetabolizerStatus());
 
     genotype = new Genotype("*1","*3");
-    assertEquals("EM/PM", genotype.getMetabolizerStatus());
+    Assert.assertEquals("EM/PM", genotype.getMetabolizerStatus());
 
     genotype = new Genotype("*1XN","*3");
-    assertEquals("PM/UM", genotype.getMetabolizerStatus());
+    Assert.assertEquals("PM/UM", genotype.getMetabolizerStatus());
   }
 
   public void testToString() {
     Genotype unknownGenotype = new Genotype("Unknown/*1");
-    assertEquals("*1/Unknown", unknownGenotype.toString());
+    Assert.assertEquals("*1/Unknown", unknownGenotype.toString());
 
     Genotype genotype = new Genotype("*3/*1");
-    assertEquals("*1/*3", genotype.toString());
+    Assert.assertEquals("*1/*3", genotype.toString());
   }
 }
