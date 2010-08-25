@@ -1,4 +1,7 @@
 import org.apache.log4j.Logger;
+import summary.GenotypeSummary;
+import summary.MetabStatusSummary;
+import summary.NonFourSummary;
 import util.CliHelper;
 
 import java.io.*;
