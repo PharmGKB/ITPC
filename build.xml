@@ -1,0 +1,249 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="itpcparser" default="all">
+  
+  
+  <property file="build.properties"/>
+  <!-- Uncomment the following property if no tests compilation is needed -->
+  <!-- 
+  <property name="skip.tests" value="true"/>
+   -->
+  
+  <!-- Compiler options -->
+  
+  <property name="compiler.debug" value="on"/>
+  <property name="compiler.generate.no.warnings" value="off"/>
+  <property name="compiler.args" value=""/>
+  <property name="compiler.max.memory" value="128m"/>
+  <patternset id="ignored.files">
+    <exclude name="**/CVS/**"/>
+    <exclude name="**/SCCS/**"/>
+    <exclude name="**/RCS/**"/>
+    <exclude name="**/rcs/**"/>
+    <exclude name="**/.DS_Store/**"/>
+    <exclude name="**/.svn/**"/>
+    <exclude name="**/.pyc/**"/>
+    <exclude name="**/.pyo/**"/>
+    <exclude name="**/*.pyc/**"/>
+    <exclude name="**/*.pyo/**"/>
+    <exclude name="**/.git/**"/>
+    <exclude name="**/*.hprof/**"/>
+    <exclude name="**/_svn/**"/>
+    <exclude name="**/.hg/**"/>
+  </patternset>
+  <patternset id="library.patterns">
+    <include name="*.zip"/>
+    <include name="*.war"/>
+    <include name="*.egg"/>
+    <include name="*.ear"/>
+    <include name="*.swc"/>
+    <include name="*.jar"/>
+  </patternset>
+  <patternset id="compiler.resources">
+    <include name="**/?*.properties"/>
+    <include name="**/?*.xml"/>
+    <include name="**/?*.gif"/>
+    <include name="**/?*.png"/>
+    <include name="**/?*.jpeg"/>
+    <include name="**/?*.jpg"/>
+    <include name="**/?*.html"/>
+    <include name="**/?*.dtd"/>
+    <include name="**/?*.tld"/>
+    <include name="**/?*.ftl"/>
+  </patternset>
+  
+  <!-- JDK definitions -->
+  
+  <property name="jdk.bin.1.6" value="${jdk.home.1.6}/bin"/>
+  <path id="jdk.classpath.1.6">
+    <fileset dir="${jdk.home.1.6}">
+      <include name="../../A/Resources/Deploy.bundle/Contents/Resources/Java/deploy.jar"/>
+      <include name="../Classes/dt.jar"/>
+      <include name="../../A/Resources/Deploy.bundle/Contents/Resources/Java/javaws.jar"/>
+      <include name="../Classes/jce.jar"/>
+      <include name="../Classes/management-agent.jar"/>
+      <include name="lib/sa-jdi.jar"/>
+      <include name="../Classes/alt-rt.jar"/>
+      <include name="../Classes/charsets.jar"/>
+      <include name="../Classes/classes.jar"/>
+      <include name="../Classes/jconsole.jar"/>
+      <include name="../Classes/jsse.jar"/>
+      <include name="../Classes/laf.jar"/>
+      <include name="../Classes/ui.jar"/>
+      <include name="lib/ext/apple_provider.jar"/>
+      <include name="lib/ext/dnsns.jar"/>
+      <include name="lib/ext/localedata.jar"/>
+      <include name="lib/ext/sunjce_provider.jar"/>
+      <include name="lib/ext/sunpkcs11.jar"/>
+    </fileset>
+  </path>
+  
+  <property name="project.jdk.home" value="${jdk.home.1.6}"/>
+  <property name="project.jdk.bin" value="${jdk.bin.1.6}"/>
+  <property name="project.jdk.classpath" value="jdk.classpath.1.6"/>
+  
+  
+  <!-- Project Libraries -->
+  
+  <path id="library.apache-commons.classpath">
+    <pathelement location="${basedir}/lib/commons-cli.jar"/>
+    <pathelement location="${basedir}/lib/commons-io.jar"/>
+    <pathelement location="${basedir}/lib/commons-lang.jar"/>
+  </path>
+  
+  <path id="library.google.classpath">
+    <pathelement location="${basedir}/lib/google-collect.jar"/>
+  </path>
+  
+  <path id="library.junit.classpath">
+    <pathelement location="${basedir}/lib/junit.jar"/>
+  </path>
+  
+  <path id="library.log4j.classpath">
+    <pathelement location="${basedir}/lib/log4j.jar"/>
+  </path>
+  
+  <path id="library.poi.classpath">
+    <pathelement location="${basedir}/lib/poi-ooxml.jar"/>
+    <pathelement location="${basedir}/lib/poi.jar"/>
+  </path>
+  
+  
+  <!-- Global Libraries -->
+  
+  
+  <!-- Application Server Libraries -->
+  
+  <!-- Modules -->
+  
+  
+  <!-- Module ItpcParser -->
+  
+  <dirname property="module.itpcparser.basedir" file="${ant.file}"/>
+  
+  
+  <property name="module.jdk.home.itpcparser" value="${project.jdk.home}"/>
+  <property name="module.jdk.bin.itpcparser" value="${project.jdk.bin}"/>
+  <property name="module.jdk.classpath.itpcparser" value="${project.jdk.classpath}"/>
+  
+  <property name="compiler.args.itpcparser" value="${compiler.args}"/>
+  
+  <property name="itpcparser.output.dir" value="${module.itpcparser.basedir}/out/production/ItpcParser"/>
+  <property name="itpcparser.testoutput.dir" value="${module.itpcparser.basedir}/out/test/ItpcParser"/>
+  
+  <path id="itpcparser.module.bootclasspath">
+    <!-- Paths to be included in compilation bootclasspath -->
+  </path>
+  
+  <path id="itpcparser.module.production.classpath">
+    <path refid="${module.jdk.classpath.itpcparser}"/>
+    <path refid="library.apache-commons.classpath"/>
+    <path refid="library.log4j.classpath"/>
+    <path refid="library.poi.classpath"/>
+    <path refid="library.junit.classpath"/>
+    <path refid="library.google.classpath"/>
+  </path>
+  
+  <path id="itpcparser.runtime.production.module.classpath">
+    <pathelement location="${itpcparser.output.dir}"/>
+    <path refid="library.apache-commons.classpath"/>
+    <path refid="library.log4j.classpath"/>
+    <path refid="library.poi.classpath"/>
+    <path refid="library.junit.classpath"/>
+    <path refid="library.google.classpath"/>
+  </path>
+  
+  <path id="itpcparser.module.classpath">
+    <path refid="${module.jdk.classpath.itpcparser}"/>
+    <pathelement location="${itpcparser.output.dir}"/>
+    <path refid="library.apache-commons.classpath"/>
+    <path refid="library.log4j.classpath"/>
+    <path refid="library.poi.classpath"/>
+    <path refid="library.junit.classpath"/>
+    <path refid="library.google.classpath"/>
+  </path>
+  
+  <path id="itpcparser.runtime.module.classpath">
+    <pathelement location="${itpcparser.output.dir}"/>
+    <pathelement location="${itpcparser.testoutput.dir}"/>
+    <path refid="library.apache-commons.classpath"/>
+    <path refid="library.log4j.classpath"/>
+    <path refid="library.poi.classpath"/>
+    <path refid="library.junit.classpath"/>
+    <path refid="library.google.classpath"/>
+  </path>
+  
+  
+  <patternset id="excluded.from.module.itpcparser">
+    <patternset refid="ignored.files"/>
+  </patternset>
+  
+  <patternset id="excluded.from.compilation.itpcparser">
+    <patternset refid="excluded.from.module.itpcparser"/>
+  </patternset>
+  
+  <path id="itpcparser.module.sourcepath">
+    <dirset dir="${module.itpcparser.basedir}">
+      <include name="src"/>
+    </dirset>
+  </path>
+  
+  <path id="itpcparser.module.test.sourcepath">
+    <dirset dir="${module.itpcparser.basedir}">
+      <include name="test"/>
+    </dirset>
+  </path>
+  
+  
+  <target name="compile.module.itpcparser" depends="compile.module.itpcparser.production,compile.module.itpcparser.tests" description="Compile module ItpcParser"/>
+  
+  <target name="compile.module.itpcparser.production" description="Compile module ItpcParser; production classes">
+    <mkdir dir="${itpcparser.output.dir}"/>
+    <javac destdir="${itpcparser.output.dir}" debug="${compiler.debug}" nowarn="${compiler.generate.no.warnings}" memorymaximumsize="${compiler.max.memory}" fork="true" executable="${module.jdk.bin.itpcparser}/javac">
+      <compilerarg line="${compiler.args.itpcparser}"/>
+      <bootclasspath refid="itpcparser.module.bootclasspath"/>
+      <classpath refid="itpcparser.module.production.classpath"/>
+      <src refid="itpcparser.module.sourcepath"/>
+      <patternset refid="excluded.from.compilation.itpcparser"/>
+    </javac>
+    
+    <copy todir="${itpcparser.output.dir}">
+      <fileset dir="${module.itpcparser.basedir}/src">
+        <patternset refid="compiler.resources"/>
+        <type type="file"/>
+      </fileset>
+    </copy>
+  </target>
+  
+  <target name="compile.module.itpcparser.tests" depends="compile.module.itpcparser.production" description="compile module ItpcParser; test classes" unless="skip.tests">
+    <mkdir dir="${itpcparser.testoutput.dir}"/>
+    <javac destdir="${itpcparser.testoutput.dir}" debug="${compiler.debug}" nowarn="${compiler.generate.no.warnings}" memorymaximumsize="${compiler.max.memory}" fork="true" executable="${module.jdk.bin.itpcparser}/javac">
+      <compilerarg line="${compiler.args.itpcparser}"/>
+      <bootclasspath refid="itpcparser.module.bootclasspath"/>
+      <classpath refid="itpcparser.module.classpath"/>
+      <src refid="itpcparser.module.test.sourcepath"/>
+      <patternset refid="excluded.from.compilation.itpcparser"/>
+    </javac>
+    
+    <copy todir="${itpcparser.testoutput.dir}">
+      <fileset dir="${module.itpcparser.basedir}/test">
+        <patternset refid="compiler.resources"/>
+        <type type="file"/>
+      </fileset>
+    </copy>
+  </target>
+  
+  <target name="clean.module.itpcparser" description="cleanup module">
+    <delete dir="${itpcparser.output.dir}"/>
+    <delete dir="${itpcparser.testoutput.dir}"/>
+  </target>
+  
+  <target name="init" description="Build initialization">
+    <!-- Perform any build initialization in this target -->
+  </target>
+  
+  <target name="clean" depends="clean.module.itpcparser" description="cleanup all"/>
+  
+  <target name="build.modules" depends="init, clean, compile.module.itpcparser" description="build all modules"/>
+  
+  <target name="all" depends="build.modules" description="build all"/>
+</project>
