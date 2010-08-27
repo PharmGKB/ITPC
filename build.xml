@@ -198,7 +198,7 @@
   
   <target name="compile.module.itpcparser.production" description="Compile module ItpcParser; production classes">
     <mkdir dir="${itpcparser.output.dir}"/>
-    <javac destdir="${itpcparser.output.dir}" debug="${compiler.debug}" nowarn="${compiler.generate.no.warnings}" memorymaximumsize="${compiler.max.memory}" fork="true" executable="${module.jdk.bin.itpcparser}/javac">
+    <javac destdir="${itpcparser.output.dir}" debug="${compiler.debug}" nowarn="${compiler.generate.no.warnings}" memorymaximumsize="${compiler.max.memory}" fork="true" executable="${module.jdk.bin.itpcparser}/javac" includeantruntime="false">
       <compilerarg line="${compiler.args.itpcparser}"/>
       <bootclasspath refid="itpcparser.module.bootclasspath"/>
       <classpath refid="itpcparser.module.production.classpath"/>
@@ -216,7 +216,7 @@
   
   <target name="compile.module.itpcparser.tests" depends="compile.module.itpcparser.production" description="compile module ItpcParser; test classes" unless="skip.tests">
     <mkdir dir="${itpcparser.testoutput.dir}"/>
-    <javac destdir="${itpcparser.testoutput.dir}" debug="${compiler.debug}" nowarn="${compiler.generate.no.warnings}" memorymaximumsize="${compiler.max.memory}" fork="true" executable="${module.jdk.bin.itpcparser}/javac">
+    <javac destdir="${itpcparser.testoutput.dir}" debug="${compiler.debug}" nowarn="${compiler.generate.no.warnings}" memorymaximumsize="${compiler.max.memory}" fork="true" executable="${module.jdk.bin.itpcparser}/javac" includeantruntime="false">
       <compilerarg line="${compiler.args.itpcparser}"/>
       <bootclasspath refid="itpcparser.module.bootclasspath"/>
       <classpath refid="itpcparser.module.classpath"/>
@@ -246,4 +246,22 @@
   <target name="build.modules" depends="init, clean, compile.module.itpcparser" description="build all modules"/>
   
   <target name="all" depends="build.modules" description="build all"/>
+
+  <target name="test" depends="init, compile.module.itpcparser.tests">
+    <mkdir dir="${itpcparser.testoutput.dir}"/>
+
+      <junit fork="yes" clonevm="true" printsummary="yes" haltonfailure="yes">
+          <classpath refid="itpcparser.module.classpath"/>
+        <classpath>
+          <pathelement location="${itpcparser.testoutput.dir}"/>
+        </classpath>
+        <formatter type="plain"/>
+        <sysproperty key="PHARMGEN" value="${env.PHARMGEN}" />
+        <batchtest todir="${module.itpcparser.basedir}/test">
+          <fileset dir="${module.itpcparser.basedir}/test">
+            <include name="**/*Test.java"/>
+          </fileset>
+        </batchtest>
+      </junit>
+  </target>
 </project>
