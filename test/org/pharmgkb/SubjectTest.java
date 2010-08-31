@@ -106,7 +106,7 @@ public class SubjectTest extends TestCase {
     subject.setRs1065852(new VariantAlleles("c/t"));
     subject.setRs3892097(new VariantAlleles("g/a"));
     subject.setRs16947(new VariantAlleles("c/t"));
-    Assert.assertEquals("*1/*4", subject.getGenotypePgkb().toString());
+    Assert.assertEquals("*4/Unknown", subject.getGenotypePgkb().toString());
 
     subject = makeDefaultSubject();
     subject.setRs1065852(new VariantAlleles("c/t"));

@@ -366,6 +366,11 @@ public class Subject {
       if (this.getRs3892097().hasData()) {
         if (this.getRs3892097().contains("a")) {
           geno.addString("*4");
+
+          // this is the *4k which we don't separately call, but is still distinct from *4
+          if (getRs3892097().count("a")==1 && getRs3892097().count("a")==1 && getRs16947().count("t")==1) {
+            geno.addString("Unknown");
+          }
         }
         if (this.getRs3892097().count("a")==2 && !geno.isHeteroDeletion()) {
           geno.addString("*4");
