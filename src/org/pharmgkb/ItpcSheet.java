@@ -326,12 +326,12 @@ public class ItpcSheet implements Iterator {
     ExcelUtils.writeCell(headerRow, allele1finalIdx, "CYP2D6 Allele 1 (Final)");
     ExcelUtils.writeCell(headerRow, allele2finalIdx, "CYP2D6 Allele 2 (Final)");
     ExcelUtils.writeCell(headerRow, callCommentsIdx, "Curator comments on calls");
-    ExcelUtils.writeCell(headerRow, scoreIdx, "Drug and CYP2D6 org.pharmgkb.Genotype Score");
+    ExcelUtils.writeCell(headerRow, scoreIdx, "Drug and CYP2D6 Genotype Score");
 
-    ExcelUtils.writeCell(headerRow, genotypeIdx, "org.pharmgkb.Genotype (PharmGKB)");
+    ExcelUtils.writeCell(headerRow, genotypeIdx, "Genotype (PharmGKB)");
     ExcelUtils.writeCell(headerRow, weakIdx, "Weak Drug (PharmGKB)");
     ExcelUtils.writeCell(headerRow, potentIdx, "Potent Drug (PharmGKB)");
-    ExcelUtils.writeCell(headerRow, metabStatusIdx, "org.pharmgkb.Metabolizer Status (PharmGKB)");
+    ExcelUtils.writeCell(headerRow, metabStatusIdx, "Metabolizer Status (PharmGKB)");
 
     ExcelUtils.writeCell(headerRow, incAgeIdx, "Inc 1\nPostmenopausal");
     ExcelUtils.writeCell(headerRow, incNonmetaIdx, "Inc 2a\nNon-metastatic invasive cancer");
