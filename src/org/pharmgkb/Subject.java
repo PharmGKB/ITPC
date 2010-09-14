@@ -468,7 +468,6 @@ public class Subject {
           this.getRs16947().hasData()   &&
           deletionDetectable() &&
           (this.getRs28371725().hasData() || (!this.getRs28371725().hasData() && (this.getRs16947().is("C","C") || this.getRs16947().is("C","-")))) &&
-          (this.getRs28371706().hasData() || (!this.getRs28371706().hasData() && (this.getRs16947().is("C","C") || this.getRs16947().is("C","-")))) &&
           (!geno.isHeteroDeletion() || (geno.isHeteroDeletion() && (this.getRs28371725().hasData() || this.getRs28371706().hasData())))) // we can use rs16947 to exclude *41 calls so it doesn't always have to be available
       {
         geno.addString("*1");

@@ -191,6 +191,14 @@ public class SubjectTest extends TestCase {
     Assert.assertEquals("*2/*10", subject.getGenotypePgkb().toString());
   }
 
+  public void testCallsWithUnknownData() {
+    Subject subject = makeDefaultSubject();
+    subject.setRs16947(new VariantAlleles("c/t"));
+    subject.setRs28371706(new VariantAlleles(null));
+    subject.setRs28371725(new VariantAlleles("a/g"));
+    Assert.assertEquals("*1/*41", subject.getGenotypePgkb().toString());
+  }
+
   public void testSetGenotypeAmplichip() {
     Subject subject = makeDefaultSubject();
     try {
