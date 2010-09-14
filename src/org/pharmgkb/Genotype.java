@@ -68,6 +68,8 @@ public class Genotype extends StringPair {
     metabMap.put("*39XN", Metabolizer.UM);
     metabMap.put("*41XN", Metabolizer.UM);
     metabMap.put("*45XN", Metabolizer.UM);
+
+    metabMap.put("Unknown", Metabolizer.Unknown);
   }
 
   private static final Map<Metabolizer,Float> scoreMap = new HashMap<Metabolizer,Float>();
