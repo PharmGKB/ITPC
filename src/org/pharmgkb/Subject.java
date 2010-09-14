@@ -372,7 +372,7 @@ public class Subject {
             geno.addString("Unknown");
           }
         }
-        if (this.getRs3892097().count("a")==2 && !geno.isHeteroDeletion()) {
+        if (this.getRs3892097().count("a")==2 && deletionDetectable() && !geno.isHeteroDeletion()) {
           geno.addString("*4");
         }
       }
