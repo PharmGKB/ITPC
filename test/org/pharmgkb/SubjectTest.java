@@ -115,6 +115,25 @@ public class SubjectTest extends TestCase {
     Assert.assertEquals("*2/*4", subject.getGenotypePgkb().toString());
   }
 
+  public void testStarFive() {
+    Subject subject = makeDefaultSubject();
+    subject.setDeletion(Subject.Deletion.Hetero);
+    Assert.assertEquals("*1/*5", subject.getGenotypePgkb().toString());
+
+    subject = makeDefaultSubject();
+    subject.setDeletion(Subject.Deletion.Unknown);
+    Assert.assertEquals("*1/Unknown", subject.getGenotypePgkb().toString());
+
+    subject = makeDefaultSubject();
+    subject.setDeletion(Subject.Deletion.Unknown);
+    subject.setRs3892097(new VariantAlleles("a/a"));
+    subject.setRs1065852(new VariantAlleles(null));
+    subject.setRs5030655(new VariantAlleles(null));
+    subject.setRs16947(new VariantAlleles(null));
+    subject.setRs28371706(new VariantAlleles(null));
+    Assert.assertEquals("*4/Unknown", subject.getGenotypePgkb().toString());
+  }
+
   public void testStarTwo() {
     Subject subject = makeDefaultSubject();
     Assert.assertEquals("*1/*1", subject.getGenotypePgkb().toString());
