@@ -54,7 +54,7 @@ public class ItpcSheetTest extends TestCase {
   }
 
   public void testParseColumnIndexes() throws Exception {
-    ItpcSheet sheet = new ItpcSheet(file);
+    ItpcSheet sheet = new ItpcSheet(file, false);
 
     assertTrue(sheet.ageIdx>=0);
     assertTrue(sheet.subjectId>=0);
@@ -127,7 +127,7 @@ public class ItpcSheetTest extends TestCase {
   }
 
   public void testNext() throws Exception {
-    ItpcSheet sheet = new ItpcSheet(file);
+    ItpcSheet sheet = new ItpcSheet(file, false);
 
     assertTrue(sheet.hasNext());
 

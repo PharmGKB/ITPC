@@ -247,7 +247,7 @@
   
   <target name="all" depends="build.modules" description="build all"/>
 
-  <target name="test" depends="init, compile.module.itpcparser.tests">
+  <target name="test" depends="init, compile.module.itpcparser.tests" description="run all JUnit TestCases">
     <mkdir dir="${itpcparser.testoutput.dir}"/>
 
       <junit fork="yes" clonevm="true" printsummary="yes" haltonfailure="yes">

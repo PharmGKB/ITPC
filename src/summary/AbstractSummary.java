@@ -24,7 +24,7 @@ public abstract class AbstractSummary {
    * @return a new, blank Sheet in the given Workbook
    */
   public Sheet getSheet(Workbook wb) {
-    Sheet sheet = null;
+    Sheet sheet;
 
     int sheetIdx = wb.getSheetIndex(getSheetTitle());
     if (sheetIdx >= 0) {

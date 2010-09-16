@@ -20,6 +20,7 @@ import java.util.List;
 public class Parser {
   private static final Logger sf_logger = Logger.getLogger(Parser.class);
   private File m_fileInput;
+  private boolean m_doHighlight = false;
   protected ItpcSheet dataSheet;
 
   public static void main(String[] args) {
@@ -39,7 +40,7 @@ public class Parser {
       throw new Exception("Input file doesn't exist");
     }
 
-    dataSheet = new ItpcSheet(getFileInput());
+    dataSheet = new ItpcSheet(getFileInput(), m_doHighlight);
     List<AbstractSummary> summaries =
         Arrays.asList(new GenotypeSummary(), new MetabStatusSummary(), new NonFourSummary());
 
@@ -71,6 +72,7 @@ public class Parser {
   protected void parseArgs(String[] args) throws Exception {
     CliHelper cli = new CliHelper(getClass(), false);
     cli.addOption("f", "file", "ITPC excel file to read", "pathToFile");
+    cli.addOption("hi", "highlight", "Highlight changed values");
 
     try {
       cli.parse(args);
@@ -91,6 +93,10 @@ public class Parser {
       else {
         throw new Exception("File doesn't exist: " + fileInput);
       }
+    }
+
+    if (cli.hasOption("-hi")) {
+      m_doHighlight = true;
     }
 
   }

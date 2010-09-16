@@ -39,17 +39,15 @@ package util;
 import java.math.BigDecimal;
 import java.math.MathContext;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 import org.apache.commons.lang.StringUtils;
-import org.apache.poi.hssf.util.HSSFColor;
 import org.apache.poi.ss.usermodel.*;
 
 
 /**
  * This class provides convenience methods for dealing with POI objects.
  *
- * @author Winston Gor
+ * @author Ryan Whaley
  */
 public class POIUtils {
 
@@ -108,24 +106,6 @@ public class POIUtils {
 
 
   /**
-   * Returns value at specified row and cell numbers.  Indexes are 0-based.
-   *
-   * @param sheet Excel spreadsheet
-   * @param rowNum row number
-   * @param cellNum cell number
-   * @return value of cell
-   **/
-  public static String getStringCellValue(Sheet sheet, int rowNum, int cellNum) {
-
-    Row row = sheet.getRow(rowNum);
-    if (row != null) {
-      return getStringValue(row.getCell(cellNum));
-    }
-    return null;
-  }
-
-
-  /**
    * Returns column values in specified row.  Indexes are 0-based.
    *
    * @param sheet Excel spreadsheet
@@ -165,112 +145,4 @@ public class POIUtils {
     return values;
   }
 
-
- /**
-  * Returns cells within specified column range in specified row.
-  *
-  * @param sheet Excel spreadsheet
-  * @param rowNum row number
-  * @param column column number
-  * @return list of cell values in row
-  **/
-  public static Cell getCell(Sheet sheet, int rowNum, int column) {
-
-    Cell cell = null;
-    Row row = sheet.getRow(rowNum);
-    if (row != null) {
-      cell = row.getCell(column);
-    }
-    return cell;
-  }
-
-
-  public static CellStyle getTitleStyle(Workbook wb) {
-    CellStyle style = wb.createCellStyle();
-
-    style.setBorderBottom(CellStyle.BORDER_THIN);
-    style.setBottomBorderColor(IndexedColors.BLACK.getIndex());
-    style.setBorderLeft(CellStyle.BORDER_THIN);
-    style.setLeftBorderColor(IndexedColors.BLACK.getIndex());
-    style.setBorderTop(CellStyle.BORDER_THIN);
-    style.setTopBorderColor(IndexedColors.BLACK.getIndex());
-    style.setBorderRight(CellStyle.BORDER_THIN);
-    style.setRightBorderColor(IndexedColors.BLACK.getIndex());
-
-    style.setAlignment(CellStyle.ALIGN_CENTER);
-    style.setWrapText(true);
-
-    return style;
-  }
-
-  /**
-   * Styles the given row with the Title Style specified in <code>getTitleStyle</code>. The <code>startIndex</code>
-   * parameter specifies which column column to start applying the style on (0 = all columns) inclusively.
-   * @param headerRow an Excel Row
-   * @param startIndex the index of the column to start applying the style on
-   */
-  public static void styleTitleCells(Row headerRow, int startIndex) {
-    CellStyle style = POIUtils.getTitleStyle(headerRow.getSheet().getWorkbook());
-
-    Iterator<Cell> headerCells = headerRow.cellIterator();
-
-    while (headerCells.hasNext()) {
-      Cell headerCell=headerCells.next();
-      if (headerCell.getColumnIndex()>=startIndex) {
-        headerCell.setCellStyle(style);
-      }
-    }
-  }
-
-  public static CellStyle getScoreStyle(Workbook wb) {
-    CellStyle scoreStyle = wb.createCellStyle();
-    DataFormat scoreFormat = wb.createDataFormat();
-    scoreStyle.setDataFormat(scoreFormat.getFormat("0.0"));
-    return scoreStyle;
-  }
-
-  /**
-   * Copies the given row to the given sheet, useful for copying rows between two differnt sheets.
-   * This will preserve values, formulas, and formatting
-   * @param row a Row to copy
-   * @param sheet a Sheet to copy to
-   * @return the new Row in <code>sheet</code>
-   */
-  public static Row copyRowTo(Row row, Sheet sheet) {
-    return copyRowTo(row, sheet, row.getRowNum());
-  }
-
-  /**
-   * Copies the given row to the given sheet, useful for copying rows between two differnt sheets.
-   * This will preserve values, formulas, and formatting.  You can specify a new row number if you
-   * want the row to appear in a different place in the new sheet.
-   * @param row a Row to copy
-   * @param sheet a Sheet to copy to
-   * @param rowNum the desired row number in <code>sheet</code>
-   * @return the new Row in <code>sheet</code>
-   */
-  public static Row copyRowTo(Row row, Sheet sheet, int rowNum) {
-    Row newRow = sheet.createRow(rowNum);
-
-    for (Cell cell : row) {
-      Cell newCell = newRow.createCell(cell.getColumnIndex());
-      newCell.setCellStyle(cell.getCellStyle());
-      switch (cell.getCellType()) {
-        case Cell.CELL_TYPE_NUMERIC:
-          newCell.setCellValue(cell.getNumericCellValue());
-          break;
-        case Cell.CELL_TYPE_STRING:
-          newCell.setCellValue(cell.getStringCellValue());
-          break;
-        case Cell.CELL_TYPE_BOOLEAN:
-          newCell.setCellValue(cell.getBooleanCellValue());
-          break;
-        case Cell.CELL_TYPE_FORMULA:
-          newCell.setCellFormula(cell.getCellFormula());
-        default:
-          break;
-      }
-    }
-    return newRow;
-  }
 }

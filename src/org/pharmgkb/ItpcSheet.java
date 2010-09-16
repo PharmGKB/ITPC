@@ -1,44 +1,13 @@
-package org.pharmgkb;/*
- ----- BEGIN LICENSE BLOCK -----
- Version: MPL 1.1/GPL 2.0/LGPL 2.1
+package org.pharmgkb;
 
- The contents of this file are subject to the Mozilla Public License Version
- 1.1 (the "License"); you may not use this file except in compliance with the
- License. You may obtain a copy of the License at http://www.mozilla.org/MPL/
-
- Software distributed under the License is distributed on an "AS IS" basis,
- WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License for
- the specific language governing rights and limitations under the License.
-
- The Original Code is PharmGen.
-
- The Initial Developer of the Original Code is PharmGKB (The Pharmacogenetics
- and Pharmacogenetics Knowledge Base, supported by NIH U01GM61374). Portions
- created by the Initial Developer are Copyright (C) 2010 the Initial Developer.
- All Rights Reserved.
-
- Contributor(s):
-
- Alternatively, the contents of this file may be used under the terms of
- either the GNU General Public License Version 2 or later (the "GPL"), or the
- GNU Lesser General Public License Version 2.1 or later (the "LGPL"), in
- which case the provisions of the GPL or the LGPL are applicable instead of
- those above. If you wish to allow use of your version of this file only
- under the terms of either the GPL or the LGPL, and not to allow others to
- use your version of this file under the terms of the MPL, indicate your
- decision by deleting the provisions above and replace them with the notice
- and other provisions required by the GPL or the LGPL. If you do not delete
- the provisions above, a recipient may use your version of this file under
- the terms of any one of the MPL, the GPL or the LGPL.
-
- ----- END LICENSE BLOCK -----
- */
 import java.io.*;
 import java.util.Iterator;
 import java.util.List;
 import org.apache.log4j.Logger;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
+import org.apache.poi.hssf.usermodel.HSSFCellStyle;
+import org.apache.poi.hssf.util.HSSFColor;
 import org.apache.poi.ss.usermodel.*;
 import util.*;
 
@@ -55,6 +24,9 @@ public class ItpcSheet implements Iterator {
 
   private Sheet m_dataSheet = null;
   private int m_rowIndex = -1;
+
+  private CellStyle styleTitle = null;
+  private CellStyle styleHighlight = null;
 
   protected int subjectId = -1;
   protected int projectSiteIdx = -1;
@@ -140,9 +112,10 @@ public class ItpcSheet implements Iterator {
    * </ol>
    * After this has been initialized, samples can be gathered by using the <code>getSampleIterator</code> method
    * @param file an Excel .XLS file
+   * @param doHighlighting highlight changed cells in the output file
    * @throws Exception can occur from file I/O
    */
-  public ItpcSheet(File file) throws Exception {
+  public ItpcSheet(File file, boolean doHighlighting) throws Exception {
     if (file == null || !file.getName().endsWith(".xls")) {
       throw new Exception("File not in right format: " + file);
     }
@@ -160,6 +133,9 @@ public class ItpcSheet implements Iterator {
       }
 
       m_dataSheet = inputSheet;
+      if (doHighlighting) {
+        doHighlighting();
+      }
 
       parseColumnIndexes();
 
@@ -317,7 +293,7 @@ public class ItpcSheet implements Iterator {
 
     writeCellTitles(headerRow);
 
-    POIUtils.styleTitleCells(headerRow, startPgkbColsIdx);
+    styleTitleCells(headerRow, startPgkbColsIdx);
   }
 
   private void writeCellTitles(Row headerRow) {
@@ -456,36 +432,37 @@ public class ItpcSheet implements Iterator {
 
   public void writeSubjectCalculatedColumns(Subject subject) {
     Row row = this.getCurrentRow();
+    CellStyle highlight = getHighlightStyle();
 
-    ExcelUtils.writeCell(row, allele1idx, subject.getGenotypePgkb().get(0));
-    ExcelUtils.writeCell(row, allele2idx, subject.getGenotypePgkb().get(1));
-    ExcelUtils.writeCell(row, allele1finalIdx, subject.getGenotypeFinal().get(0));
-    ExcelUtils.writeCell(row, allele2finalIdx, subject.getGenotypeFinal().get(1));
-    ExcelUtils.writeCell(row, callCommentsIdx, subject.getCuratorComment());
-    ExcelUtils.writeCell(row, genotypeIdx, subject.getGenotypeFinal().getMetabolizerStatus());
-    ExcelUtils.writeCell(row, weakIdx, subject.getWeak().toString());
-    ExcelUtils.writeCell(row, potentIdx, subject.getPotent().toString());
+    ExcelUtils.writeCell(row, allele1idx, subject.getGenotypePgkb().get(0), highlight);
+    ExcelUtils.writeCell(row, allele2idx, subject.getGenotypePgkb().get(1), highlight);
+    ExcelUtils.writeCell(row, allele1finalIdx, subject.getGenotypeFinal().get(0), highlight);
+    ExcelUtils.writeCell(row, allele2finalIdx, subject.getGenotypeFinal().get(1), highlight);
+    ExcelUtils.writeCell(row, callCommentsIdx, subject.getCuratorComment(), highlight);
+    ExcelUtils.writeCell(row, genotypeIdx, subject.getGenotypeFinal().getMetabolizerStatus(), highlight);
+    ExcelUtils.writeCell(row, weakIdx, subject.getWeak().toString(), highlight);
+    ExcelUtils.writeCell(row, potentIdx, subject.getPotent().toString(), highlight);
     if (subject.getScore()==null) {
-      ExcelUtils.writeCell(row, scoreIdx, Value.Unknown.toString());
+      ExcelUtils.writeCell(row, scoreIdx, Value.Unknown.toString(), highlight);
     }
     else {
-      ExcelUtils.writeCell(row, scoreIdx, subject.getScore());
+      ExcelUtils.writeCell(row, scoreIdx, subject.getScore(), highlight);
     }
-    ExcelUtils.writeCell(row, metabStatusIdx, subject.getMetabolizerGroup());
-    ExcelUtils.writeCell(row, incAgeIdx, subject.passInclusion1().toString());
-    ExcelUtils.writeCell(row, incNonmetaIdx, subject.passInclusion2a().toString());
-    ExcelUtils.writeCell(row, incPriorHistIdx, subject.passInclusion2b().toString());
-    ExcelUtils.writeCell(row, incErPosIdx, subject.passInclusion3().toString());
-    ExcelUtils.writeCell(row, incSysTherIdx, subject.passInclusion4().toString());
-    ExcelUtils.writeCell(row, incAdjTamoxIdx, subject.passInclusion4a().toString());
-    ExcelUtils.writeCell(row, incDurationIdx, subject.passInclusion4b().toString());
-    ExcelUtils.writeCell(row, incTamoxDoseIdx, subject.passInclusion4c().toString());
-    ExcelUtils.writeCell(row, incChemoIdx, subject.passInclusion5().toString());
-    ExcelUtils.writeCell(row, incHormoneIdx, subject.passInclusion6().toString());
-    ExcelUtils.writeCell(row, incDnaCollectionIdx, subject.passInclusion7().toString());
-    ExcelUtils.writeCell(row, incFollowupIdx, subject.passInclusion8().toString());
-    ExcelUtils.writeCell(row, incGenoDataAvailIdx, subject.passInclusion9().toString());
-    ExcelUtils.writeCell(row, includeIdx, subject.include().toString());
+    ExcelUtils.writeCell(row, metabStatusIdx, subject.getMetabolizerGroup(), highlight);
+    ExcelUtils.writeCell(row, incAgeIdx, subject.passInclusion1().toString(), highlight);
+    ExcelUtils.writeCell(row, incNonmetaIdx, subject.passInclusion2a().toString(), highlight);
+    ExcelUtils.writeCell(row, incPriorHistIdx, subject.passInclusion2b().toString(), highlight);
+    ExcelUtils.writeCell(row, incErPosIdx, subject.passInclusion3().toString(), highlight);
+    ExcelUtils.writeCell(row, incSysTherIdx, subject.passInclusion4().toString(), highlight);
+    ExcelUtils.writeCell(row, incAdjTamoxIdx, subject.passInclusion4a().toString(), highlight);
+    ExcelUtils.writeCell(row, incDurationIdx, subject.passInclusion4b().toString(), highlight);
+    ExcelUtils.writeCell(row, incTamoxDoseIdx, subject.passInclusion4c().toString(), highlight);
+    ExcelUtils.writeCell(row, incChemoIdx, subject.passInclusion5().toString(), highlight);
+    ExcelUtils.writeCell(row, incHormoneIdx, subject.passInclusion6().toString(), highlight);
+    ExcelUtils.writeCell(row, incDnaCollectionIdx, subject.passInclusion7().toString(), highlight);
+    ExcelUtils.writeCell(row, incFollowupIdx, subject.passInclusion8().toString(), highlight);
+    ExcelUtils.writeCell(row, incGenoDataAvailIdx, subject.passInclusion9().toString(), highlight);
+    ExcelUtils.writeCell(row, includeIdx, subject.include().toString(), highlight);
   }
 
   public File saveOutput() throws IOException {
@@ -502,4 +479,59 @@ public class ItpcSheet implements Iterator {
   public Workbook getWorkbook() {
     return m_dataSheet.getWorkbook();
   }
+
+  public CellStyle getTitleStyle() {
+    if (styleTitle == null) {
+      styleTitle = getWorkbook().createCellStyle();
+
+      styleTitle.setBorderBottom(CellStyle.BORDER_THIN);
+      styleTitle.setBottomBorderColor(IndexedColors.BLACK.getIndex());
+      styleTitle.setBorderLeft(CellStyle.BORDER_THIN);
+      styleTitle.setLeftBorderColor(IndexedColors.BLACK.getIndex());
+      styleTitle.setBorderTop(CellStyle.BORDER_THIN);
+      styleTitle.setTopBorderColor(IndexedColors.BLACK.getIndex());
+      styleTitle.setBorderRight(CellStyle.BORDER_THIN);
+      styleTitle.setRightBorderColor(IndexedColors.BLACK.getIndex());
+
+      styleTitle.setAlignment(CellStyle.ALIGN_CENTER);
+      styleTitle.setWrapText(true);
+    }
+
+    return styleTitle;
+  }
+
+  public void doHighlighting() {
+    if (styleHighlight == null) {
+      styleHighlight = getWorkbook().createCellStyle();
+
+      styleHighlight.setFillForegroundColor(HSSFColor.LIGHT_YELLOW.index);
+      styleHighlight.setFillPattern(HSSFCellStyle.SOLID_FOREGROUND);
+      styleHighlight.setAlignment(HSSFCellStyle.ALIGN_CENTER);
+      styleHighlight.setWrapText(true);
+    }
+  }
+
+  public CellStyle getHighlightStyle() {
+    return styleHighlight;
+  }
+
+  /**
+   * Styles the given row with the Title Style specified in <code>getTitleStyle</code>. The <code>startIndex</code>
+   * parameter specifies which column column to start applying the style on (0 = all columns) inclusively.
+   * @param headerRow an Excel Row
+   * @param startIndex the index of the column to start applying the style on
+   */
+  public void styleTitleCells(Row headerRow, int startIndex) {
+    CellStyle style = getTitleStyle();
+
+    Iterator<Cell> headerCells = headerRow.cellIterator();
+
+    while (headerCells.hasNext()) {
+      Cell headerCell=headerCells.next();
+      if (headerCell.getColumnIndex()>=startIndex) {
+        headerCell.setCellStyle(style);
+      }
+    }
+  }
+
 }
