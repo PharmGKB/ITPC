@@ -27,6 +27,7 @@ public class ItpcSheet implements Iterator {
 
   private CellStyle styleTitle = null;
   private CellStyle styleHighlight = null;
+  private CellStyle styleGreenHighlight = null;
 
   protected int subjectId = -1;
   protected int projectSiteIdx = -1;
@@ -74,6 +75,8 @@ public class ItpcSheet implements Iterator {
 
   protected int allele1idx = -1;
   protected int allele2idx = -1;
+  protected int allele1allIdx = -1;
+  protected int allele2allIdx = -1;
   protected int allele1finalIdx = -1;
   protected int allele2finalIdx = -1;
   protected int callCommentsIdx = -1;
@@ -265,31 +268,33 @@ public class ItpcSheet implements Iterator {
     // new columns to add to the end of the template
     int startPgkbColsIdx = projectNotesIdx+1;
     allele1idx = startPgkbColsIdx;
-    allele2idx = startPgkbColsIdx + 1;
-    allele1finalIdx = startPgkbColsIdx + 2;
-    allele2finalIdx = startPgkbColsIdx + 3;
-    callCommentsIdx = startPgkbColsIdx + 4;
-    genotypeIdx = startPgkbColsIdx + 5;
-    weakIdx = startPgkbColsIdx + 6;
-    potentIdx = startPgkbColsIdx + 7;
-    scoreIdx = startPgkbColsIdx + 8;
-    metabStatusIdx = startPgkbColsIdx + 9;
+    allele2idx = startPgkbColsIdx           + 1;
+    allele1allIdx = startPgkbColsIdx        + 2;
+    allele2allIdx = startPgkbColsIdx        + 3;
+    allele1finalIdx = startPgkbColsIdx      + 4;
+    allele2finalIdx = startPgkbColsIdx      + 5;
+    callCommentsIdx = startPgkbColsIdx      + 6;
+    genotypeIdx = startPgkbColsIdx          + 7;
+    weakIdx = startPgkbColsIdx              + 8;
+    potentIdx = startPgkbColsIdx            + 9;
+    scoreIdx = startPgkbColsIdx             + 10;
+    metabStatusIdx = startPgkbColsIdx       + 11;
 
-    incAgeIdx = startPgkbColsIdx + 10;
-    incNonmetaIdx = startPgkbColsIdx + 11;
-    incPriorHistIdx = startPgkbColsIdx + 12;
-    incErPosIdx = startPgkbColsIdx + 13;
-    incSysTherIdx = startPgkbColsIdx + 14;
-    incAdjTamoxIdx = startPgkbColsIdx + 15;
-    incDurationIdx = startPgkbColsIdx + 16;
-    incTamoxDoseIdx = startPgkbColsIdx + 17;
-    incChemoIdx = startPgkbColsIdx + 18;
-    incHormoneIdx = startPgkbColsIdx + 19;
-    incDnaCollectionIdx = startPgkbColsIdx + 20;
-    incFollowupIdx = startPgkbColsIdx + 21;
-    incGenoDataAvailIdx = startPgkbColsIdx + 22;
+    incAgeIdx = startPgkbColsIdx            + 12;
+    incNonmetaIdx = startPgkbColsIdx        + 13;
+    incPriorHistIdx = startPgkbColsIdx      + 14;
+    incErPosIdx = startPgkbColsIdx          + 15;
+    incSysTherIdx = startPgkbColsIdx        + 16;
+    incAdjTamoxIdx = startPgkbColsIdx       + 17;
+    incDurationIdx = startPgkbColsIdx       + 18;
+    incTamoxDoseIdx = startPgkbColsIdx      + 19;
+    incChemoIdx = startPgkbColsIdx          + 20;
+    incHormoneIdx = startPgkbColsIdx        + 21;
+    incDnaCollectionIdx = startPgkbColsIdx  + 22;
+    incFollowupIdx = startPgkbColsIdx       + 23;
+    incGenoDataAvailIdx = startPgkbColsIdx  + 24;
 
-    includeIdx = startPgkbColsIdx + 23;
+    includeIdx = startPgkbColsIdx           + 25;
 
     writeCellTitles(headerRow);
 
@@ -299,6 +304,8 @@ public class ItpcSheet implements Iterator {
   private void writeCellTitles(Row headerRow) {
     ExcelUtils.writeCell(headerRow, allele1idx, "CYP2D6 Allele 1 (PharmGKB)");
     ExcelUtils.writeCell(headerRow, allele2idx, "CYP2D6 Allele 2 (PharmGKB)");
+    ExcelUtils.writeCell(headerRow, allele1allIdx, "CYP2D6 Allele 1 (All Calls)");
+    ExcelUtils.writeCell(headerRow, allele2allIdx, "CYP2D6 Allele 2 (All Calls)");
     ExcelUtils.writeCell(headerRow, allele1finalIdx, "CYP2D6 Allele 1 (Final)");
     ExcelUtils.writeCell(headerRow, allele2finalIdx, "CYP2D6 Allele 2 (Final)");
     ExcelUtils.writeCell(headerRow, callCommentsIdx, "Curator comments on calls");
@@ -433,9 +440,12 @@ public class ItpcSheet implements Iterator {
   public void writeSubjectCalculatedColumns(Subject subject) {
     Row row = this.getCurrentRow();
     CellStyle highlight = getHighlightStyle();
+    subject.calculateGenotypeLimited();
 
     ExcelUtils.writeCell(row, allele1idx, subject.getGenotypePgkb().get(0), highlight);
     ExcelUtils.writeCell(row, allele2idx, subject.getGenotypePgkb().get(1), highlight);
+    ExcelUtils.writeCell(row, allele1allIdx, subject.getGenotypeAllFinal().get(0), highlight);
+    ExcelUtils.writeCell(row, allele2allIdx, subject.getGenotypeAllFinal().get(1), highlight);
     ExcelUtils.writeCell(row, allele1finalIdx, subject.getGenotypeFinal().get(0), highlight);
     ExcelUtils.writeCell(row, allele2finalIdx, subject.getGenotypeFinal().get(1), highlight);
     ExcelUtils.writeCell(row, callCommentsIdx, subject.getCuratorComment(), highlight);
@@ -463,6 +473,13 @@ public class ItpcSheet implements Iterator {
     ExcelUtils.writeCell(row, incFollowupIdx, subject.passInclusion8().toString(), highlight);
     ExcelUtils.writeCell(row, incGenoDataAvailIdx, subject.passInclusion9().toString(), highlight);
     ExcelUtils.writeCell(row, includeIdx, subject.include().toString(), highlight);
+
+    if (!subject.getGenotypeAllFinal().get(0).equals(subject.getGenotypeFinal().get(0))) {
+      row.getCell(allele1finalIdx).setCellStyle(getStyleGreenHighlight());
+    }
+    if (!subject.getGenotypeAllFinal().get(1).equals(subject.getGenotypeFinal().get(1))) {
+      row.getCell(allele1finalIdx).setCellStyle(getStyleGreenHighlight());
+    }
   }
 
   public File saveOutput() throws IOException {
@@ -534,4 +551,15 @@ public class ItpcSheet implements Iterator {
     }
   }
 
+  public CellStyle getStyleGreenHighlight() {
+    if (styleGreenHighlight == null) {
+      styleGreenHighlight = getWorkbook().createCellStyle();
+
+      styleGreenHighlight.setFillForegroundColor(HSSFColor.LIGHT_GREEN.index);
+      styleGreenHighlight.setFillPattern(HSSFCellStyle.SOLID_FOREGROUND);
+      styleGreenHighlight.setAlignment(HSSFCellStyle.ALIGN_CENTER);
+      styleGreenHighlight.setWrapText(true);
+    }
+    return styleGreenHighlight;
+  }
 }

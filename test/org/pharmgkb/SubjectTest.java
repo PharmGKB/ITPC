@@ -199,6 +199,22 @@ public class SubjectTest extends TestCase {
     Assert.assertEquals("*1/*41", subject.getGenotypePgkb().toString());
   }
 
+  public void testLimitedCalls() {
+    Subject subject = makeDefaultSubject();
+    subject.setRs5030655(new VariantAlleles(null));
+    assertEquals("Unknown/Unknown", subject.getGenotypeFinal().toString());
+    subject.calculateGenotypeLimited();
+    assertEquals("*1/*1", subject.getGenotypeLimited().toString());
+
+    subject = makeDefaultSubject();
+    subject.setRs5030655(new VariantAlleles(null));
+    subject.setRs3892097(new VariantAlleles("g/a"));
+    subject.setDeletion(Subject.Deletion.Unknown);
+    assertEquals("*4/Unknown", subject.getGenotypeFinal().toString());
+    subject.calculateGenotypeLimited();
+    assertEquals("*1/*4", subject.getGenotypeLimited().toString());
+  }
+
   public void testSetGenotypeAmplichip() {
     Subject subject = makeDefaultSubject();
     try {

@@ -50,6 +50,7 @@ public class Subject {
 
   private Genotype m_genotypePgkb = new Genotype();
   private Genotype m_genotypeAmplichip = new Genotype();
+  private Genotype m_genotypeLimited = new Genotype();
 
   private VariantAlleles m_rs1065852 = new VariantAlleles();
   private VariantAlleles m_rs4986774 = new VariantAlleles();
@@ -88,12 +89,21 @@ public class Subject {
     }
   }
 
-  public Genotype getGenotypeFinal() {
+  public Genotype getGenotypeAllFinal() {
     if (m_genotypeAmplichip != null && m_genotypeAmplichip.hasData()) {
       return m_genotypeAmplichip;
     }
     else {
       return m_genotypePgkb;
+    }
+  }
+
+  public Genotype getGenotypeFinal() {
+    if (getGenotypeAllFinal().isUncertain() && !getGenotypeLimited().isUncertain()) {
+      return getGenotypeLimited();
+    }
+    else {
+      return getGenotypeAllFinal();
     }
   }
 
@@ -480,6 +490,86 @@ public class Subject {
     this.setGenotypePgkb(geno);
   }
 
+  public void calculateGenotypeLimited() {
+    Genotype geno = new Genotype();
+
+    boolean starThreeAble = applyStarThreeLogic(geno);
+    boolean starFourAble = applyStarFourLogic(geno);
+    boolean starTenAble = applyStarTenLogic(geno);
+    boolean starFortyOneAble = applyStarFortyOneLogic(geno);
+
+    while (geno.size() < 2) {
+      if (starThreeAble && starFourAble && starTenAble && starFortyOneAble) {
+        geno.addString("*1");
+      }
+      else {
+        geno.addString("Unknown");
+      }
+    }
+
+    setGenotypeLimited(geno);
+  }
+
+  protected boolean applyStarThreeLogic(Genotype geno) {
+    if (getRs4986774().hasData()) {
+      if (geno.isHeteroDeletion() && getRs4986774().count("-")==2) {
+        geno.addString("*3");
+      }
+      else if (!geno.isHeteroDeletion()) {
+        for (int i=0; i<getRs4986774().count("-"); i++) {
+          geno.addString("*3");
+        }
+      }
+      return true;
+    }
+    else {
+      return false;
+    }
+  }
+
+  protected boolean applyStarFourLogic(Genotype geno) {
+    if (getRs3892097().hasData()) {
+      if (getRs3892097().contains("a")) {
+        geno.addString("*4");
+      }
+      if (getRs3892097().is("a","a")) {
+        geno.addString("*4");
+      }
+      return true;
+    }
+    else {
+      return false;
+    }
+  }
+
+  protected boolean applyStarTenLogic(Genotype geno) {
+    if (this.getRs1065852().hasData()) {
+      if (this.getRs1065852().contains("t") && this.getRs3892097().count("a")==0) {
+        geno.addString("*10");
+      }
+      if (!geno.isHeteroDeletion() && this.getRs1065852().is("t","t") && this.getRs3892097().contains("g")) {
+        geno.addString("*10");
+      }
+      return true;
+    }
+    else {
+      return false;
+    }
+  }
+
+  protected boolean applyStarFortyOneLogic(Genotype geno) {
+    if (this.getRs28371725().hasData()) {
+      if (this.getRs28371725().contains("a")) {
+        geno.addString("*41");
+      }
+      if (this.getRs28371725().count("a")==2 && deletionDetectable() && !geno.isHeteroDeletion()) {
+        geno.addString("*41");
+      }
+      return true;
+    }
+    return false;
+  }
+
   public Deletion getDeletion() {
     return m_deletion;
   }
@@ -629,6 +719,8 @@ public class Subject {
       if (!ItpcUtils.isBlank(this.getFirstAdjEndoTher()) && !ItpcUtils.isBlank(this.getTimeBtwSurgTamox())) {
         if (this.getFirstAdjEndoTher().equals("1")
             && (this.getTimeBtwSurgTamox().equalsIgnoreCase("< 6 weeks")
+            || this.getTimeBtwSurgTamox().equalsIgnoreCase("< 6 months")
+            || this.getTimeBtwSurgTamox().equalsIgnoreCase("< 90 days")
             || this.getTimeBtwSurgTamox().equalsIgnoreCase("28-42"))) {
           return Value.Yes;
         }
@@ -913,6 +1005,14 @@ public class Subject {
 
   public void setCuratorComment(String curatorComment) {
     m_curatorComment = curatorComment;
+  }
+
+  public Genotype getGenotypeLimited() {
+    return m_genotypeLimited;
+  }
+
+  public void setGenotypeLimited(Genotype genotypeLimited) {
+    m_genotypeLimited = genotypeLimited;
   }
 
   enum Deletion {Unknown, None, Hetero, Homo}

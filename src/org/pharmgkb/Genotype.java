@@ -82,11 +82,11 @@ public class Genotype extends StringPair {
 
   private static final Map<Metabolizer,Integer> priorityMap = new HashMap<Metabolizer,Integer>();
   static {
-    priorityMap.put(Metabolizer.PM,1);
+    priorityMap.put(Metabolizer.PM,1); // top priority
     priorityMap.put(Metabolizer.IM,2);
     priorityMap.put(Metabolizer.EM,3);
     priorityMap.put(Metabolizer.UM,4);
-    priorityMap.put(Metabolizer.Unknown, 5);
+    priorityMap.put(Metabolizer.Unknown, 5); // bottom priority
   }
 
   public Genotype() {}
