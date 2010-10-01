@@ -75,8 +75,8 @@ public class ItpcSheet implements Iterator {
 
   protected int allele1idx = -1;
   protected int allele2idx = -1;
-  protected int allele1allIdx = -1;
-  protected int allele2allIdx = -1;
+  protected int allele1LtdIdx = -1;
+  protected int allele2LtdIdx = -1;
   protected int allele1finalIdx = -1;
   protected int allele2finalIdx = -1;
   protected int callCommentsIdx = -1;
@@ -269,8 +269,8 @@ public class ItpcSheet implements Iterator {
     int startPgkbColsIdx = projectNotesIdx+1;
     allele1idx = startPgkbColsIdx;
     allele2idx = startPgkbColsIdx           + 1;
-    allele1allIdx = startPgkbColsIdx        + 2;
-    allele2allIdx = startPgkbColsIdx        + 3;
+    allele1LtdIdx = startPgkbColsIdx        + 2;
+    allele2LtdIdx = startPgkbColsIdx        + 3;
     allele1finalIdx = startPgkbColsIdx      + 4;
     allele2finalIdx = startPgkbColsIdx      + 5;
     callCommentsIdx = startPgkbColsIdx      + 6;
@@ -304,8 +304,8 @@ public class ItpcSheet implements Iterator {
   private void writeCellTitles(Row headerRow) {
     ExcelUtils.writeCell(headerRow, allele1idx, "CYP2D6 Allele 1 (PharmGKB)");
     ExcelUtils.writeCell(headerRow, allele2idx, "CYP2D6 Allele 2 (PharmGKB)");
-    ExcelUtils.writeCell(headerRow, allele1allIdx, "CYP2D6 Allele 1 (All Calls)");
-    ExcelUtils.writeCell(headerRow, allele2allIdx, "CYP2D6 Allele 2 (All Calls)");
+    ExcelUtils.writeCell(headerRow, allele1LtdIdx, "CYP2D6 Allele 1 (PharmGKB - Limited)");
+    ExcelUtils.writeCell(headerRow, allele2LtdIdx, "CYP2D6 Allele 2 (PharmGKB - Limited)");
     ExcelUtils.writeCell(headerRow, allele1finalIdx, "CYP2D6 Allele 1 (Final)");
     ExcelUtils.writeCell(headerRow, allele2finalIdx, "CYP2D6 Allele 2 (Final)");
     ExcelUtils.writeCell(headerRow, callCommentsIdx, "Curator comments on calls");
@@ -444,8 +444,8 @@ public class ItpcSheet implements Iterator {
 
     ExcelUtils.writeCell(row, allele1idx, subject.getGenotypePgkb().get(0), highlight);
     ExcelUtils.writeCell(row, allele2idx, subject.getGenotypePgkb().get(1), highlight);
-    ExcelUtils.writeCell(row, allele1allIdx, subject.getGenotypeAllFinal().get(0), highlight);
-    ExcelUtils.writeCell(row, allele2allIdx, subject.getGenotypeAllFinal().get(1), highlight);
+    ExcelUtils.writeCell(row, allele1LtdIdx, subject.getGenotypeLimited().get(0), highlight);
+    ExcelUtils.writeCell(row, allele2LtdIdx, subject.getGenotypeLimited().get(1), highlight);
     ExcelUtils.writeCell(row, allele1finalIdx, subject.getGenotypeFinal().get(0), highlight);
     ExcelUtils.writeCell(row, allele2finalIdx, subject.getGenotypeFinal().get(1), highlight);
     ExcelUtils.writeCell(row, callCommentsIdx, subject.getCuratorComment(), highlight);
