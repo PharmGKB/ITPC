@@ -1,5 +1,6 @@
 package org.pharmgkb;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import util.ItpcUtils;
 import util.Value;
@@ -19,6 +20,7 @@ public class Subject {
   private String m_subjectId = null;
   private String m_projectSite = null;
   private String m_age = null;
+  private String m_race = null;
   private String m_menoStatus = null;
   private String m_metastatic = null;
   private String m_erStatus = null;
@@ -493,6 +495,7 @@ public class Subject {
   public void calculateGenotypeLimited() {
     Genotype geno = new Genotype();
 
+    if (!StringUtils.isBlank(getRace()) && getRace().equalsIgnoreCase("asian")) { applyStarFiveLogic(geno); }
     boolean starThreeAble = applyStarThreeLogic(geno);
     boolean starFourAble = applyStarFourLogic(geno);
     boolean starTenAble = applyStarTenLogic(geno);
@@ -508,6 +511,20 @@ public class Subject {
     }
 
     setGenotypeLimited(geno);
+  }
+
+  protected boolean applyStarFiveLogic(Genotype geno) {
+    if (getDeletion() == Deletion.Unknown) {
+      return false;
+    }
+
+    if (getDeletion() == Deletion.Hetero || getDeletion() == Deletion.Homo) {
+      geno.addString("*5");
+    }
+    if (getDeletion() == Deletion.Homo) {
+      geno.addString("*5");
+    }
+    return true;
   }
 
   protected boolean applyStarThreeLogic(Genotype geno) {
@@ -580,8 +597,13 @@ public class Subject {
   }
 
   public void setDeletion(String deletion) {
-    if (deletion == null) {
-      this.setDeletion(Deletion.Unknown);
+    if (deletion == null || deletion.equalsIgnoreCase("NA")) {
+      if (getRace().equals("Asian")) {
+        setDeletion(Deletion.Unknown);
+      }
+      else {
+        setDeletion(Deletion.None);
+      }
     }
     else {
       deletion = deletion.toLowerCase();
@@ -591,9 +613,6 @@ public class Subject {
       }
       else if (deletion.contains("deletion") && !deletion.contains("no deletion")) {
         this.setDeletion(Deletion.Hetero);
-      }
-      else if (deletion.equalsIgnoreCase("NA")) {
-        this.setDeletion(Deletion.Unknown);
       }
       else {
         this.setDeletion(Deletion.None);
@@ -1013,6 +1032,14 @@ public class Subject {
 
   public void setGenotypeLimited(Genotype genotypeLimited) {
     m_genotypeLimited = genotypeLimited;
+  }
+
+  public String getRace() {
+    return m_race;
+  }
+
+  public void setRace(String race) {
+    m_race = race;
   }
 
   enum Deletion {Unknown, None, Hetero, Homo}
