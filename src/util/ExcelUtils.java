@@ -2,6 +2,7 @@ package util;
 
 import org.apache.log4j.Logger;
 import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.util.CellReference;
 
@@ -22,13 +23,23 @@ public class ExcelUtils {
   }
 
   public static void writeCell(Row row, int idx, String value) {
+    writeCell(row, idx, value, null);
+  }
+
+  public static void writeCell(Row row, int idx, String value, CellStyle highlight) {
     Cell cell = row.getCell(idx);
     if (cell == null) {
       row.createCell(idx).setCellValue(value);
     }
     else {
       if (cell.getCellType() == Cell.CELL_TYPE_STRING) {
-        if (!value.equals(cell.getStringCellValue())) {
+        if (!value.equals(cell.getStringCellValue())
+            && !(value.equals("Yes") && cell.getStringCellValue().equals("Y"))
+            && !(value.equals("No") && cell.getStringCellValue().equals("N"))
+            && !(value.equals("Yes") && cell.getStringCellValue().equals("True"))
+            && !(value.equals("No") && cell.getStringCellValue().equals("False"))
+            && !(value.equals("Unknown") && cell.getStringCellValue().equals("NA"))
+            && !(value.equals("Uncategorized") && cell.getStringCellValue().equals("Unclassified"))) {
           StringBuilder sb = new StringBuilder();
           sb.append("Changed value: ")
               .append(CellReference.convertNumToColString(cell.getColumnIndex()))
@@ -38,6 +49,9 @@ public class ExcelUtils {
               .append(" -> ")
               .append(value);
           sf_logger.info(sb.toString());
+          if (highlight != null) {
+            cell.setCellStyle(highlight);
+          }
         }
       }
       else {
@@ -55,12 +69,15 @@ public class ExcelUtils {
 
         row.removeCell(cell);
         row.createCell(idx).setCellType(Cell.CELL_TYPE_STRING);
+        if (highlight != null) {
+          cell.setCellStyle(highlight);
+        }
       }
       cell.setCellValue(value);
     }
   }
 
-  public static void writeCell(Row row, int idx, float value) {
+  public static void writeCell(Row row, int idx, float value, CellStyle highlight) {
     Cell cell = row.getCell(idx);
     if (cell == null) {
       row.createCell(idx).setCellValue(value);
@@ -78,6 +95,9 @@ public class ExcelUtils {
               .append(" -> ")
               .append(value);
           sf_logger.info(sb.toString());
+          if (highlight != null) {
+            cell.setCellStyle(highlight);
+          }
         }
       }
       else {
@@ -95,6 +115,9 @@ public class ExcelUtils {
 
         row.removeCell(cell);
         row.createCell(idx).setCellType(Cell.CELL_TYPE_NUMERIC);
+        if (highlight != null) {
+          cell.setCellStyle(highlight);
+        }
       }
 
       cell.setCellValue(value);
