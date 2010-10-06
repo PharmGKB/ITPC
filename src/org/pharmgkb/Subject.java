@@ -495,10 +495,10 @@ public class Subject {
   public void calculateGenotypeLimited() {
     Genotype geno = new Genotype();
 
-    if (!StringUtils.isBlank(getRace()) && getRace().equalsIgnoreCase("asian")) { applyStarFiveLogic(geno); }
+    applyStarFiveLogic(geno);
     boolean starThreeAble = applyStarThreeLogic(geno);
     boolean starFourAble = applyStarFourLogic(geno);
-    boolean starTenAble = applyStarTenLogic(geno);
+    boolean starTenAble = starFourAble && applyStarTenLogic(geno);
     boolean starFortyOneAble = applyStarFortyOneLogic(geno);
 
     while (geno.size() < 2) {
@@ -537,7 +537,7 @@ public class Subject {
           geno.addString("*3");
         }
       }
-      return true;
+      return !getRs4986774().isUncertain();
     }
     else {
       return false;
@@ -552,7 +552,7 @@ public class Subject {
       if (getRs3892097().is("a","a")) {
         geno.addString("*4");
       }
-      return true;
+      return !getRs3892097().isUncertain();
     }
     else {
       return false;
@@ -567,7 +567,7 @@ public class Subject {
       if (!geno.isHeteroDeletion() && this.getRs1065852().is("t","t") && this.getRs3892097().contains("g")) {
         geno.addString("*10");
       }
-      return true;
+      return !getRs1065852().isUncertain();
     }
     else {
       return false;
@@ -582,8 +582,20 @@ public class Subject {
       if (this.getRs28371725().count("a")==2 && deletionDetectable() && !geno.isHeteroDeletion()) {
         geno.addString("*41");
       }
-      return true;
+      return !getRs28371725().isUncertain();
     }
+
+    // rs16947 and rs28371725 are in LD so if rs28371725 is missing we can still make some calls
+    if (getRs16947().hasData()) {
+      if (getRs16947().is("c","t") && geno.size()==0) {
+        geno.addString("*1");
+        return false;
+      }
+      else if (getRs16947().is("c","c") || (getRs16947().is("c","-") && geno.isHeteroDeletion() )) {
+        return true;
+      }
+    }
+
     return false;
   }
 

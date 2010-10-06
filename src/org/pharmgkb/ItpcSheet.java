@@ -27,7 +27,6 @@ public class ItpcSheet implements Iterator {
 
   private CellStyle styleTitle = null;
   private CellStyle styleHighlight = null;
-  private CellStyle styleGreenHighlight = null;
 
   protected int subjectId = -1;
   protected int projectSiteIdx = -1;
@@ -144,9 +143,9 @@ public class ItpcSheet implements Iterator {
       parseColumnIndexes();
 
       PoiWorksheetIterator sampleIterator = new PoiWorksheetIterator(m_dataSheet);
-      this.setSampleIterator(sampleIterator);
-      this.next(); // skip header row
-      this.next(); // skip legend row
+      setSampleIterator(sampleIterator);
+      skipNext(); // skip header row
+      skipNext(); // skip legend row
     }
     catch (Exception ex) {
       throw new Exception("Error initializing ITPC Sheet", ex);
@@ -353,6 +352,11 @@ public class ItpcSheet implements Iterator {
     return parseSubject(this.getSampleIterator().next());
   }
 
+  public void skipNext() {
+    rowIndexPlus();
+    this.getSampleIterator().next();
+  }
+
   public void remove() {
     throw new UnsupportedOperationException("org.pharmgkb.ItpcSheet does not support removing Subjects");
   }
@@ -477,13 +481,6 @@ public class ItpcSheet implements Iterator {
     ExcelUtils.writeCell(row, incFollowupIdx, subject.passInclusion8().toString(), highlight);
     ExcelUtils.writeCell(row, incGenoDataAvailIdx, subject.passInclusion9().toString(), highlight);
     ExcelUtils.writeCell(row, includeIdx, subject.include().toString(), highlight);
-
-    if (!subject.getGenotypeAllFinal().get(0).equals(subject.getGenotypeFinal().get(0))) {
-      row.getCell(allele1finalIdx).setCellStyle(getStyleGreenHighlight());
-    }
-    if (!subject.getGenotypeAllFinal().get(1).equals(subject.getGenotypeFinal().get(1))) {
-      row.getCell(allele1finalIdx).setCellStyle(getStyleGreenHighlight());
-    }
   }
 
   public File saveOutput() throws IOException {
@@ -553,17 +550,5 @@ public class ItpcSheet implements Iterator {
         headerCell.setCellStyle(style);
       }
     }
-  }
-
-  public CellStyle getStyleGreenHighlight() {
-    if (styleGreenHighlight == null) {
-      styleGreenHighlight = getWorkbook().createCellStyle();
-
-      styleGreenHighlight.setFillForegroundColor(HSSFColor.LIGHT_GREEN.index);
-      styleGreenHighlight.setFillPattern(HSSFCellStyle.SOLID_FOREGROUND);
-      styleGreenHighlight.setAlignment(HSSFCellStyle.ALIGN_CENTER);
-      styleGreenHighlight.setWrapText(true);
-    }
-    return styleGreenHighlight;
   }
 }

@@ -31,7 +31,6 @@ public class Parser {
     }
     catch (Exception ex) {
       sf_logger.error("Error running parser", ex);
-      ex.printStackTrace();
     }
   }
 
