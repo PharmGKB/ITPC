@@ -27,19 +27,20 @@ public class ExcelUtils {
   }
 
   public static void writeCell(Row row, int idx, String value, CellStyle highlight) {
+    // first validate all the important arguments
+    if (value == null || row == null || idx<0) {
+      // don't do anything if they're missing
+      return;
+    }
+
     Cell cell = row.getCell(idx);
+
     if (cell == null) {
       row.createCell(idx).setCellValue(value);
     }
     else {
       if (cell.getCellType() == Cell.CELL_TYPE_STRING) {
-        if (!value.equals(cell.getStringCellValue())
-            && !(value.equals("Yes") && cell.getStringCellValue().equals("Y"))
-            && !(value.equals("No") && cell.getStringCellValue().equals("N"))
-            && !(value.equals("Yes") && cell.getStringCellValue().equals("True"))
-            && !(value.equals("No") && cell.getStringCellValue().equals("False"))
-            && !(value.equals("Unknown") && cell.getStringCellValue().equals("NA"))
-            && !(value.equals("Uncategorized") && cell.getStringCellValue().equals("Unclassified"))) {
+        if (!value.equals(cell.getStringCellValue())) {
           StringBuilder sb = new StringBuilder();
           sb.append("Changed value: ")
               .append(CellReference.convertNumToColString(cell.getColumnIndex()))
