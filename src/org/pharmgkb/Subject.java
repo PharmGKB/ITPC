@@ -499,9 +499,13 @@ public class Subject {
     boolean starFourAble = applyStarFourLogic(geno);
     boolean starTenAble = starFourAble && applyStarTenLogic(geno);
     boolean starFortyOneAble = applyStarFortyOneLogic(geno);
+    boolean starTwoAble = applyStarTwoLogic(geno);
+    boolean starSixAble = applyStarSixLogic(geno);
+    boolean starSeventeenAble = applyStarSeventeenLogic(geno);
 
     while (geno.size() < 2) {
-      if (starThreeAble && starFourAble && starTenAble && starFortyOneAble) {
+      if (starFourAble &&
+          (starThreeAble || starTenAble || starFortyOneAble || starTwoAble || starSixAble || starSeventeenAble)) {
         geno.addString("*1");
       }
       else {
@@ -524,6 +528,60 @@ public class Subject {
       geno.addString("*5");
     }
     return true;
+  }
+
+  protected boolean applyStarTwoLogic(Genotype geno) {
+    if (getRs16947().hasData() && getRs28371706().hasData() && getRs28371725().hasData()
+        && getRs16947().count("t") > getRs28371706().count("t")
+        && getRs16947().count("t") > getRs28371725().count("a")
+        && !(getRs16947().count("t") <= getRs1065852().count("t") && getRs16947().count("t") <= getRs3892097().count("a"))) {
+
+      geno.addString("*2");
+
+      if (!geno.isHeteroDeletion()
+          && (getRs16947().is("t","t")
+          && getRs28371706().is("c","c")
+          && getRs28371725().is("g","g"))) {
+        geno.addString("*2");
+      }
+      return !getRs16947().isUncertain() && !getRs28371706().isUncertain() && !getRs28371725().isUncertain();
+    }
+    else {
+      return false;
+    }
+  }
+
+  protected boolean applyStarSixLogic(Genotype geno) {
+    if (this.getRs5030655().hasData()) {
+      if (geno.isHeteroDeletion() && this.getRs5030655().count("-")==2) {
+        geno.addString("*6");
+      }
+      else if (!geno.isHeteroDeletion()) {
+        for (int i=0; i<this.getRs5030655().count("-"); i++) {
+          geno.addString("*6");
+        }
+      }
+      return !getRs5030655().isUncertain();
+    }
+    else {
+      return false;
+    }
+  }
+
+  protected boolean applyStarSeventeenLogic(Genotype geno) {
+    if (this.getRs28371706().hasData() && this.getRs16947().hasData()) {
+      if (this.getRs28371706().contains("t") && this.getRs16947().contains("t")) {
+        geno.addString("*17");
+      }
+      if (this.getRs28371706().count("t")==2 && this.getRs16947().count("t")==2
+          && deletionDetectable() && !geno.isHeteroDeletion()) {
+        geno.addString("*17");
+      }
+      return !getRs28371706().isUncertain() && !getRs16947().isUncertain();
+    }
+    else {
+      return false;
+    }
   }
 
   protected boolean applyStarThreeLogic(Genotype geno) {

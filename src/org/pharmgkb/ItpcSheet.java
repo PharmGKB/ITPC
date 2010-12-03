@@ -1,15 +1,19 @@
 package org.pharmgkb;
 
-import java.io.*;
-import java.util.Iterator;
-import java.util.List;
-import org.apache.log4j.Logger;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
+import org.apache.log4j.Logger;
 import org.apache.poi.hssf.usermodel.HSSFCellStyle;
 import org.apache.poi.hssf.util.HSSFColor;
 import org.apache.poi.ss.usermodel.*;
-import util.*;
+import util.ExcelUtils;
+import util.ItpcUtils;
+import util.PoiWorksheetIterator;
+import util.Value;
+
+import java.io.*;
+import java.util.Iterator;
+import java.util.List;
 
 
 /**
@@ -330,7 +334,7 @@ public class ItpcSheet implements Iterator {
     ExcelUtils.writeCell(headerRow, incHormoneIdx, "Inc 6\nNo additional adjuvant hormonal therapy");
     ExcelUtils.writeCell(headerRow, incDnaCollectionIdx, "Inc 7\nTiming of DNA Collection");
     ExcelUtils.writeCell(headerRow, incFollowupIdx, "Inc 8\nAdequate follow-up");
-    ExcelUtils.writeCell(headerRow, incGenoDataAvailIdx, "Inc 9\nCYP2D6 genotype data available for assessment of *3, *4, *10, and *41");
+    ExcelUtils.writeCell(headerRow, incGenoDataAvailIdx, "Inc 9\nCYP2D6 genotype data available for assessment of *4 and any other allele");
 
     ExcelUtils.writeCell(headerRow, includeIdx, "Include");
   }
