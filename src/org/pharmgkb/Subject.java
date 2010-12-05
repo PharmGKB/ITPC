@@ -569,19 +569,17 @@ public class Subject {
   }
 
   protected boolean applyStarSeventeenLogic(Genotype geno) {
-    if (this.getRs28371706().hasData() && this.getRs16947().hasData()) {
-      if (this.getRs28371706().contains("t") && this.getRs16947().contains("t")) {
+    if (getRs28371706().hasData() && getRs16947().hasData()) {
+      if (getRs28371706().contains("t") && getRs16947().contains("t")) {
         geno.addString("*17");
       }
-      if (this.getRs28371706().count("t")==2 && this.getRs16947().count("t")==2
+      if (getRs28371706().count("t")==2 && getRs16947().count("t")==2
           && deletionDetectable() && !geno.isHeteroDeletion()) {
         geno.addString("*17");
       }
       return !getRs28371706().isUncertain() && !getRs16947().isUncertain();
     }
-    else {
-      return false;
-    }
+    else return getRs28371706().hasData() || getRs16947().hasData();
   }
 
   protected boolean applyStarThreeLogic(Genotype geno) {
