@@ -495,17 +495,16 @@ public class Subject {
     Genotype geno = new Genotype();
 
     applyStarFiveLogic(geno);
-    boolean starThreeAble = applyStarThreeLogic(geno);
+    applyStarThreeLogic(geno);
     boolean starFourAble = applyStarFourLogic(geno);
-    boolean starTenAble = starFourAble && applyStarTenLogic(geno);
-    boolean starFortyOneAble = applyStarFortyOneLogic(geno);
-    boolean starTwoAble = applyStarTwoLogic(geno);
-    boolean starSixAble = applyStarSixLogic(geno);
-    boolean starSeventeenAble = applyStarSeventeenLogic(geno);
+    applyStarTenLogic(geno);
+    applyStarFortyOneLogic(geno);
+    applyStarTwoLogic(geno);
+    applyStarSixLogic(geno);
+    applyStarSeventeenLogic(geno);
 
     while (geno.size() < 2) {
-      if (starFourAble &&
-          (starThreeAble || starTenAble || starFortyOneAble || starTwoAble || starSixAble || starSeventeenAble)) {
+      if (starFourAble) {
         geno.addString("*1");
       }
       else {
