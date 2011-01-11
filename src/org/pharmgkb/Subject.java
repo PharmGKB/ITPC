@@ -713,6 +713,9 @@ public class Subject {
       if (allele.toLowerCase().contains("xn")) {
         alleleClean += "XN";
       }
+      else if (allele.equalsIgnoreCase("*2a")) {
+        alleleClean = "*2A";
+      }
     }
     else {
       throw new Exception("Malformed allele: " + allele);

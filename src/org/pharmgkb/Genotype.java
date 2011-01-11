@@ -66,6 +66,7 @@ public class Genotype extends StringPair {
 
     metabMap.put("*1XN", Metabolizer.UM);
     metabMap.put("*2XN", Metabolizer.UM);
+    metabMap.put("*2A", Metabolizer.UM);
     metabMap.put("*35XN", Metabolizer.UM);
     metabMap.put("*39XN", Metabolizer.UM);
 

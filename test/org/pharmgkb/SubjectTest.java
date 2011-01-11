@@ -226,6 +226,13 @@ public class SubjectTest extends TestCase {
 
       subject.setGenotypeAmplichip("*1/*1");
       Assert.assertEquals("*1/*1",subject.getGenotypeAmplichip().toString());
+
+      subject.setGenotypeAmplichip("*1/*2A");
+      subject.setRs1065852(new VariantAlleles(""));
+      subject.setRs3892097(new VariantAlleles(""));
+      Assert.assertEquals("*1/*2A",subject.getGenotypeAmplichip().toString());
+      Assert.assertEquals("*1/*2A",subject.getGenotypeFinal().toString());
+      Assert.assertEquals("EM/UM",subject.getGenotypeFinal().getMetabolizerStatus());
     }
     catch (Exception ex) {
       fail("Couldn't parse amplichip");
