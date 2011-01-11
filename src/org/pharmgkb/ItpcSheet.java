@@ -76,6 +76,7 @@ public class ItpcSheet implements Iterator {
   protected int rs28371725idx = -1;
 
   protected int amplichipidx = -1;
+  protected int otherGenoIdx = -1;
 
   protected int allele1idx = -1;
   protected int allele2idx = -1;
@@ -219,6 +220,8 @@ public class ItpcSheet implements Iterator {
         firstAdjEndoTherIdx = idx;
       } else if (header.contains("project notes (existing column)")) {
         projectNotesIdx = idx;
+      } else if (header.equalsIgnoreCase("other genotyping")) {
+        otherGenoIdx = idx;
       } else if (header.contains("rs4986774")) {
         if (!header.contains("source")) {
           rs4986774idx = idx;
@@ -417,6 +420,10 @@ public class ItpcSheet implements Iterator {
     subject.setDeletion(fields.get(star5idx));
 
     subject.setGenotypeAmplichip(fields.get(amplichipidx));
+    if (fields.size()>otherGenoIdx && !StringUtils.isBlank(fields.get(otherGenoIdx))) {
+      subject.setGenotypeAmplichip(fields.get(otherGenoIdx));
+    }
+
     subject.setCuratorComment(fields.get(callCommentsIdx));
 
     return subject;
