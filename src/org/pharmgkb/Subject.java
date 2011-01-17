@@ -3,8 +3,6 @@ package org.pharmgkb;
 import org.apache.log4j.Logger;
 import util.ItpcUtils;
 import util.Value;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 /**
  * Created by IntelliJ IDEA.
@@ -14,7 +12,6 @@ import java.util.regex.Pattern;
  */
 public class Subject {
   private static final Logger logger = Logger.getLogger(Subject.class);
-  private static final Pattern sf_alleleRegex = Pattern.compile("\\*\\d+");
 
   private String m_subjectId = null;
   private String m_projectSite = null;
@@ -693,7 +690,7 @@ public class Subject {
       String[] tokens = amplichip.split("/");
       for (String token : tokens) {
         try {
-          genotype.addString(alleleStrip(token));
+          genotype.addString(token);
         }
         catch (Exception ex) {
           throw new Exception("Error processing amplichip: " + amplichip, ex);
@@ -702,26 +699,6 @@ public class Subject {
     }
 
     return genotype;
-  }
-
-  private static String alleleStrip(String allele) throws Exception {
-    String alleleClean;
-
-    Matcher m = sf_alleleRegex.matcher(allele);
-    if (m.find()) {
-      alleleClean = allele.substring(m.start(),m.end());
-      if (allele.toLowerCase().contains("xn")) {
-        alleleClean += "XN";
-      }
-      else if (allele.equalsIgnoreCase("*2a")) {
-        alleleClean = "*2A";
-      }
-    }
-    else {
-      throw new Exception("Malformed allele: " + allele);
-    }
-
-    return alleleClean;
   }
 
   public Value passInclusion1() {

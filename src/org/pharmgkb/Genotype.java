@@ -2,6 +2,7 @@ package org.pharmgkb;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
+import util.ItpcUtils;
 import util.StringPair;
 
 import java.util.*;
@@ -107,7 +108,7 @@ public class Genotype extends StringPair {
   }
 
   public boolean isValid(String string) {
-    return metabMap.keySet().contains(string) || string.equals("Unknown");
+    return metabMap.keySet().contains(ItpcUtils.alleleStrip(string)) || string.equals("Unknown");
   }
 
   public Float getScore() {
@@ -116,7 +117,7 @@ public class Genotype extends StringPair {
     if (!this.isUncertain()) {
       score = 0f;
       for (String allele : this.getStrings()) {
-        score += scoreMap.get(metabMap.get(allele));
+        score += scoreMap.get(metabMap.get(ItpcUtils.alleleStrip(allele)));
       }
     }
 
@@ -210,7 +211,7 @@ public class Genotype extends StringPair {
 
     List<String> genotypes = new ArrayList<String>();
     for (String allele : this.getStrings()) {
-      genotypes.add(getText(metabMap.get(allele)));
+      genotypes.add(getText(metabMap.get(ItpcUtils.alleleStrip(allele))));
     }
 
     StringBuilder genoBuilder = new StringBuilder();
@@ -233,7 +234,7 @@ public class Genotype extends StringPair {
   }
 
   private float priority(String allele) {
-    return priorityMap.get(metabMap.get(allele));
+    return priorityMap.get(metabMap.get(ItpcUtils.alleleStrip(allele)));
   }
 
   public boolean is(Metabolizer status1, Metabolizer status2) {
@@ -251,7 +252,7 @@ public class Genotype extends StringPair {
   protected int count(Metabolizer status) {
     int count = 0;
     for (String element : getStrings()) {
-      if (metabMap.get(element) == status) count++;
+      if (metabMap.get(ItpcUtils.alleleStrip(element)) == status) count++;
     }
     return count;
   }
