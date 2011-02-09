@@ -264,4 +264,18 @@
         </batchtest>
       </junit>
   </target>
+
+    <target name="makeJar" depends="init, compile.module.itpcparser" description="Builds the executable .jar file">
+        <jar destfile="out/ItpcParser.jar" basedir="${itpcparser.output.dir}">
+            <zipgroupfileset dir="lib" includes="*.jar" excludes=""/>
+            <fileset dir="conf">
+                <include name="**/*.properties"/>
+            </fileset>
+
+            <manifest>
+                <attribute name="Main-Class" value="Parser"/>
+                <attribute name="Class-Path" value="${project.jdk.classpath}"/>
+            </manifest>
+        </jar>
+    </target>
 </project>
