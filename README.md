@@ -7,6 +7,16 @@ The consortium's site can be found at [the PharmGKB website](http://www.pharmgkb
 
 This project was written and is maintained using the IntelliJ IDEA 9 IDE.
 
+Building and Running
+-------------------
+To build the code
+
+1. Update _build.properties_ to point to your JDK 1.6 home
+2. Build the ItpcParser.jar file by running: _ant makeJar_ (it will be in the _out_ directory)
+3. To run the parser execute: _java -jar ItpcParser.jar -f /path/to/itpc.xls_
+
+To get a full list of command line parameters use the command _java -jar ItpcParser.jar -h_
+
 About the Code
 --------------
 This project was written in the JDK 1.6.0 Update 20
@@ -18,11 +28,6 @@ The supporting library versions are listed below:
 * commons-lang.jar :: Apache Commons Lang 2.4
 * log4j.jar :: Log4J 1.2.15
 * poi-ooxml.jar, poi.jar :: Apache POI 3.6
-
-
-Notes
------
-* Command line parameters can be viewed by using the -h flag of ItpcParser
 
 Contact
 -------
