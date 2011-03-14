@@ -219,10 +219,10 @@ public class SubjectTest extends TestCase {
     Subject subject = makeDefaultSubject();
     try {
       subject.setGenotypeAmplichip("*1AXN/*3B");
-      Assert.assertEquals("*1XN/*3",subject.getGenotypeAmplichip().toString());
+      Assert.assertEquals("*1AXN/*3B",subject.getGenotypeAmplichip().toString());
 
       subject.setGenotypeAmplichip("*1axn/*3");
-      Assert.assertEquals("*1XN/*3",subject.getGenotypeAmplichip().toString());
+      Assert.assertEquals("*1axn/*3",subject.getGenotypeAmplichip().toString());
 
       subject.setGenotypeAmplichip("*1/*1");
       Assert.assertEquals("*1/*1",subject.getGenotypeAmplichip().toString());
@@ -456,6 +456,18 @@ public class SubjectTest extends TestCase {
 
     subject.setFollowup("2");
     Assert.assertEquals(Value.No, subject.includeWo4a());
+  }
+
+  public void testGenoMetabolizerGroup() {
+    Subject subject = makeDefaultSubject();
+    subject.setGenotypeAmplichip("*1/*1");
+    Assert.assertEquals("Extensive", subject.getGenoMetabolizerGroup());
+
+    subject.setGenotypeAmplichip("*4/*4");
+    Assert.assertEquals("Poor", subject.getGenoMetabolizerGroup());
+
+    subject.setGenotypeAmplichip("*41/*41");
+    Assert.assertEquals("Intermediate", subject.getGenoMetabolizerGroup());
   }
 
   private void setPhenotypes(Subject subject) {

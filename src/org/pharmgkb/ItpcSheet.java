@@ -86,6 +86,7 @@ public class ItpcSheet implements Iterator {
   protected int allele2finalIdx = -1;
   protected int callCommentsIdx = -1;
   protected int genotypeIdx = -1;
+  protected int genoMetabStatusIdx = -1;
   protected int weakIdx = -1;
   protected int potentIdx = -1;
   protected int metabStatusIdx = -1;
@@ -284,26 +285,27 @@ public class ItpcSheet implements Iterator {
     allele2finalIdx = startPgkbColsIdx      + 5;
     callCommentsIdx = startPgkbColsIdx      + 6;
     genotypeIdx = startPgkbColsIdx          + 7;
-    weakIdx = startPgkbColsIdx              + 8;
-    potentIdx = startPgkbColsIdx            + 9;
-    scoreIdx = startPgkbColsIdx             + 10;
-    metabStatusIdx = startPgkbColsIdx       + 11;
+    genoMetabStatusIdx = startPgkbColsIdx   + 8;
+    weakIdx = startPgkbColsIdx              + 9;
+    potentIdx = startPgkbColsIdx            + 10;
+    scoreIdx = startPgkbColsIdx             + 11;
+    metabStatusIdx = startPgkbColsIdx       + 12;
 
-    incAgeIdx = startPgkbColsIdx            + 12;
-    incNonmetaIdx = startPgkbColsIdx        + 13;
-    incPriorHistIdx = startPgkbColsIdx      + 14;
-    incErPosIdx = startPgkbColsIdx          + 15;
-    incSysTherIdx = startPgkbColsIdx        + 16;
-    incAdjTamoxIdx = startPgkbColsIdx       + 17;
-    incDurationIdx = startPgkbColsIdx       + 18;
-    incTamoxDoseIdx = startPgkbColsIdx      + 19;
-    incChemoIdx = startPgkbColsIdx          + 20;
-    incHormoneIdx = startPgkbColsIdx        + 21;
-    incDnaCollectionIdx = startPgkbColsIdx  + 22;
-    incFollowupIdx = startPgkbColsIdx       + 23;
-    incGenoDataAvailIdx = startPgkbColsIdx  + 24;
+    incAgeIdx = startPgkbColsIdx            + 13;
+    incNonmetaIdx = startPgkbColsIdx        + 14;
+    incPriorHistIdx = startPgkbColsIdx      + 15;
+    incErPosIdx = startPgkbColsIdx          + 16;
+    incSysTherIdx = startPgkbColsIdx        + 17;
+    incAdjTamoxIdx = startPgkbColsIdx       + 18;
+    incDurationIdx = startPgkbColsIdx       + 19;
+    incTamoxDoseIdx = startPgkbColsIdx      + 20;
+    incChemoIdx = startPgkbColsIdx          + 21;
+    incHormoneIdx = startPgkbColsIdx        + 22;
+    incDnaCollectionIdx = startPgkbColsIdx  + 23;
+    incFollowupIdx = startPgkbColsIdx       + 24;
+    incGenoDataAvailIdx = startPgkbColsIdx  + 25;
 
-    includeIdx = startPgkbColsIdx           + 25;
+    includeIdx = startPgkbColsIdx           + 26;
 
     writeCellTitles(headerRow);
 
@@ -321,6 +323,7 @@ public class ItpcSheet implements Iterator {
     ExcelUtils.writeCell(headerRow, scoreIdx, "Drug and CYP2D6 Genotype Score");
 
     ExcelUtils.writeCell(headerRow, genotypeIdx, "Genotype (PharmGKB)");
+    ExcelUtils.writeCell(headerRow, genoMetabStatusIdx, "Don's Call for Extensive, Intermediate, Poor, or Unknown based on Genotypes only");
     ExcelUtils.writeCell(headerRow, weakIdx, "Weak Drug (PharmGKB)");
     ExcelUtils.writeCell(headerRow, potentIdx, "Potent Drug (PharmGKB)");
     ExcelUtils.writeCell(headerRow, metabStatusIdx, "Metabolizer Status (PharmGKB)");
@@ -469,6 +472,7 @@ public class ItpcSheet implements Iterator {
     ExcelUtils.writeCell(row, allele2finalIdx, subject.getGenotypeFinal().get(1), highlight);
     ExcelUtils.writeCell(row, callCommentsIdx, subject.getCuratorComment(), highlight);
     ExcelUtils.writeCell(row, genotypeIdx, subject.getGenotypeFinal().getMetabolizerStatus(), highlight);
+    ExcelUtils.writeCell(row, genoMetabStatusIdx, subject.getGenoMetabolizerGroup(), highlight);
     ExcelUtils.writeCell(row, weakIdx, subject.getWeak().toString(), highlight);
     ExcelUtils.writeCell(row, potentIdx, subject.getPotent().toString(), highlight);
     if (subject.getScore()==null) {
