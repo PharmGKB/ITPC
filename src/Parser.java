@@ -1,10 +1,7 @@
 import org.apache.log4j.Logger;
 import org.pharmgkb.ItpcSheet;
 import org.pharmgkb.Subject;
-import summary.AbstractSummary;
-import summary.GenotypeSummary;
-import summary.MetabStatusSummary;
-import summary.NonFourSummary;
+import summary.*;
 import util.CliHelper;
 
 import java.io.*;
@@ -40,8 +37,12 @@ public class Parser {
     }
 
     dataSheet = new ItpcSheet(getFileInput(), m_doHighlight);
-    List<AbstractSummary> summaries =
-        Arrays.asList(new GenotypeSummary(), new MetabStatusSummary(), new NonFourSummary());
+    List<AbstractSummary> summaries = Arrays.asList(
+        new GenotypeSummary(),
+        new MetabStatusSummary(),
+        new NonFourSummary(),
+        new InclusionSummary()
+    );
 
     int sampleCount = 0;
     while (dataSheet.hasNext()) {

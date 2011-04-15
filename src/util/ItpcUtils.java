@@ -16,6 +16,8 @@ import java.util.regex.Pattern;
  * Time: 9:55:50 AM
  */
 public class ItpcUtils {
+  public static final Integer SITE_COUNT = 12;
+
   private static final Logger logger = Logger.getLogger(ItpcUtils.class);
   private static final Pattern sf_alleleRegex = Pattern.compile("\\*\\d+");
 
