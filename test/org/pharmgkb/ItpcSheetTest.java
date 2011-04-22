@@ -33,12 +33,12 @@ package org.pharmgkb;/*
 
  ----- END LICENSE BLOCK -----
  */
-import java.io.File;
-
 import junit.framework.Assert;
 import junit.framework.TestCase;
 import org.apache.poi.ss.usermodel.Row;
 import util.Value;
+
+import java.io.File;
 
 
 /**
@@ -57,6 +57,7 @@ public class ItpcSheetTest extends TestCase {
     ItpcSheet sheet = new ItpcSheet(file, false);
 
     assertTrue(sheet.ageIdx>=0);
+    assertTrue(sheet.genderIdx>=0);
     assertTrue(sheet.subjectId>=0);
     assertTrue(sheet.projectSiteIdx>=0);
     assertTrue(sheet.ageIdx>=0);
@@ -79,6 +80,7 @@ public class ItpcSheetTest extends TestCase {
     assertTrue(sheet.genoSourceIdx1>=0);
     assertTrue(sheet.genoSourceIdx2>=0);
     assertTrue(sheet.genoSourceIdx3>=0);
+    assertTrue(sheet.otherGenoIdx>=0);
 
     assertTrue(sheet.fluoxetineCol>=0);
     assertTrue(sheet.paroxetineCol>=0);
@@ -138,6 +140,7 @@ public class ItpcSheetTest extends TestCase {
     Assert.assertEquals("ID1", subject.getSubjectId());
     String subject1 = subject.getSubjectId();
     Assert.assertEquals("999", subject.getProjectSite());
+    Assert.assertEquals("1", subject.getGender());
 
     Assert.assertEquals("Unknown/Unknown",subject.getGenotypePgkb().toString());
     Assert.assertEquals("*1/*1",subject.getGenotypeFinal().toString());

@@ -35,6 +35,7 @@ public class ItpcSheet implements Iterator {
   protected int subjectId = -1;
   protected int projectSiteIdx = -1;
   protected int ageIdx = -1;
+  protected int genderIdx = -1;
   protected int raceIdx = -1;
   protected int menoStatusIdx = -1;
   protected int metastaticIdx = -1;
@@ -183,6 +184,8 @@ public class ItpcSheet implements Iterator {
         subjectId = idx;
       } else if (header.contains("project site")) {
         projectSiteIdx = idx;
+      } else if (header.contains("gender (existing column)")) {
+        genderIdx = idx;
       } else if (header.contains("age at diagnosis")) {
         ageIdx = idx;
       } else if (header.contains("race") && header.contains("omb")) {
@@ -377,6 +380,7 @@ public class ItpcSheet implements Iterator {
     subject.setSubjectId(fields.get(subjectId));
     subject.setProjectSite(fields.get(projectSiteIdx));
     subject.setAge(fields.get(ageIdx));
+    subject.setGender(fields.get(genderIdx));
     subject.setRace(fields.get(raceIdx));
     subject.setMetastatic(fields.get(metastaticIdx));
     subject.setMenoStatus(fields.get(menoStatusIdx));

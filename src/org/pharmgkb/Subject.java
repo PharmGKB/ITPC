@@ -1,5 +1,6 @@
 package org.pharmgkb;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import util.ItpcUtils;
 import util.Value;
@@ -16,6 +17,7 @@ public class Subject {
   private String m_subjectId = null;
   private String m_projectSite = null;
   private String m_age = null;
+  private String m_gender = null;
   private String m_race = null;
   private String m_menoStatus = null;
   private String m_metastatic = null;
@@ -963,6 +965,14 @@ public class Subject {
     m_age = age;
   }
 
+  public String getGender() {
+    return m_gender;
+  }
+
+  public void setGender(String gender) {
+    m_gender = gender;
+  }
+
   public String getMetastatic() {
     return m_metastatic;
   }
@@ -1064,7 +1074,7 @@ public class Subject {
   }
 
   public void setBloodSource(String bloodSource) {
-    m_bloodSource = bloodSource;
+    m_bloodSource = StringUtils.replace(bloodSource,"*","");
   }
 
   public String getGenoSource() {
@@ -1072,7 +1082,7 @@ public class Subject {
   }
 
   public void setGenoSource(String genoSource) {
-    m_genoSource = genoSource;
+    m_genoSource = StringUtils.replace(genoSource,"*","");
   }
 
   public String getFollowup() {
