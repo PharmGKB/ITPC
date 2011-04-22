@@ -243,6 +243,10 @@ public class SubjectTest extends TestCase {
     Subject subject = new Subject();
     Assert.assertEquals(Value.Unknown, subject.passInclusion1());
 
+    subject.setGender("2");
+    Assert.assertEquals(Value.No, subject.passInclusion1());
+    subject.setGender("1");
+
     subject.setMenoStatus("1");
     Assert.assertEquals(Value.No, subject.passInclusion1());
 

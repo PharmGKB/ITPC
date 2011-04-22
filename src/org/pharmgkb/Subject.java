@@ -723,6 +723,10 @@ public class Subject {
   }
 
   public Value passInclusion1() {
+    if (!ItpcUtils.isBlank(getGender()) && getGender().equals("2")) {
+        return Value.No;
+    }
+
     if (!ItpcUtils.isBlank(this.getMenoStatus())) {
       if (this.getMenoStatus().equals("2")) {
         return Value.Yes;
