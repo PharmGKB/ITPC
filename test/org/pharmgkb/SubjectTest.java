@@ -308,16 +308,19 @@ public class SubjectTest extends TestCase {
 
   public void testInclusion4() {
     Subject subject = new Subject();
-    Assert.assertEquals(Value.No, subject.passInclusion4());
+    Assert.assertEquals(Value.Yes, subject.passInclusion4());
 
     subject.setSystemicTher("0");
+    Assert.assertEquals(Value.Yes, subject.passInclusion4());
+
+    subject.setSystemicTher("1");
     Assert.assertEquals(Value.No, subject.passInclusion4());
 
     subject.setSystemicTher("2");
     Assert.assertEquals(Value.Yes, subject.passInclusion4());
 
     subject.setSystemicTher("SpongeBob");
-    Assert.assertEquals(Value.No, subject.passInclusion4());
+    Assert.assertEquals(Value.Yes, subject.passInclusion4());
   }
 
   public void testInclusion4a() {

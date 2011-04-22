@@ -787,7 +787,7 @@ public class Subject {
   }
 
   public Value passInclusion4() {
-    if (!ItpcUtils.isBlank(this.getSystemicTher()) && this.getSystemicTher().equals("2")) {
+    if (ItpcUtils.isBlank(getSystemicTher()) || !getSystemicTher().equals("1")) {
       return Value.Yes;
     }
     else {
