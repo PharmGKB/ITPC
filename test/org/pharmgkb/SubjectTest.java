@@ -383,7 +383,7 @@ public class SubjectTest extends TestCase {
 
   public void testInclusion5() {
     Subject subject = new Subject();
-    Assert.assertEquals(Value.Yes, subject.passInclusion5());
+    Assert.assertEquals(Value.No, subject.passInclusion5());
 
     subject.setChemotherapy("0");
     Assert.assertEquals(Value.Yes, subject.passInclusion5());

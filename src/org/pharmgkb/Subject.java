@@ -843,7 +843,7 @@ public class Subject {
   }
 
   public Value passInclusion5() {
-    if (this.getChemotherapy() == null || !this.getChemotherapy().equals("1")) {
+    if (getChemotherapy() != null && getChemotherapy().equals("0")) {
       return Value.Yes;
     }
     else {
