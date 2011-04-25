@@ -52,6 +52,24 @@ public class InclusionSummary extends AbstractSummary {
     inclusions.put(13, "Final Inclusion");
   }
 
+  private static final Map<Integer,String> exclusions = Maps.newHashMap();
+  static {
+    exclusions.put(0, "Excl. 1");
+    exclusions.put(1, "Excl. 2a");
+    exclusions.put(2, "Excl. 2b");
+    exclusions.put(3, "Excl. 3");
+    exclusions.put(4, "Excl. 4");
+    exclusions.put(5, "Excl. 4a");
+    exclusions.put(6, "Excl. 4b");
+    exclusions.put(7, "Excl. 4c");
+    exclusions.put(8, "Excl. 5");
+    exclusions.put(9, "Excl. 6");
+    exclusions.put(10, "Excl. 7");
+    exclusions.put(11, "Excl. 8");
+    exclusions.put(12, "Excl. 9");
+    exclusions.put(13, "Final Exclusion");
+  }
+
   private List<Map<Integer,Map<Value,Integer>>> projectMap = null;
 
   public InclusionSummary() {
@@ -123,8 +141,10 @@ public class InclusionSummary extends AbstractSummary {
   private int writeTable(Sheet sheet, int currentRow, Value value) {
     // initialize the inclusion totals to 0
     int totalSubjects = 0;
+    Map<Integer,String> useHeaders = value == Value.Yes ? inclusions : exclusions;
+    
     Map<Integer, Integer> inclusionTotals = Maps.newHashMap();
-    for (int i=0; i<inclusions.size(); i++) {
+    for (int i=0; i<useHeaders.size(); i++) {
       inclusionTotals.put(i,0);
     }
 
@@ -133,32 +153,32 @@ public class InclusionSummary extends AbstractSummary {
 
     Row headerRow = sheet.createRow(currentRow++);
     headerRow.createCell(0).setCellValue("Site ID");
-    for (int i=0; i<inclusions.size(); i++) {
-      headerRow.createCell(i+1).setCellValue(inclusions.get(i));
+    for (int i=0; i<useHeaders.size(); i++) {
+      headerRow.createCell(i+1).setCellValue(useHeaders.get(i));
     }
-    headerRow.createCell(inclusions.size()+1).setCellValue("Total Subjects");
+    headerRow.createCell(useHeaders.size()+1).setCellValue("Total Subjects");
 
     for (int i=0; i<ItpcUtils.SITE_COUNT; i++) {
       Row siteRow = sheet.createRow(currentRow++);
       String siteName = (new Integer(i+1)).toString();
       siteRow.createCell(0).setCellValue(siteName);
 
-      for (int j=0; j<inclusions.size(); j++) {
+      for (int j=0; j<useHeaders.size(); j++) {
         siteRow.createCell(j+1).setCellValue(projectMap.get(i).get(j).get(value));
         inclusionTotals.put(j, inclusionTotals.get(j) + projectMap.get(i).get(j).get(value));
       }
 
       Integer siteSubjectTotal = projectMap.get(i).get(0).get(Value.Yes) + projectMap.get(i).get(0).get(Value.No) + projectMap.get(i).get(0).get(Value.Unknown);
-      siteRow.createCell(inclusions.size()+1).setCellValue(siteSubjectTotal);
+      siteRow.createCell(useHeaders.size()+1).setCellValue(siteSubjectTotal);
       totalSubjects += siteSubjectTotal;
     }
 
     Row totalsRow = sheet.createRow(currentRow++);
     totalsRow.createCell(0).setCellValue("Total");
-    for (int i=0; i<inclusions.size(); i++) {
+    for (int i=0; i<useHeaders.size(); i++) {
       totalsRow.createCell(i+1).setCellValue(inclusionTotals.get(i));
     }
-    totalsRow.createCell(inclusions.size()+1).setCellValue(totalSubjects);
+    totalsRow.createCell(useHeaders.size()+1).setCellValue(totalSubjects);
 
     return currentRow;
   }
