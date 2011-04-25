@@ -408,7 +408,7 @@ public class SubjectTest extends TestCase {
     Assert.assertEquals(Value.No, subject.passInclusion7());
 
     subject.setGenoSource("0");
-    Assert.assertEquals(Value.No, subject.passInclusion7());
+    Assert.assertEquals(Value.Yes, subject.passInclusion7());
 
     subject.setTumorSource("1");
     Assert.assertEquals(Value.Yes, subject.passInclusion7());

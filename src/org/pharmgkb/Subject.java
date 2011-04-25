@@ -5,6 +5,9 @@ import org.apache.log4j.Logger;
 import util.ItpcUtils;
 import util.Value;
 
+import java.util.Arrays;
+import java.util.List;
+
 /**
  * Created by IntelliJ IDEA.
  * User: whaleyr
@@ -861,16 +864,19 @@ public class Subject {
   }
 
   public Value passInclusion7() {
-    if (this.getGenoSource() != null && (
-        (this.getTumorSource()!=null && (this.getGenoSource().equals("0") || this.getGenoSource().equals("3") || this.getGenoSource().equals("4")) && this.getTumorSource().equals("1"))
-        || ((this.getGenoSource().equals("1") || this.getGenoSource().equals("2")) && this.getBloodSource()!=null && (this.getBloodSource().equals("1") || this.getBloodSource().equals("2") || this.getBloodSource().equals("7")))
-        )
-        ) {
-      return Value.Yes;
-    }
-    else {
+    List<String> bloodSourceCodes = Arrays.asList("1","2");
+    List<String> passingBloodTimings = Arrays.asList("1","2");
+
+    if (ItpcUtils.isBlank(getGenoSource())) {
       return Value.No;
     }
+
+    if (bloodSourceCodes.contains(getGenoSource())) {
+      if (!passingBloodTimings.contains(getBloodSource())) {
+        return Value.No;
+      }
+    }
+    return Value.Yes;
   }
 
   public Value passInclusion8() {
