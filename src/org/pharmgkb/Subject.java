@@ -39,6 +39,7 @@ public class Subject {
   private String m_firstAdjEndoTher = null;
   private String m_genoSource = null;
   private String m_curatorComment = null;
+  private String m_tumorDimension = null;
   private Deletion m_deletion = Deletion.Unknown;
 
   private Value m_hasParoxetine = Value.Unknown;
@@ -759,10 +760,10 @@ public class Subject {
   }
 
   public Value passInclusion2a() {
-    if (this.getMetastatic() != null && this.getMetastatic().equals("0")) {
+    if (this.getMetastatic() != null && this.getMetastatic().equals("0") && isValidTumorDimension()) {
       return Value.Yes;
     }
-    else if (this.getMetastatic() != null && this.getMetastatic().equals("1")) {
+    else if ((this.getMetastatic() != null && this.getMetastatic().equals("1")) || !isValidTumorDimension()) {
       return Value.No;
     }
     else {
@@ -771,8 +772,8 @@ public class Subject {
   }
 
   public Value passInclusion2b() {
-    if ((this.getPriorHistory() == null || this.getPriorHistory().equals("0"))
-        && (this.getPriorDcis() == null || !this.getPriorDcis().equals("1"))) {
+    if ((ItpcUtils.isBlank(getPriorHistory()) || this.getPriorHistory().equals("0"))
+        && (ItpcUtils.isBlank(getPriorDcis()) || !this.getPriorDcis().equals("1"))) {
       return Value.Yes;
     }
     else {
@@ -1125,6 +1126,29 @@ public class Subject {
 
   public void setRace(String race) {
     m_race = race;
+  }
+
+  public String getTumorDimension() {
+    return m_tumorDimension;
+  }
+
+  public void setTumorDimension(String tumorDimension) {
+    m_tumorDimension = tumorDimension;
+  }
+
+  protected boolean isValidTumorDimension() {
+    boolean valid = true;
+
+    if (StringUtils.trimToNull(getTumorDimension()) != null) {
+      String tumorDimension = getTumorDimension().toLowerCase();
+
+      valid = !(tumorDimension.contains("dcis")
+          || tumorDimension.contains("lcis")
+          || tumorDimension.contains("atypical lobular hyperplasia")
+          || tumorDimension.contains("taking for high risk"));
+    }
+
+    return valid;
   }
 
   enum Deletion {Unknown, None, Hetero, Homo}

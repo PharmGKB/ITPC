@@ -57,6 +57,7 @@ public class ItpcSheet implements Iterator {
   protected int genoSourceIdx2 = -1;
   protected int genoSourceIdx3 = -1;
   protected int projectNotesIdx = -1;
+  protected int tumorDimensionIdx = -1;
 
   protected int fluoxetineCol = -1;
   protected int paroxetineCol = -1;
@@ -192,6 +193,8 @@ public class ItpcSheet implements Iterator {
         raceIdx = idx;
       } else if (header.contains("metastatic disease")) {
         metastaticIdx = idx;
+      } else if (header.contains("maximum dimension of tumor")) {
+        tumorDimensionIdx = idx;
       } else if (header.contains("menopause status at diagnosis")) {
         menoStatusIdx = idx;
       } else if (header.equals("estrogen receptor (existing column)")) {
@@ -397,6 +400,7 @@ public class ItpcSheet implements Iterator {
     subject.setFollowup(fields.get(followupIdx));
     subject.setTimeBtwSurgTamox(fields.get(timeBtwSurgTamoxIdx));
     subject.setFirstAdjEndoTher(fields.get(firstAdjEndoTherIdx));
+    subject.setTumorDimension(fields.get(tumorDimensionIdx));
 
     if (!StringUtils.isBlank(fields.get(genoSourceIdx1)) && !fields.get(genoSourceIdx1).equals("NA")) {
       subject.setGenoSource(fields.get(genoSourceIdx1));
