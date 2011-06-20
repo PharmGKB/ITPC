@@ -22,10 +22,8 @@ public class ItpcUtils {
   private static final Pattern sf_alleleRegex = Pattern.compile("\\*\\d+");
 
   public static boolean isBlank(String string) {
-    return
-        string == null
-            || StringUtils.isBlank(string)
-            || string.equalsIgnoreCase("na");
+    String trimString = StringUtils.trimToNull(string);
+    return StringUtils.isBlank(trimString) || trimString.equalsIgnoreCase("na");
   }
 
   public static File getOutputFile(File inputFile) {

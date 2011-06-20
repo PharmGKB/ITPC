@@ -41,6 +41,12 @@ public class Subject {
   private String m_curatorComment = null;
   private String m_tumorDimension = null;
   private Deletion m_deletion = Deletion.Unknown;
+  private Value m_additionalCancer = null;
+  private String m_addCxIpsilateral = null;
+  private String m_addCxDistantRecur = null;
+  private String m_addCxContralateral = null;
+  private String m_addCxSecondInvasive = null;
+  private String m_addCxLastEval = null;
 
   private Value m_hasParoxetine = Value.Unknown;
   private Value m_hasFluoxetine = Value.Unknown;
@@ -944,6 +950,21 @@ public class Subject {
     }
   }
 
+  public Value exclude1() {
+    if (getAdditionalCancer() == Value.Yes
+        && (ItpcUtils.isBlank(getAddCxIpsilateral()) || getAddCxIpsilateral().equals("0"))
+        && (ItpcUtils.isBlank(getAddCxDistantRecur()) || getAddCxDistantRecur().equals("0"))
+        && (ItpcUtils.isBlank(getAddCxContralateral()) || getAddCxContralateral().equals("0"))
+        && (ItpcUtils.isBlank(getAddCxSecondInvasive()) || getAddCxSecondInvasive().equals("0"))
+        && (ItpcUtils.isBlank(getAddCxLastEval()))
+        ) {
+      return Value.Yes;
+    }
+    else {
+      return Value.No;
+    }
+  }
+
   public String getMenoStatus() {
     return m_menoStatus;
   }
@@ -1149,6 +1170,69 @@ public class Subject {
     }
 
     return valid;
+  }
+
+  public Value getAdditionalCancer() {
+    return m_additionalCancer;
+  }
+
+  public void setAdditionalCancer(Value additionalCancer) {
+    m_additionalCancer = additionalCancer;
+  }
+
+  public void setAdditionalCancer(String additionalCancer) {
+    if (additionalCancer == null) {
+      m_additionalCancer = Value.Unknown;
+    }
+    else if (additionalCancer.equals("1")) {
+      m_additionalCancer = Value.Yes;
+    }
+    else if (additionalCancer.equals("2")) {
+      m_additionalCancer = Value.No;
+    }
+    else {
+      m_additionalCancer = Value.Unknown;
+    }
+  }
+
+  public String getAddCxIpsilateral() {
+    return m_addCxIpsilateral;
+  }
+
+  public void setAddCxIpsilateral(String addCxIpsilateral) {
+    m_addCxIpsilateral = addCxIpsilateral;
+  }
+
+  public String getAddCxDistantRecur() {
+    return m_addCxDistantRecur;
+  }
+
+  public void setAddCxDistantRecur(String addCxDistantRecur) {
+    m_addCxDistantRecur = addCxDistantRecur;
+  }
+
+  public String getAddCxContralateral() {
+    return m_addCxContralateral;
+  }
+
+  public void setAddCxContralateral(String addCxContralateral) {
+    m_addCxContralateral = addCxContralateral;
+  }
+
+  public String getAddCxSecondInvasive() {
+    return m_addCxSecondInvasive;
+  }
+
+  public void setAddCxSecondInvasive(String addCxSecondInvasive) {
+    m_addCxSecondInvasive = addCxSecondInvasive;
+  }
+
+  public String getAddCxLastEval() {
+    return m_addCxLastEval;
+  }
+
+  public void setAddCxLastEval(String addCxLastEval) {
+    m_addCxLastEval = addCxLastEval;
   }
 
   enum Deletion {Unknown, None, Hetero, Homo}

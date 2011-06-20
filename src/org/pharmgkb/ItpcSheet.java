@@ -58,6 +58,12 @@ public class ItpcSheet implements Iterator {
   protected int genoSourceIdx3 = -1;
   protected int projectNotesIdx = -1;
   protected int tumorDimensionIdx = -1;
+  protected int additionalCancerIdx = -1;
+  protected int addCxIpsilateralIdx = -1;
+  protected int addCxDistantRecurIdx = -1;
+  protected int addCxContralateralIdx = -1;
+  protected int addCxSecondInvasiveIdx = -1;
+  protected int addCxLastEvalIdx = -1;
 
   protected int fluoxetineCol = -1;
   protected int paroxetineCol = -1;
@@ -94,6 +100,7 @@ public class ItpcSheet implements Iterator {
   protected int metabStatusIdx = -1;
   protected int includeIdx = -1;
   protected int scoreIdx = -1;
+  protected int exclude1Idx = -1;
 
   protected int incAgeIdx = -1;
   protected int incNonmetaIdx = -1;
@@ -278,6 +285,18 @@ public class ItpcSheet implements Iterator {
         citalopramCol = idx;
       } else if (header.contains("amplichip call")) {
         amplichipidx = idx;
+      } else if (header.equalsIgnoreCase("Additional cancer?  (new column)")) {
+        additionalCancerIdx = idx;
+      } else if (header.contains("time from diagnosis to ipsilateral local or regional recurrence")) {
+        addCxIpsilateralIdx = idx;
+      } else if (header.contains("time from diagnosis to distant recurrence")) {
+        addCxDistantRecurIdx = idx;
+      } else if (header.contains("time from diagnosis to contralateral breast cancer")) {
+        addCxContralateralIdx = idx;
+      } else if (header.contains("time from diagnosis to second primary invasive cancer")) {
+        addCxSecondInvasiveIdx = idx;
+      } else if (header.contains("time from diagnosis to date of last disease evaluation")) {
+        addCxLastEvalIdx = idx;
       }
     }
 
@@ -312,6 +331,7 @@ public class ItpcSheet implements Iterator {
     incGenoDataAvailIdx = startPgkbColsIdx  + 25;
 
     includeIdx = startPgkbColsIdx           + 26;
+    exclude1Idx = startPgkbColsIdx          + 27;
 
     writeCellTitles(headerRow);
 
@@ -349,6 +369,7 @@ public class ItpcSheet implements Iterator {
     ExcelUtils.writeCell(headerRow, incGenoDataAvailIdx, "Inc 9\nCYP2D6 *4 genotype data available for assessment");
 
     ExcelUtils.writeCell(headerRow, includeIdx, "Include");
+    ExcelUtils.writeCell(headerRow, exclude1Idx, "Exclusion 1: Time of event unknown");
   }
 
   private PoiWorksheetIterator getSampleIterator() {
@@ -401,6 +422,12 @@ public class ItpcSheet implements Iterator {
     subject.setTimeBtwSurgTamox(fields.get(timeBtwSurgTamoxIdx));
     subject.setFirstAdjEndoTher(fields.get(firstAdjEndoTherIdx));
     subject.setTumorDimension(fields.get(tumorDimensionIdx));
+    subject.setAdditionalCancer(fields.get(additionalCancerIdx));
+    subject.setAddCxIpsilateral(fields.get(addCxIpsilateralIdx));
+    subject.setAddCxDistantRecur(fields.get(addCxDistantRecurIdx));
+    subject.setAddCxContralateral(fields.get(addCxContralateralIdx));
+    subject.setAddCxSecondInvasive(fields.get(addCxSecondInvasiveIdx));
+    subject.setAddCxLastEval(fields.get(addCxLastEvalIdx));
 
     if (!StringUtils.isBlank(fields.get(genoSourceIdx1)) && !fields.get(genoSourceIdx1).equals("NA")) {
       subject.setGenoSource(fields.get(genoSourceIdx1));
@@ -504,6 +531,7 @@ public class ItpcSheet implements Iterator {
     ExcelUtils.writeCell(row, incFollowupIdx, subject.passInclusion8().toString(), highlight);
     ExcelUtils.writeCell(row, incGenoDataAvailIdx, subject.passInclusion9().toString(), highlight);
     ExcelUtils.writeCell(row, includeIdx, subject.include().toString(), highlight);
+    ExcelUtils.writeCell(row, exclude1Idx, subject.exclude1().toString(), highlight);
   }
 
   public File saveOutput() throws IOException {
