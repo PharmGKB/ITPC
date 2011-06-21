@@ -1066,7 +1066,7 @@ public class Subject {
         Long newDays = Long.parseLong(getDaysDiagtoDeath());
         Long oldDays = Long.parseLong(getOldDaysDiagToDeath());
 
-        if (newDays == oldDays) {
+        if (!newDays.equals(oldDays)) {
           return Value.Yes;
         }
       }
