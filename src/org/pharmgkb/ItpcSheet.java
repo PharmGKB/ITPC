@@ -64,6 +64,12 @@ public class ItpcSheet implements Iterator {
   protected int addCxContralateralIdx = -1;
   protected int addCxSecondInvasiveIdx = -1;
   protected int addCxLastEvalIdx = -1;
+  protected int firstDiseaseEventIdx = -1;
+  protected int hasDiseaseEventIdx = -1;
+  protected int daysDiagToDeathIdx = -1;
+  protected int oldDaysDiagToDeathIdx = -1;
+  protected int patientDiedIdx = -1;
+  protected int diagToEventDaysIdx = -1;
 
   protected int fluoxetineCol = -1;
   protected int paroxetineCol = -1;
@@ -101,6 +107,14 @@ public class ItpcSheet implements Iterator {
   protected int includeIdx = -1;
   protected int scoreIdx = -1;
   protected int exclude1Idx = -1;
+  protected int exclude2Idx = -1;
+  protected int exclude3Idx = -1;
+  protected int exclude4Idx = -1;
+  protected int exclude5Idx = -1;
+  protected int exclude6Idx = -1;
+  protected int excludeSummaryIdx = -1;
+  protected int newFirstDiseaseEventIdx = -1;
+  protected int newHasDiseaseEventIdx = -1;
 
   protected int incAgeIdx = -1;
   protected int incNonmetaIdx = -1;
@@ -134,7 +148,7 @@ public class ItpcSheet implements Iterator {
    * @throws Exception can occur from file I/O
    */
   public ItpcSheet(File file, boolean doHighlighting) throws Exception {
-    if (file == null || !file.getName().endsWith(".xls")) {
+    if (file == null || !(file.getName().endsWith(".xls") || file.getName().endsWith(".xlsx"))) {
       throw new Exception("File not in right format: " + file);
     }
 
@@ -297,6 +311,18 @@ public class ItpcSheet implements Iterator {
         addCxSecondInvasiveIdx = idx;
       } else if (header.contains("time from diagnosis to date of last disease evaluation")) {
         addCxLastEvalIdx = idx;
+      } else if (header.equalsIgnoreCase("First Disease Event (existing column)")) {
+        firstDiseaseEventIdx = idx;
+      } else if (header.contains("has the patient developed a local/regional/distant recurrence")) {
+        hasDiseaseEventIdx = idx;
+      } else if (header.equalsIgnoreCase("Time from diagnosis until death if the patient has died (new column)")) {
+        daysDiagToDeathIdx = idx; // RMW: column CT, number of days
+      } else if (header.contains("for patients who have died, time to death")) {
+        oldDaysDiagToDeathIdx = idx; // RMW: column CP, number of days
+      } else if (header.equalsIgnoreCase("Has the patient died? (new column)")) {
+        patientDiedIdx = idx;
+      } else if (header.equalsIgnoreCase("Time from Primary Diagnosis to First Disease Event (existing column)")) {
+        diagToEventDaysIdx = idx;
       }
     }
 
@@ -331,7 +357,18 @@ public class ItpcSheet implements Iterator {
     incGenoDataAvailIdx = startPgkbColsIdx  + 25;
 
     includeIdx = startPgkbColsIdx           + 26;
-    exclude1Idx = startPgkbColsIdx          + 27;
+    // skip for "other genotyping"
+    // skip for "Vera Excludes"
+
+    newFirstDiseaseEventIdx = startPgkbColsIdx + 29;
+    newHasDiseaseEventIdx = startPgkbColsIdx + 30;
+    exclude1Idx = startPgkbColsIdx          + 31;
+    exclude2Idx = startPgkbColsIdx          + 32;
+    exclude3Idx = startPgkbColsIdx          + 33;
+    exclude4Idx = startPgkbColsIdx          + 34;
+    exclude5Idx = startPgkbColsIdx          + 35;
+    exclude6Idx = startPgkbColsIdx          + 36;
+    excludeSummaryIdx = startPgkbColsIdx    + 37;
 
     writeCellTitles(headerRow);
 
@@ -369,7 +406,15 @@ public class ItpcSheet implements Iterator {
     ExcelUtils.writeCell(headerRow, incGenoDataAvailIdx, "Inc 9\nCYP2D6 *4 genotype data available for assessment");
 
     ExcelUtils.writeCell(headerRow, includeIdx, "Include");
-    ExcelUtils.writeCell(headerRow, exclude1Idx, "Exclusion 1: Time of event unknown");
+    ExcelUtils.writeCell(headerRow, newFirstDiseaseEventIdx, "First Disease Event from new columns");
+    ExcelUtils.writeCell(headerRow, newHasDiseaseEventIdx, "Has Disease Event");
+    ExcelUtils.writeCell(headerRow, exclude1Idx, "Exclusion 1: time of event unknown");
+    ExcelUtils.writeCell(headerRow, exclude2Idx, "Exclusion 2: inconsistent disease event data");
+    ExcelUtils.writeCell(headerRow, exclude3Idx, "Exclusion 3: no followup data");
+    ExcelUtils.writeCell(headerRow, exclude4Idx, "Exclusion 4: eftime inconsistent");
+    ExcelUtils.writeCell(headerRow, exclude5Idx, "Exclusion 5: inconsistent death data");
+    ExcelUtils.writeCell(headerRow, exclude6Idx, "Exclusion 6: inconsistent death time");
+    ExcelUtils.writeCell(headerRow, excludeSummaryIdx, "Exclusion Summary");
   }
 
   private PoiWorksheetIterator getSampleIterator() {
@@ -428,6 +473,12 @@ public class ItpcSheet implements Iterator {
     subject.setAddCxContralateral(fields.get(addCxContralateralIdx));
     subject.setAddCxSecondInvasive(fields.get(addCxSecondInvasiveIdx));
     subject.setAddCxLastEval(fields.get(addCxLastEvalIdx));
+    subject.setFirstDiseaseEvent(fields.get(firstDiseaseEventIdx));
+    subject.setDaysDiagtoDeath(fields.get(daysDiagToDeathIdx));
+    subject.setOldDaysDiagToDeath(fields.get(oldDaysDiagToDeathIdx));
+    subject.setPatientDied(fields.get(patientDiedIdx));
+    subject.setHasDiseaseEvent(fields.get(hasDiseaseEventIdx));
+    subject.setDiagToEventDays(fields.get(diagToEventDaysIdx));
 
     if (!StringUtils.isBlank(fields.get(genoSourceIdx1)) && !fields.get(genoSourceIdx1).equals("NA")) {
       subject.setGenoSource(fields.get(genoSourceIdx1));
@@ -531,7 +582,15 @@ public class ItpcSheet implements Iterator {
     ExcelUtils.writeCell(row, incFollowupIdx, subject.passInclusion8().toString(), highlight);
     ExcelUtils.writeCell(row, incGenoDataAvailIdx, subject.passInclusion9().toString(), highlight);
     ExcelUtils.writeCell(row, includeIdx, subject.include().toString(), highlight);
+    ExcelUtils.writeCell(row, newFirstDiseaseEventIdx, subject.getFirstDiseaseEventCalc(), highlight);
+    ExcelUtils.writeCell(row, newHasDiseaseEventIdx, subject.hasAdditionalDiseaseEvent().toString(), highlight);
     ExcelUtils.writeCell(row, exclude1Idx, subject.exclude1().toString(), highlight);
+    ExcelUtils.writeCell(row, exclude2Idx, subject.exclude2().toString(), highlight);
+    ExcelUtils.writeCell(row, exclude3Idx, subject.exclude3().toString(), highlight);
+    ExcelUtils.writeCell(row, exclude4Idx, subject.exclude4().toString(), highlight);
+    ExcelUtils.writeCell(row, exclude5Idx, subject.exclude5().toString(), highlight);
+    ExcelUtils.writeCell(row, exclude6Idx, subject.exclude6().toString(), highlight);
+    ExcelUtils.writeCell(row, excludeSummaryIdx, subject.excludeSummary().toString(), highlight);
   }
 
   public File saveOutput() throws IOException {

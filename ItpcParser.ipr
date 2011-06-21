@@ -359,6 +359,9 @@
       <CLASSES>
         <root url="jar://$PROJECT_DIR$/lib/poi.jar!/" />
         <root url="jar://$PROJECT_DIR$/lib/poi-ooxml.jar!/" />
+        <root url="jar://$PROJECT_DIR$/lib/xmlbeans-2.3.0.jar!/" />
+        <root url="jar://$PROJECT_DIR$/lib/poi-ooxml-schemas-3.6-20091214.jar!/" />
+        <root url="jar://$PROJECT_DIR$/lib/dom4j-1.6.1.jar!/" />
       </CLASSES>
       <JAVADOC>
         <root url="file://$USER_HOME$/pharmgkb/tools/poi-3.6/docs/apidocs" />

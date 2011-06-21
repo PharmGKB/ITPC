@@ -1,5 +1,7 @@
 package org.pharmgkb;
 
+import com.google.common.base.Joiner;
+import com.google.common.collect.Lists;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import util.ItpcUtils;
@@ -47,6 +49,12 @@ public class Subject {
   private String m_addCxContralateral = null;
   private String m_addCxSecondInvasive = null;
   private String m_addCxLastEval = null;
+  private String m_firstDiseaseEvent = null;
+  private Value m_hasDiseaseEvent = null;
+  private String m_daysDiagtoDeath = null;
+  private String m_oldDaysDiagToDeath = null;
+  private Value m_patientDied = null;
+  private String m_diagToEventDays = null;
 
   private Value m_hasParoxetine = Value.Unknown;
   private Value m_hasFluoxetine = Value.Unknown;
@@ -956,7 +964,127 @@ public class Subject {
         && (ItpcUtils.isBlank(getAddCxDistantRecur()) || getAddCxDistantRecur().equals("0"))
         && (ItpcUtils.isBlank(getAddCxContralateral()) || getAddCxContralateral().equals("0"))
         && (ItpcUtils.isBlank(getAddCxSecondInvasive()) || getAddCxSecondInvasive().equals("0"))
-        && (ItpcUtils.isBlank(getAddCxLastEval()))
+        && (getAddCxLastEval() != null && getAddCxLastEval().equals("NA"))
+        ) {
+      return Value.Yes;
+    }
+    else {
+      return Value.No;
+    }
+  }
+
+  public Value exclude2() {
+    if (getFirstDiseaseEvent() == null) {
+      return Value.No;
+    }
+
+    if (getFirstDiseaseEvent().equals("1") && (ItpcUtils.isBlank(getAddCxIpsilateral()))) {
+      return Value.Yes;
+    }
+    else if (getFirstDiseaseEvent().equals("2") && (ItpcUtils.isBlank(getAddCxDistantRecur()))) {
+      return Value.Yes;
+    }
+    else if (getFirstDiseaseEvent().equals("3") && (ItpcUtils.isBlank(getAddCxContralateral()))) {
+      return Value.Yes;
+    }
+    else if (getFirstDiseaseEvent().equals("4") && (ItpcUtils.isBlank(getAddCxSecondInvasive()))) {
+      return Value.Yes;
+    }
+    return Value.No;
+  }
+
+  public Value exclude3() {
+    if (
+        ItpcUtils.isBlank(getFirstDiseaseEvent())
+        && getAdditionalCancer() == Value.Unknown
+        && (ItpcUtils.isBlank(getAddCxLastEval()) || getAddCxLastEval().equals("0"))
+        ) {
+      return Value.Yes;
+    }
+    else if (
+        (!ItpcUtils.isBlank(getFirstDiseaseEvent()) && getFirstDiseaseEvent().equals("5"))
+        && (getAdditionalCancer()==Value.Unknown || getAdditionalCancer()==Value.No)
+        && (ItpcUtils.isBlank(getAddCxLastEval()) || getAddCxLastEval().equals("0"))
+        && getPatientDied()==Value.Yes
+        ) {
+      return Value.Yes;
+    }
+    else {
+      return Value.No;
+    }
+  }
+
+  public Value exclude4() {
+    if (getHasDiseaseEvent()==Value.No
+        && getFirstDiseaseEvent() != null
+        && getFirstDiseaseEvent().equals("0")
+        && getAdditionalCancer()==Value.No
+       ) {
+
+      try {
+        Long daysSinceLastEval = Long.parseLong(getAddCxLastEval());
+        Long daysDiagToEvent = Long.parseLong(getDiagToEventDays());
+
+        if (Math.abs(daysSinceLastEval-daysDiagToEvent)>365) {
+          return Value.Yes;
+        } else {
+          return Value.No;
+        }
+      } catch (NumberFormatException ex) {
+        if (ItpcUtils.isBlank(getAddCxLastEval())
+            || ItpcUtils.isBlank(getDiagToEventDays())) {
+          return Value.No;
+        }
+        else {
+          return Value.Unknown;
+        }
+      }
+    }
+    else {
+      return Value.No;
+    }
+  }
+
+  public Value exclude5() {
+    if (!ItpcUtils.isBlank(getFirstDiseaseEvent())
+      && getFirstDiseaseEvent().equals("5")
+        && getAdditionalCancer() == Value.No
+        && !ItpcUtils.isBlank(getAddCxLastEval())
+        && getAddCxLastEval().equals("0")
+        && getPatientDied() == Value.No) {
+      return Value.Yes;
+    }
+    else {
+      return Value.No;
+    }
+  }
+
+  public Value exclude6() {
+    if (!ItpcUtils.isBlank(getDaysDiagtoDeath())
+        && !ItpcUtils.isBlank(getOldDaysDiagToDeath())) {
+      try {
+        Long newDays = Long.parseLong(getDaysDiagtoDeath());
+        Long oldDays = Long.parseLong(getOldDaysDiagToDeath());
+
+        if (newDays == oldDays) {
+          return Value.Yes;
+        }
+      }
+      catch (NumberFormatException ex) {
+        return Value.No;
+      }
+    }
+    return Value.No;
+  }
+
+  public Value excludeSummary() {
+    if (
+        exclude1() == Value.Yes
+        || exclude2() == Value.Yes
+        || exclude3() == Value.Yes
+        || exclude4() == Value.Yes
+        || exclude5() == Value.Yes
+        || exclude6() == Value.Yes
         ) {
       return Value.Yes;
     }
@@ -1233,6 +1361,119 @@ public class Subject {
 
   public void setAddCxLastEval(String addCxLastEval) {
     m_addCxLastEval = addCxLastEval;
+  }
+
+  public String getFirstDiseaseEvent() {
+    return m_firstDiseaseEvent;
+  }
+
+  public void setFirstDiseaseEvent(String firstDiseaseEvent) {
+    m_firstDiseaseEvent = firstDiseaseEvent;
+  }
+
+  public String getFirstDiseaseEventCalc() {
+    List<String> eventCodes = Lists.newArrayList();
+    if (!(ItpcUtils.isBlank(getAddCxIpsilateral()) || getAddCxIpsilateral().equals("0"))) {
+      eventCodes.add("1");
+    }
+    if (!(ItpcUtils.isBlank(getAddCxDistantRecur()) || getAddCxDistantRecur().equals("0"))) {
+      eventCodes.add("2");
+    }
+    if (!(ItpcUtils.isBlank(getAddCxContralateral()) || getAddCxContralateral().equals("0"))) {
+      eventCodes.add("3");
+    }
+    if (!(ItpcUtils.isBlank(getAddCxSecondInvasive()) || getAddCxSecondInvasive().equals("0"))) {
+      eventCodes.add("4");
+    }
+    if (!(ItpcUtils.isBlank(getDaysDiagtoDeath()) || getDaysDiagtoDeath().equals("0"))
+        && (ItpcUtils.isBlank(getAddCxIpsilateral()) || getAddCxIpsilateral().equals("0"))
+        && (ItpcUtils.isBlank(getAddCxDistantRecur()) || getAddCxDistantRecur().equals("0"))
+        && (ItpcUtils.isBlank(getAddCxContralateral()) || getAddCxContralateral().equals("0"))
+        && (ItpcUtils.isBlank(getAddCxSecondInvasive()) || getAddCxSecondInvasive().equals("0"))) {
+      eventCodes.add("5");
+    }
+
+    return Joiner.on(";").join(eventCodes);
+  }
+
+  public Value hasAdditionalDiseaseEvent() {
+    if (StringUtils.isBlank(getFirstDiseaseEventCalc())) {
+      return Value.No;
+    }
+    else {
+      return Value.Yes;
+    }
+  }
+
+  public String getDaysDiagtoDeath() {
+    return m_daysDiagtoDeath;
+  }
+
+  public void setDaysDiagtoDeath(String daysDiagtoDeath) {
+    m_daysDiagtoDeath = daysDiagtoDeath;
+  }
+
+  public Value getPatientDied() {
+    return m_patientDied;
+  }
+
+  public void setPatientDied(Value patientDied) {
+    m_patientDied = patientDied;
+  }
+
+  public void setPatientDied(String died) {
+    String patientDied = died.trim();
+    if (patientDied == null) {
+      m_patientDied = Value.Unknown;
+    }
+    else if (patientDied.equals("2")) {
+      m_patientDied = Value.Yes;
+    }
+    else if (patientDied.equals("1")) {
+      m_patientDied = Value.No;
+    }
+    else {
+      m_patientDied = Value.Unknown;
+    }
+  }
+
+  public Value getHasDiseaseEvent() {
+    return m_hasDiseaseEvent;
+  }
+
+  public void setHasDiseaseEvent(Value hasDiseaseEvent) {
+    m_hasDiseaseEvent = hasDiseaseEvent;
+  }
+
+  public void setHasDiseaseEvent(String hasDiseaseEvent) {
+    if (hasDiseaseEvent == null) {
+      m_hasDiseaseEvent = Value.Unknown;
+    }
+    else if (hasDiseaseEvent.equals("0")) {
+      m_hasDiseaseEvent = Value.No;
+    }
+    else if (hasDiseaseEvent.equals("1")) {
+      m_hasDiseaseEvent = Value.Yes;
+    }
+    else {
+      m_hasDiseaseEvent = Value.Unknown;
+    }
+  }
+
+  public String getDiagToEventDays() {
+    return m_diagToEventDays;
+  }
+
+  public void setDiagToEventDays(String diagToEventDays) {
+    m_diagToEventDays = diagToEventDays;
+  }
+
+  public String getOldDaysDiagToDeath() {
+    return m_oldDaysDiagToDeath;
+  }
+
+  public void setOldDaysDiagToDeath(String oldDaysDiagToDeath) {
+    m_oldDaysDiagToDeath = oldDaysDiagToDeath;
   }
 
   enum Deletion {Unknown, None, Hetero, Homo}
