@@ -105,6 +105,8 @@ public class ItpcSheet implements Iterator {
   protected int potentIdx = -1;
   protected int metabStatusIdx = -1;
   protected int includeIdx = -1;
+  protected int includeCrit1Idx = -1;
+  protected int includeCrit2Idx = -1;
   protected int scoreIdx = -1;
   protected int exclude1Idx = -1;
   protected int exclude2Idx = -1;
@@ -357,18 +359,20 @@ public class ItpcSheet implements Iterator {
     incGenoDataAvailIdx = startPgkbColsIdx  + 25;
 
     includeIdx = startPgkbColsIdx           + 26;
+    includeCrit1Idx = startPgkbColsIdx      + 27;
+    includeCrit2Idx = startPgkbColsIdx      + 28;
     // skip for "other genotyping"
     // skip for "Vera Excludes"
 
-    newFirstDiseaseEventIdx = startPgkbColsIdx + 29;
-    newHasDiseaseEventIdx = startPgkbColsIdx + 30;
-    exclude1Idx = startPgkbColsIdx          + 31;
-    exclude2Idx = startPgkbColsIdx          + 32;
-    exclude3Idx = startPgkbColsIdx          + 33;
-    exclude4Idx = startPgkbColsIdx          + 34;
-    exclude5Idx = startPgkbColsIdx          + 35;
-    exclude6Idx = startPgkbColsIdx          + 36;
-    excludeSummaryIdx = startPgkbColsIdx    + 37;
+    newFirstDiseaseEventIdx = startPgkbColsIdx + 31;
+    newHasDiseaseEventIdx = startPgkbColsIdx + 32;
+    exclude1Idx = startPgkbColsIdx          + 33;
+    exclude2Idx = startPgkbColsIdx          + 34;
+    exclude3Idx = startPgkbColsIdx          + 35;
+    exclude4Idx = startPgkbColsIdx          + 36;
+    exclude5Idx = startPgkbColsIdx          + 37;
+    exclude6Idx = startPgkbColsIdx          + 38;
+    excludeSummaryIdx = startPgkbColsIdx    + 39;
 
     writeCellTitles(headerRow);
 
@@ -405,7 +409,9 @@ public class ItpcSheet implements Iterator {
     ExcelUtils.writeCell(headerRow, incFollowupIdx, "Inc 8\nAdequate follow-up");
     ExcelUtils.writeCell(headerRow, incGenoDataAvailIdx, "Inc 9\nCYP2D6 *4 genotype data available for assessment");
 
-    ExcelUtils.writeCell(headerRow, includeIdx, "Include");
+    ExcelUtils.writeCell(headerRow, includeIdx, "Include\nbased on all Inc columns");
+    ExcelUtils.writeCell(headerRow, includeCrit1Idx, "Include\nCriterion 1\nbased on Inc 1, 2a, 3, 4b, 4c, 5, 6, 8, 9");
+    ExcelUtils.writeCell(headerRow, includeCrit2Idx, "Include\nCriterion 2\nbased on Inc 2a, 3, 4c, 5, 6, 9");
     ExcelUtils.writeCell(headerRow, newFirstDiseaseEventIdx, "First Disease Event from new columns");
     ExcelUtils.writeCell(headerRow, newHasDiseaseEventIdx, "Has Disease Event");
     ExcelUtils.writeCell(headerRow, exclude1Idx, "Exclusion 1: time of event unknown");
@@ -582,6 +588,8 @@ public class ItpcSheet implements Iterator {
     ExcelUtils.writeCell(row, incFollowupIdx, subject.passInclusion8().toString(), highlight);
     ExcelUtils.writeCell(row, incGenoDataAvailIdx, subject.passInclusion9().toString(), highlight);
     ExcelUtils.writeCell(row, includeIdx, subject.include().toString(), highlight);
+    ExcelUtils.writeCell(row, includeCrit1Idx, subject.includeCrit1().toString(), highlight);
+    ExcelUtils.writeCell(row, includeCrit2Idx, subject.includeCrit2().toString(), highlight);
     ExcelUtils.writeCell(row, newFirstDiseaseEventIdx, subject.getFirstDiseaseEventCalc(), highlight);
     ExcelUtils.writeCell(row, newHasDiseaseEventIdx, subject.hasAdditionalDiseaseEvent().toString(), highlight);
     ExcelUtils.writeCell(row, exclude1Idx, subject.exclude1().toString(), highlight);

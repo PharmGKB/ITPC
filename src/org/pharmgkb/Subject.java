@@ -933,6 +933,37 @@ public class Subject {
     }
   }
 
+  public Value includeCrit1() {
+    if (passInclusion1() == Value.Yes
+        && passInclusion2a() == Value.Yes
+        && passInclusion3() == Value.Yes
+        && passInclusion4b() == Value.Yes
+        && passInclusion4c() == Value.Yes
+        && passInclusion5() == Value.Yes
+        && passInclusion6() == Value.Yes
+        && passInclusion8() == Value.Yes
+        && passInclusion9() == Value.Yes) {
+      return Value.Yes;
+    }
+    else {
+      return Value.No;
+    }
+  }
+
+  public Value includeCrit2() {
+    if (passInclusion2a() == Value.Yes
+        && passInclusion3() == Value.Yes
+        && passInclusion4c() == Value.Yes
+        && passInclusion5() == Value.Yes
+        && passInclusion6() == Value.Yes
+        && passInclusion9() == Value.Yes) {
+      return Value.Yes;
+    }
+    else {
+      return Value.No;
+    }
+  }
+
   /**
    * Same as include() but disregards inclusion 4a.  This is used for analysis to see if 4a is causing many records to
    * be removed.
@@ -1403,6 +1434,27 @@ public class Subject {
     else {
       return Value.Yes;
     }
+  }
+
+  public String getDiagToEventDaysCalc() { // RMW: calculated column BU
+    if (getAdditionalCancer()==Value.Yes) {
+      if (!ItpcUtils.isBlank(getAddCxContralateral())) {
+        return getAddCxContralateral();
+      }
+      else if (!ItpcUtils.isBlank(getAddCxDistantRecur())) {
+        return getAddCxDistantRecur();
+      }
+      else if (!ItpcUtils.isBlank(getAddCxIpsilateral())) {
+        return getAddCxIpsilateral();
+      }
+      else if (!ItpcUtils.isBlank(getAddCxSecondInvasive())) {
+        return getAddCxSecondInvasive();
+      }
+    }
+    else if (getAdditionalCancer()==Value.No && getPatientDied()==Value.Yes) {
+        return getDaysDiagtoDeath();
+    }
+    return null;
   }
 
   public String getDaysDiagtoDeath() {
