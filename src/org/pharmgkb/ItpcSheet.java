@@ -29,7 +29,7 @@ public class ItpcSheet implements Iterator {
   private Sheet m_dataSheet = null;
   private int m_rowIndex = -1;
 
-  private CellStyle styleTitle = null;
+  private CellStyle styleTitle = null, styleDescr = null;
   private CellStyle styleHighlight = null;
 
   protected int subjectId = -1;
@@ -111,9 +111,6 @@ public class ItpcSheet implements Iterator {
   protected int exclude1Idx = -1;
   protected int exclude2Idx = -1;
   protected int exclude3Idx = -1;
-  protected int exclude4Idx = -1;
-  protected int exclude5Idx = -1;
-  protected int exclude6Idx = -1;
   protected int excludeSummaryIdx = -1;
   protected int newFirstDiseaseEventIdx = -1;
   protected int newHasDiseaseEventIdx = -1;
@@ -369,14 +366,15 @@ public class ItpcSheet implements Iterator {
     exclude1Idx = startPgkbColsIdx          + 33;
     exclude2Idx = startPgkbColsIdx          + 34;
     exclude3Idx = startPgkbColsIdx          + 35;
-    exclude4Idx = startPgkbColsIdx          + 36;
-    exclude5Idx = startPgkbColsIdx          + 37;
-    exclude6Idx = startPgkbColsIdx          + 38;
-    excludeSummaryIdx = startPgkbColsIdx    + 39;
+    excludeSummaryIdx = startPgkbColsIdx    + 36;
 
     writeCellTitles(headerRow);
+    styleCells(headerRow, startPgkbColsIdx, getTitleStyle());
 
-    styleTitleCells(headerRow, startPgkbColsIdx);
+    // write the description row
+    Row descrRow = m_dataSheet.getRow(1);
+    writeCellDescr(descrRow);
+    styleCells(descrRow, startPgkbColsIdx, getDescrStyle());
   }
 
   private void writeCellTitles(Row headerRow) {
@@ -389,8 +387,8 @@ public class ItpcSheet implements Iterator {
     ExcelUtils.writeCell(headerRow, callCommentsIdx, "Curator comments on calls");
     ExcelUtils.writeCell(headerRow, scoreIdx, "Drug and CYP2D6 Genotype Score");
 
-    ExcelUtils.writeCell(headerRow, genotypeIdx, "Genotype (PharmGKB)");
-    ExcelUtils.writeCell(headerRow, genoMetabStatusIdx, "Don's Call for Extensive, Intermediate, Poor, or Unknown based on Genotypes only");
+    ExcelUtils.writeCell(headerRow, genotypeIdx, "CYP2D6 Genotype (PharmGKB)");
+    ExcelUtils.writeCell(headerRow, genoMetabStatusIdx, "Metabolizer Status based on Genotypes only (PharmGKB)");
     ExcelUtils.writeCell(headerRow, weakIdx, "Weak Drug (PharmGKB)");
     ExcelUtils.writeCell(headerRow, potentIdx, "Potent Drug (PharmGKB)");
     ExcelUtils.writeCell(headerRow, metabStatusIdx, "Metabolizer Status (PharmGKB)");
@@ -410,17 +408,20 @@ public class ItpcSheet implements Iterator {
     ExcelUtils.writeCell(headerRow, incGenoDataAvailIdx, "Inc 9\nCYP2D6 *4 genotype data available for assessment");
 
     ExcelUtils.writeCell(headerRow, includeIdx, "Include\nbased on all Inc columns");
-    ExcelUtils.writeCell(headerRow, includeCrit1Idx, "Include\nCriterion 1\nbased on Inc 1, 2a, 3, 4b, 4c, 5, 6, 8, 9");
-    ExcelUtils.writeCell(headerRow, includeCrit2Idx, "Include\nCriterion 2\nbased on Inc 2a, 3, 4c, 5, 6, 9");
+    ExcelUtils.writeCell(headerRow, includeCrit1Idx, "Include\nCriterion 1");
+    ExcelUtils.writeCell(headerRow, includeCrit2Idx, "Include\nCriterion 2");
     ExcelUtils.writeCell(headerRow, newFirstDiseaseEventIdx, "First Disease Event from new columns");
     ExcelUtils.writeCell(headerRow, newHasDiseaseEventIdx, "Has Disease Event");
     ExcelUtils.writeCell(headerRow, exclude1Idx, "Exclusion 1: time of event unknown");
-    ExcelUtils.writeCell(headerRow, exclude2Idx, "Exclusion 2: inconsistent disease event data");
-    ExcelUtils.writeCell(headerRow, exclude3Idx, "Exclusion 3: no followup data");
-    ExcelUtils.writeCell(headerRow, exclude4Idx, "Exclusion 4: eftime inconsistent");
-    ExcelUtils.writeCell(headerRow, exclude5Idx, "Exclusion 5: inconsistent death data");
-    ExcelUtils.writeCell(headerRow, exclude6Idx, "Exclusion 6: inconsistent death time");
+    ExcelUtils.writeCell(headerRow, exclude2Idx, "Exclusion 2: no followup data");
+    ExcelUtils.writeCell(headerRow, exclude3Idx, "Exclusion 3: inconsistent death data");
     ExcelUtils.writeCell(headerRow, excludeSummaryIdx, "Exclusion Summary");
+  }
+
+  private void writeCellDescr(Row descrRow) {
+    ExcelUtils.writeCell(descrRow, genoMetabStatusIdx, " Extensive, Intermediate, Poor, or Unknown");
+    ExcelUtils.writeCell(descrRow, includeCrit1Idx, "based on Inc 1, 2a, 3, 4b, 4c, 5, 6, 8, 9");
+    ExcelUtils.writeCell(descrRow, includeCrit2Idx, "based on Inc 2a, 3, 4c, 5, 6, 9");
   }
 
   private PoiWorksheetIterator getSampleIterator() {
@@ -595,9 +596,6 @@ public class ItpcSheet implements Iterator {
     ExcelUtils.writeCell(row, exclude1Idx, subject.exclude1().toString(), highlight);
     ExcelUtils.writeCell(row, exclude2Idx, subject.exclude2().toString(), highlight);
     ExcelUtils.writeCell(row, exclude3Idx, subject.exclude3().toString(), highlight);
-    ExcelUtils.writeCell(row, exclude4Idx, subject.exclude4().toString(), highlight);
-    ExcelUtils.writeCell(row, exclude5Idx, subject.exclude5().toString(), highlight);
-    ExcelUtils.writeCell(row, exclude6Idx, subject.exclude6().toString(), highlight);
     ExcelUtils.writeCell(row, excludeSummaryIdx, subject.excludeSummary().toString(), highlight);
   }
 
@@ -636,6 +634,27 @@ public class ItpcSheet implements Iterator {
     return styleTitle;
   }
 
+  public CellStyle getDescrStyle() {
+    if (styleDescr == null) {
+      styleDescr = getWorkbook().createCellStyle();
+
+      styleDescr.setBorderBottom(CellStyle.BORDER_THIN);
+      styleDescr.setBottomBorderColor(IndexedColors.BLACK.getIndex());
+      styleDescr.setBorderLeft(CellStyle.BORDER_THIN);
+      styleDescr.setLeftBorderColor(IndexedColors.BLACK.getIndex());
+      styleDescr.setBorderTop(CellStyle.BORDER_THIN);
+      styleDescr.setTopBorderColor(IndexedColors.BLACK.getIndex());
+      styleDescr.setBorderRight(CellStyle.BORDER_THIN);
+      styleDescr.setRightBorderColor(IndexedColors.BLACK.getIndex());
+
+      styleDescr.setAlignment(CellStyle.ALIGN_CENTER);
+      styleDescr.setWrapText(true);
+      styleDescr.setVerticalAlignment(CellStyle.VERTICAL_CENTER);
+    }
+
+    return styleDescr;
+  }
+
   public void doHighlighting() {
     if (styleHighlight == null) {
       styleHighlight = getWorkbook().createCellStyle();
@@ -654,13 +673,12 @@ public class ItpcSheet implements Iterator {
   /**
    * Styles the given row with the Title Style specified in <code>getTitleStyle</code>. The <code>startIndex</code>
    * parameter specifies which column column to start applying the style on (0 = all columns) inclusively.
-   * @param headerRow an Excel Row
+   * @param row an Excel Row
    * @param startIndex the index of the column to start applying the style on
+   * @param style the CellStyle to apply
    */
-  public void styleTitleCells(Row headerRow, int startIndex) {
-    CellStyle style = getTitleStyle();
-
-    Iterator<Cell> headerCells = headerRow.cellIterator();
+  public void styleCells(Row row, int startIndex, CellStyle style) {
+    Iterator<Cell> headerCells = row.cellIterator();
 
     while (headerCells.hasNext()) {
       Cell headerCell=headerCells.next();

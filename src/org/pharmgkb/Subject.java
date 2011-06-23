@@ -995,7 +995,6 @@ public class Subject {
         && (ItpcUtils.isBlank(getAddCxDistantRecur()) || getAddCxDistantRecur().equals("0"))
         && (ItpcUtils.isBlank(getAddCxContralateral()) || getAddCxContralateral().equals("0"))
         && (ItpcUtils.isBlank(getAddCxSecondInvasive()) || getAddCxSecondInvasive().equals("0"))
-        && (getAddCxLastEval() != null && getAddCxLastEval().equals("NA"))
         ) {
       return Value.Yes;
     }
@@ -1005,36 +1004,14 @@ public class Subject {
   }
 
   public Value exclude2() {
-    if (getFirstDiseaseEvent() == null) {
-      return Value.No;
-    }
-
-    if (getFirstDiseaseEvent().equals("1") && (ItpcUtils.isBlank(getAddCxIpsilateral()))) {
-      return Value.Yes;
-    }
-    else if (getFirstDiseaseEvent().equals("2") && (ItpcUtils.isBlank(getAddCxDistantRecur()))) {
-      return Value.Yes;
-    }
-    else if (getFirstDiseaseEvent().equals("3") && (ItpcUtils.isBlank(getAddCxContralateral()))) {
-      return Value.Yes;
-    }
-    else if (getFirstDiseaseEvent().equals("4") && (ItpcUtils.isBlank(getAddCxSecondInvasive()))) {
-      return Value.Yes;
-    }
-    return Value.No;
-  }
-
-  public Value exclude3() {
     if (
-        ItpcUtils.isBlank(getFirstDiseaseEvent())
-        && getAdditionalCancer() == Value.Unknown
+        getAdditionalCancer() == Value.Unknown
         && (ItpcUtils.isBlank(getAddCxLastEval()) || getAddCxLastEval().equals("0"))
         ) {
       return Value.Yes;
     }
     else if (
-        (!ItpcUtils.isBlank(getFirstDiseaseEvent()) && getFirstDiseaseEvent().equals("5"))
-        && (getAdditionalCancer()==Value.Unknown || getAdditionalCancer()==Value.No)
+        (getAdditionalCancer()==Value.Unknown || getAdditionalCancer()==Value.No)
         && (ItpcUtils.isBlank(getAddCxLastEval()) || getAddCxLastEval().equals("0"))
         && getPatientDied()==Value.Yes
         ) {
@@ -1045,41 +1022,8 @@ public class Subject {
     }
   }
 
-  public Value exclude4() {
-    if (getHasDiseaseEvent()==Value.No
-        && getFirstDiseaseEvent() != null
-        && getFirstDiseaseEvent().equals("0")
-        && getAdditionalCancer()==Value.No
-       ) {
-
-      try {
-        Long daysSinceLastEval = Long.parseLong(getAddCxLastEval());
-        Long daysDiagToEvent = Long.parseLong(getDiagToEventDays());
-
-        if (Math.abs(daysSinceLastEval-daysDiagToEvent)>365) {
-          return Value.Yes;
-        } else {
-          return Value.No;
-        }
-      } catch (NumberFormatException ex) {
-        if (ItpcUtils.isBlank(getAddCxLastEval())
-            || ItpcUtils.isBlank(getDiagToEventDays())) {
-          return Value.No;
-        }
-        else {
-          return Value.Unknown;
-        }
-      }
-    }
-    else {
-      return Value.No;
-    }
-  }
-
-  public Value exclude5() {
-    if (!ItpcUtils.isBlank(getFirstDiseaseEvent())
-      && getFirstDiseaseEvent().equals("5")
-        && getAdditionalCancer() == Value.No
+  public Value exclude3() {
+    if (getAdditionalCancer() == Value.No
         && !ItpcUtils.isBlank(getAddCxLastEval())
         && getAddCxLastEval().equals("0")
         && getPatientDied() == Value.No) {
@@ -1090,33 +1034,10 @@ public class Subject {
     }
   }
 
-  public Value exclude6() {
-    if (!ItpcUtils.isBlank(getDaysDiagtoDeath())
-        && !ItpcUtils.isBlank(getOldDaysDiagToDeath())) {
-      try {
-        Long newDays = Long.parseLong(getDaysDiagtoDeath());
-        Long oldDays = Long.parseLong(getOldDaysDiagToDeath());
-
-        if (!newDays.equals(oldDays)) {
-          return Value.Yes;
-        }
-      }
-      catch (NumberFormatException ex) {
-        return Value.No;
-      }
-    }
-    return Value.No;
-  }
-
   public Value excludeSummary() {
-    if (
-        exclude1() == Value.Yes
+    if (exclude1() == Value.Yes
         || exclude2() == Value.Yes
-        || exclude3() == Value.Yes
-        || exclude4() == Value.Yes
-        || exclude5() == Value.Yes
-        || exclude6() == Value.Yes
-        ) {
+        || exclude3() == Value.Yes) {
       return Value.Yes;
     }
     else {
