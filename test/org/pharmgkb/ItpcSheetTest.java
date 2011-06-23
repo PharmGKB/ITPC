@@ -102,15 +102,12 @@ public class ItpcSheetTest extends TestCase {
 
     assertTrue(sheet.amplichipidx>=0);
 
-    assertTrue(sheet.allele1idx>=0);
-    assertTrue(sheet.allele2idx>=0);
     assertTrue(sheet.allele1finalIdx>=0);
     assertTrue(sheet.allele2finalIdx>=0);
     assertTrue(sheet.genotypeIdx>=0);
     assertTrue(sheet.weakIdx>=0);
     assertTrue(sheet.potentIdx>=0);
     assertTrue(sheet.metabStatusIdx>=0);
-    assertTrue(sheet.includeIdx>=0);
     assertTrue(sheet.scoreIdx>=0);
 
     assertTrue(sheet.incAgeIdx>=0);

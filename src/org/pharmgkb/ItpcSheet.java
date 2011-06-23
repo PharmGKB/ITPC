@@ -64,12 +64,8 @@ public class ItpcSheet implements Iterator {
   protected int addCxContralateralIdx = -1;
   protected int addCxSecondInvasiveIdx = -1;
   protected int addCxLastEvalIdx = -1;
-  protected int firstDiseaseEventIdx = -1;
-  protected int hasDiseaseEventIdx = -1;
   protected int daysDiagToDeathIdx = -1;
-  protected int oldDaysDiagToDeathIdx = -1;
   protected int patientDiedIdx = -1;
-  protected int diagToEventDaysIdx = -1;
 
   protected int fluoxetineCol = -1;
   protected int paroxetineCol = -1;
@@ -92,28 +88,20 @@ public class ItpcSheet implements Iterator {
   protected int amplichipidx = -1;
   protected int otherGenoIdx = -1;
 
-  protected int allele1idx = -1;
-  protected int allele2idx = -1;
-  protected int allele1LtdIdx = -1;
-  protected int allele2LtdIdx = -1;
   protected int allele1finalIdx = -1;
   protected int allele2finalIdx = -1;
-  protected int callCommentsIdx = -1;
   protected int genotypeIdx = -1;
   protected int genoMetabStatusIdx = -1;
   protected int weakIdx = -1;
   protected int potentIdx = -1;
   protected int metabStatusIdx = -1;
-  protected int includeIdx = -1;
   protected int includeCrit1Idx = -1;
   protected int includeCrit2Idx = -1;
+  protected int includeCrit3Idx = -1;
   protected int scoreIdx = -1;
   protected int exclude1Idx = -1;
   protected int exclude2Idx = -1;
   protected int exclude3Idx = -1;
-  protected int excludeSummaryIdx = -1;
-  protected int newFirstDiseaseEventIdx = -1;
-  protected int newHasDiseaseEventIdx = -1;
 
   protected int incAgeIdx = -1;
   protected int incNonmetaIdx = -1;
@@ -203,9 +191,9 @@ public class ItpcSheet implements Iterator {
       }
       if (header.contains("subject id")) {
         subjectId = idx;
-      } else if (header.contains("project site")) {
+      } else if (header.equalsIgnoreCase("project site")) {
         projectSiteIdx = idx;
-      } else if (header.contains("gender (existing column)")) {
+      } else if (header.contains("gender")) {
         genderIdx = idx;
       } else if (header.contains("age at diagnosis")) {
         ageIdx = idx;
@@ -217,7 +205,7 @@ public class ItpcSheet implements Iterator {
         tumorDimensionIdx = idx;
       } else if (header.contains("menopause status at diagnosis")) {
         menoStatusIdx = idx;
-      } else if (header.equals("estrogen receptor (existing column)")) {
+      } else if (header.equals("estrogen receptor")) {
         erStatusIdx = idx;
       } else if (header.contains("intended tamoxifen duration")) {
         durationIdx = idx;
@@ -233,9 +221,9 @@ public class ItpcSheet implements Iterator {
         priorSitesIdx = idx;
       } else if (header.contains("prior invasive breast cancer or dcis")) {
         priorDcisIdx = idx;
-      } else if (header.contains("chemotherapy (existing column)")) {
+      } else if (header.equalsIgnoreCase("chemotherapy")) {
         chemoIdx = idx;
-      } else if (header.contains("additional hormone or other treatment after breast surgery? (new column)")) {
+      } else if (header.contains("additional hormone or other treatment after breast surgery?")) {
         hormoneIdx = idx;
       } else if (header.contains("systemic therapy prior to surgery?")) {
         systemicTherIdx = idx;
@@ -245,7 +233,7 @@ public class ItpcSheet implements Iterator {
         timeBtwSurgTamoxIdx = idx;
       } else if (header.contains("first adjuvant endocrine therapy")) {
         firstAdjEndoTherIdx = idx;
-      } else if (header.contains("project notes (existing column)")) {
+      } else if (header.contains("project notes")) {
         projectNotesIdx = idx;
       } else if (header.equalsIgnoreCase("other genotyping")) {
         otherGenoIdx = idx;
@@ -294,11 +282,11 @@ public class ItpcSheet implements Iterator {
         cimetidineCol = idx;
       } else if (header.contains("sertraline")) {
         sertralineCol = idx;
-      } else if(header.equals("citalopram (existing column)")) {
+      } else if(header.equals("citalopram")) {
         citalopramCol = idx;
       } else if (header.contains("amplichip call")) {
         amplichipidx = idx;
-      } else if (header.equalsIgnoreCase("Additional cancer?  (new column)")) {
+      } else if (header.equalsIgnoreCase("Additional cancer?")) {
         additionalCancerIdx = idx;
       } else if (header.contains("time from diagnosis to ipsilateral local or regional recurrence")) {
         addCxIpsilateralIdx = idx;
@@ -310,88 +298,65 @@ public class ItpcSheet implements Iterator {
         addCxSecondInvasiveIdx = idx;
       } else if (header.contains("time from diagnosis to date of last disease evaluation")) {
         addCxLastEvalIdx = idx;
-      } else if (header.equalsIgnoreCase("First Disease Event (existing column)")) {
-        firstDiseaseEventIdx = idx;
-      } else if (header.contains("has the patient developed a local/regional/distant recurrence")) {
-        hasDiseaseEventIdx = idx;
-      } else if (header.equalsIgnoreCase("Time from diagnosis until death if the patient has died (new column)")) {
-        daysDiagToDeathIdx = idx; // RMW: column CT, number of days
-      } else if (header.contains("for patients who have died, time to death")) {
-        oldDaysDiagToDeathIdx = idx; // RMW: column CP, number of days
-      } else if (header.equalsIgnoreCase("Has the patient died? (new column)")) {
+      } else if (header.equalsIgnoreCase("Time from diagnosis until death if the patient has died")) {
+        daysDiagToDeathIdx = idx;
+      } else if (header.equalsIgnoreCase("Has the patient died?")) {
         patientDiedIdx = idx;
-      } else if (header.equalsIgnoreCase("Time from Primary Diagnosis to First Disease Event (existing column)")) {
-        diagToEventDaysIdx = idx;
       }
     }
 
     // new columns to add to the end of the template
     int startPgkbColsIdx = projectNotesIdx+1;
-    allele1idx = startPgkbColsIdx;
-    allele2idx = startPgkbColsIdx           + 1;
-    allele1LtdIdx = startPgkbColsIdx        + 2;
-    allele2LtdIdx = startPgkbColsIdx        + 3;
-    allele1finalIdx = startPgkbColsIdx      + 4;
-    allele2finalIdx = startPgkbColsIdx      + 5;
-    callCommentsIdx = startPgkbColsIdx      + 6;
-    genotypeIdx = startPgkbColsIdx          + 7;
-    genoMetabStatusIdx = startPgkbColsIdx   + 8;
-    weakIdx = startPgkbColsIdx              + 9;
-    potentIdx = startPgkbColsIdx            + 10;
-    scoreIdx = startPgkbColsIdx             + 11;
-    metabStatusIdx = startPgkbColsIdx       + 12;
+    allele1finalIdx = startPgkbColsIdx      + 0;
+    allele2finalIdx = startPgkbColsIdx      + 1;
+    genotypeIdx = startPgkbColsIdx          + 2;
+    genoMetabStatusIdx = startPgkbColsIdx   + 3;
+    weakIdx = startPgkbColsIdx              + 4;
+    potentIdx = startPgkbColsIdx            + 5;
+    scoreIdx = startPgkbColsIdx             + 6;
+    metabStatusIdx = startPgkbColsIdx       + 7;
 
-    incAgeIdx = startPgkbColsIdx            + 13;
-    incNonmetaIdx = startPgkbColsIdx        + 14;
-    incPriorHistIdx = startPgkbColsIdx      + 15;
-    incErPosIdx = startPgkbColsIdx          + 16;
-    incSysTherIdx = startPgkbColsIdx        + 17;
-    incAdjTamoxIdx = startPgkbColsIdx       + 18;
-    incDurationIdx = startPgkbColsIdx       + 19;
-    incTamoxDoseIdx = startPgkbColsIdx      + 20;
-    incChemoIdx = startPgkbColsIdx          + 21;
-    incHormoneIdx = startPgkbColsIdx        + 22;
-    incDnaCollectionIdx = startPgkbColsIdx  + 23;
-    incFollowupIdx = startPgkbColsIdx       + 24;
-    incGenoDataAvailIdx = startPgkbColsIdx  + 25;
-
-    includeIdx = startPgkbColsIdx           + 26;
-    includeCrit1Idx = startPgkbColsIdx      + 27;
-    includeCrit2Idx = startPgkbColsIdx      + 28;
+    incAgeIdx = startPgkbColsIdx            + 8;
+    incNonmetaIdx = startPgkbColsIdx        + 9;
+    incPriorHistIdx = startPgkbColsIdx      + 10;
+    incErPosIdx = startPgkbColsIdx          + 11;
+    incSysTherIdx = startPgkbColsIdx        + 12;
+    incAdjTamoxIdx = startPgkbColsIdx       + 13;
+    incDurationIdx = startPgkbColsIdx       + 14;
+    incTamoxDoseIdx = startPgkbColsIdx      + 15;
+    incChemoIdx = startPgkbColsIdx          + 16;
+    incHormoneIdx = startPgkbColsIdx        + 17;
+    incDnaCollectionIdx = startPgkbColsIdx  + 18;
+    incFollowupIdx = startPgkbColsIdx       + 19;
+    incGenoDataAvailIdx = startPgkbColsIdx  + 20;
     // skip for "other genotyping"
-    // skip for "Vera Excludes"
 
-    newFirstDiseaseEventIdx = startPgkbColsIdx + 31;
-    newHasDiseaseEventIdx = startPgkbColsIdx + 32;
-    exclude1Idx = startPgkbColsIdx          + 33;
-    exclude2Idx = startPgkbColsIdx          + 34;
-    exclude3Idx = startPgkbColsIdx          + 35;
-    excludeSummaryIdx = startPgkbColsIdx    + 36;
+    exclude1Idx = startPgkbColsIdx          + 22;
+    exclude2Idx = startPgkbColsIdx          + 23;
+    exclude3Idx = startPgkbColsIdx          + 24;
+
+    includeCrit1Idx = startPgkbColsIdx      + 25;
+    includeCrit2Idx = startPgkbColsIdx      + 26;
+    includeCrit3Idx = startPgkbColsIdx      + 27;
 
     writeCellTitles(headerRow);
-    styleCells(headerRow, startPgkbColsIdx, getTitleStyle());
+    styleCells(headerRow, startPgkbColsIdx, headerRow.getCell(0).getCellStyle());
 
     // write the description row
     Row descrRow = m_dataSheet.getRow(1);
     writeCellDescr(descrRow);
-    styleCells(descrRow, startPgkbColsIdx, getDescrStyle());
+    styleCells(descrRow, startPgkbColsIdx, descrRow.getCell(0).getCellStyle());
   }
 
   private void writeCellTitles(Row headerRow) {
-    ExcelUtils.writeCell(headerRow, allele1idx, "CYP2D6 Allele 1 (PharmGKB)");
-    ExcelUtils.writeCell(headerRow, allele2idx, "CYP2D6 Allele 2 (PharmGKB)");
-    ExcelUtils.writeCell(headerRow, allele1LtdIdx, "CYP2D6 Allele 1 (PharmGKB - Limited)");
-    ExcelUtils.writeCell(headerRow, allele2LtdIdx, "CYP2D6 Allele 2 (PharmGKB - Limited)");
     ExcelUtils.writeCell(headerRow, allele1finalIdx, "CYP2D6 Allele 1 (Final)");
     ExcelUtils.writeCell(headerRow, allele2finalIdx, "CYP2D6 Allele 2 (Final)");
-    ExcelUtils.writeCell(headerRow, callCommentsIdx, "Curator comments on calls");
-    ExcelUtils.writeCell(headerRow, scoreIdx, "Drug and CYP2D6 Genotype Score");
-
     ExcelUtils.writeCell(headerRow, genotypeIdx, "CYP2D6 Genotype (PharmGKB)");
     ExcelUtils.writeCell(headerRow, genoMetabStatusIdx, "Metabolizer Status based on Genotypes only (PharmGKB)");
     ExcelUtils.writeCell(headerRow, weakIdx, "Weak Drug (PharmGKB)");
     ExcelUtils.writeCell(headerRow, potentIdx, "Potent Drug (PharmGKB)");
-    ExcelUtils.writeCell(headerRow, metabStatusIdx, "Metabolizer Status (PharmGKB)");
+    ExcelUtils.writeCell(headerRow, scoreIdx, "Drug and CYP2D6 Genotype Score");
+    ExcelUtils.writeCell(headerRow, metabStatusIdx, "Metabolizer Status based on Drug and CYP2D6 Genotypes (PharmGKB)");
 
     ExcelUtils.writeCell(headerRow, incAgeIdx, "Inc 1\nPostmenopausal");
     ExcelUtils.writeCell(headerRow, incNonmetaIdx, "Inc 2a\nNon-metastatic invasive cancer");
@@ -407,21 +372,21 @@ public class ItpcSheet implements Iterator {
     ExcelUtils.writeCell(headerRow, incFollowupIdx, "Inc 8\nAdequate follow-up");
     ExcelUtils.writeCell(headerRow, incGenoDataAvailIdx, "Inc 9\nCYP2D6 *4 genotype data available for assessment");
 
-    ExcelUtils.writeCell(headerRow, includeIdx, "Include\nbased on all Inc columns");
-    ExcelUtils.writeCell(headerRow, includeCrit1Idx, "Include\nCriterion 1");
-    ExcelUtils.writeCell(headerRow, includeCrit2Idx, "Include\nCriterion 2");
-    ExcelUtils.writeCell(headerRow, newFirstDiseaseEventIdx, "First Disease Event from new columns");
-    ExcelUtils.writeCell(headerRow, newHasDiseaseEventIdx, "Has Disease Event");
     ExcelUtils.writeCell(headerRow, exclude1Idx, "Exclusion 1: time of event unknown");
     ExcelUtils.writeCell(headerRow, exclude2Idx, "Exclusion 2: no followup data");
     ExcelUtils.writeCell(headerRow, exclude3Idx, "Exclusion 3: inconsistent death data");
-    ExcelUtils.writeCell(headerRow, excludeSummaryIdx, "Exclusion Summary");
+
+    ExcelUtils.writeCell(headerRow, includeCrit1Idx, "Criterion 1");
+    ExcelUtils.writeCell(headerRow, includeCrit2Idx, "Criterion 2");
+    ExcelUtils.writeCell(headerRow, includeCrit3Idx, "Criterion 3");
   }
 
   private void writeCellDescr(Row descrRow) {
     ExcelUtils.writeCell(descrRow, genoMetabStatusIdx, " Extensive, Intermediate, Poor, or Unknown");
-    ExcelUtils.writeCell(descrRow, includeCrit1Idx, "based on Inc 1, 2a, 3, 4b, 4c, 5, 6, 8, 9");
-    ExcelUtils.writeCell(descrRow, includeCrit2Idx, "based on Inc 2a, 3, 4c, 5, 6, 9");
+    ExcelUtils.writeCell(descrRow, metabStatusIdx, " Extensive, Intermediate, Poor, or Unknown");
+    ExcelUtils.writeCell(descrRow, includeCrit1Idx, "based on Inc 1, 2a, 3, 4b, 4c, 5, 6, 8, 9\nnot otherwise excluded");
+    ExcelUtils.writeCell(descrRow, includeCrit2Idx, "based on Inc 2a, 3, 4c, 5, 6, 9\nnot otherwise excluded");
+    ExcelUtils.writeCell(descrRow, includeCrit3Idx, "all subjects\nnot otherwise excluded");
   }
 
   private PoiWorksheetIterator getSampleIterator() {
@@ -480,12 +445,8 @@ public class ItpcSheet implements Iterator {
     subject.setAddCxContralateral(fields.get(addCxContralateralIdx));
     subject.setAddCxSecondInvasive(fields.get(addCxSecondInvasiveIdx));
     subject.setAddCxLastEval(fields.get(addCxLastEvalIdx));
-    subject.setFirstDiseaseEvent(fields.get(firstDiseaseEventIdx));
     subject.setDaysDiagtoDeath(fields.get(daysDiagToDeathIdx));
-    subject.setOldDaysDiagToDeath(fields.get(oldDaysDiagToDeathIdx));
     subject.setPatientDied(fields.get(patientDiedIdx));
-    subject.setHasDiseaseEvent(fields.get(hasDiseaseEventIdx));
-    subject.setDiagToEventDays(fields.get(diagToEventDaysIdx));
 
     if (!StringUtils.isBlank(fields.get(genoSourceIdx1)) && !fields.get(genoSourceIdx1).equals("NA")) {
       subject.setGenoSource(fields.get(genoSourceIdx1));
@@ -519,8 +480,6 @@ public class ItpcSheet implements Iterator {
     if (fields.size()>otherGenoIdx && !StringUtils.isBlank(fields.get(otherGenoIdx))) {
       subject.setGenotypeAmplichip(fields.get(otherGenoIdx));
     }
-
-    subject.setCuratorComment(fields.get(callCommentsIdx));
 
     return subject;
   }
@@ -557,13 +516,8 @@ public class ItpcSheet implements Iterator {
     CellStyle highlight = getHighlightStyle();
     subject.calculateGenotypeLimited();
 
-    ExcelUtils.writeCell(row, allele1idx, subject.getGenotypePgkb().get(0), highlight);
-    ExcelUtils.writeCell(row, allele2idx, subject.getGenotypePgkb().get(1), highlight);
-    ExcelUtils.writeCell(row, allele1LtdIdx, subject.getGenotypeLimited().get(0), highlight);
-    ExcelUtils.writeCell(row, allele2LtdIdx, subject.getGenotypeLimited().get(1), highlight);
     ExcelUtils.writeCell(row, allele1finalIdx, subject.getGenotypeFinal().get(0), highlight);
     ExcelUtils.writeCell(row, allele2finalIdx, subject.getGenotypeFinal().get(1), highlight);
-    ExcelUtils.writeCell(row, callCommentsIdx, subject.getCuratorComment(), highlight);
     ExcelUtils.writeCell(row, genotypeIdx, subject.getGenotypeFinal().getMetabolizerStatus(), highlight);
     ExcelUtils.writeCell(row, genoMetabStatusIdx, subject.getGenoMetabolizerGroup(), highlight);
     ExcelUtils.writeCell(row, weakIdx, subject.getWeak().toString(), highlight);
@@ -575,6 +529,7 @@ public class ItpcSheet implements Iterator {
       ExcelUtils.writeCell(row, scoreIdx, subject.getScore(), highlight);
     }
     ExcelUtils.writeCell(row, metabStatusIdx, subject.getMetabolizerGroup(), highlight);
+
     ExcelUtils.writeCell(row, incAgeIdx, subject.passInclusion1().toString(), highlight);
     ExcelUtils.writeCell(row, incNonmetaIdx, subject.passInclusion2a().toString(), highlight);
     ExcelUtils.writeCell(row, incPriorHistIdx, subject.passInclusion2b().toString(), highlight);
@@ -588,15 +543,14 @@ public class ItpcSheet implements Iterator {
     ExcelUtils.writeCell(row, incDnaCollectionIdx, subject.passInclusion7().toString(), highlight);
     ExcelUtils.writeCell(row, incFollowupIdx, subject.passInclusion8().toString(), highlight);
     ExcelUtils.writeCell(row, incGenoDataAvailIdx, subject.passInclusion9().toString(), highlight);
-    ExcelUtils.writeCell(row, includeIdx, subject.include().toString(), highlight);
-    ExcelUtils.writeCell(row, includeCrit1Idx, subject.includeCrit1().toString(), highlight);
-    ExcelUtils.writeCell(row, includeCrit2Idx, subject.includeCrit2().toString(), highlight);
-    ExcelUtils.writeCell(row, newFirstDiseaseEventIdx, subject.getFirstDiseaseEventCalc(), highlight);
-    ExcelUtils.writeCell(row, newHasDiseaseEventIdx, subject.hasAdditionalDiseaseEvent().toString(), highlight);
+
     ExcelUtils.writeCell(row, exclude1Idx, subject.exclude1().toString(), highlight);
     ExcelUtils.writeCell(row, exclude2Idx, subject.exclude2().toString(), highlight);
     ExcelUtils.writeCell(row, exclude3Idx, subject.exclude3().toString(), highlight);
-    ExcelUtils.writeCell(row, excludeSummaryIdx, subject.excludeSummary().toString(), highlight);
+
+    ExcelUtils.writeCell(row, includeCrit1Idx, subject.includeCrit1().toString(), highlight);
+    ExcelUtils.writeCell(row, includeCrit2Idx, subject.includeCrit2().toString(), highlight);
+    ExcelUtils.writeCell(row, includeCrit3Idx, subject.includeCrit3().toString(), highlight);
   }
 
   public File saveOutput() throws IOException {
@@ -612,47 +566,6 @@ public class ItpcSheet implements Iterator {
 
   public Workbook getWorkbook() {
     return m_dataSheet.getWorkbook();
-  }
-
-  public CellStyle getTitleStyle() {
-    if (styleTitle == null) {
-      styleTitle = getWorkbook().createCellStyle();
-
-      styleTitle.setBorderBottom(CellStyle.BORDER_THIN);
-      styleTitle.setBottomBorderColor(IndexedColors.BLACK.getIndex());
-      styleTitle.setBorderLeft(CellStyle.BORDER_THIN);
-      styleTitle.setLeftBorderColor(IndexedColors.BLACK.getIndex());
-      styleTitle.setBorderTop(CellStyle.BORDER_THIN);
-      styleTitle.setTopBorderColor(IndexedColors.BLACK.getIndex());
-      styleTitle.setBorderRight(CellStyle.BORDER_THIN);
-      styleTitle.setRightBorderColor(IndexedColors.BLACK.getIndex());
-
-      styleTitle.setAlignment(CellStyle.ALIGN_CENTER);
-      styleTitle.setWrapText(true);
-    }
-
-    return styleTitle;
-  }
-
-  public CellStyle getDescrStyle() {
-    if (styleDescr == null) {
-      styleDescr = getWorkbook().createCellStyle();
-
-      styleDescr.setBorderBottom(CellStyle.BORDER_THIN);
-      styleDescr.setBottomBorderColor(IndexedColors.BLACK.getIndex());
-      styleDescr.setBorderLeft(CellStyle.BORDER_THIN);
-      styleDescr.setLeftBorderColor(IndexedColors.BLACK.getIndex());
-      styleDescr.setBorderTop(CellStyle.BORDER_THIN);
-      styleDescr.setTopBorderColor(IndexedColors.BLACK.getIndex());
-      styleDescr.setBorderRight(CellStyle.BORDER_THIN);
-      styleDescr.setRightBorderColor(IndexedColors.BLACK.getIndex());
-
-      styleDescr.setAlignment(CellStyle.ALIGN_CENTER);
-      styleDescr.setWrapText(true);
-      styleDescr.setVerticalAlignment(CellStyle.VERTICAL_CENTER);
-    }
-
-    return styleDescr;
   }
 
   public void doHighlighting() {

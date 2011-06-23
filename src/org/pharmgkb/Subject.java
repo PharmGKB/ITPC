@@ -40,7 +40,6 @@ public class Subject {
   private String m_timeBtwSurgTamox = null;
   private String m_firstAdjEndoTher = null;
   private String m_genoSource = null;
-  private String m_curatorComment = null;
   private String m_tumorDimension = null;
   private Deletion m_deletion = Deletion.Unknown;
   private Value m_additionalCancer = null;
@@ -49,12 +48,8 @@ public class Subject {
   private String m_addCxContralateral = null;
   private String m_addCxSecondInvasive = null;
   private String m_addCxLastEval = null;
-  private String m_firstDiseaseEvent = null;
-  private Value m_hasDiseaseEvent = null;
   private String m_daysDiagtoDeath = null;
-  private String m_oldDaysDiagToDeath = null;
   private Value m_patientDied = null;
-  private String m_diagToEventDays = null;
 
   private Value m_hasParoxetine = Value.Unknown;
   private Value m_hasFluoxetine = Value.Unknown;
@@ -942,7 +937,8 @@ public class Subject {
         && passInclusion5() == Value.Yes
         && passInclusion6() == Value.Yes
         && passInclusion8() == Value.Yes
-        && passInclusion9() == Value.Yes) {
+        && passInclusion9() == Value.Yes
+        && excludeSummary()==Value.No) {
       return Value.Yes;
     }
     else {
@@ -956,7 +952,17 @@ public class Subject {
         && passInclusion4c() == Value.Yes
         && passInclusion5() == Value.Yes
         && passInclusion6() == Value.Yes
-        && passInclusion9() == Value.Yes) {
+        && passInclusion9() == Value.Yes
+        && excludeSummary()==Value.No) {
+      return Value.Yes;
+    }
+    else {
+      return Value.No;
+    }
+  }
+
+  public Value includeCrit3() {
+    if (excludeSummary()==Value.No) {
       return Value.Yes;
     }
     else {
@@ -1205,14 +1211,6 @@ public class Subject {
     m_followup = followup;
   }
 
-  public String getCuratorComment() {
-    return m_curatorComment;
-  }
-
-  public void setCuratorComment(String curatorComment) {
-    m_curatorComment = curatorComment;
-  }
-
   public Genotype getGenotypeLimited() {
     return m_genotypeLimited;
   }
@@ -1315,14 +1313,6 @@ public class Subject {
     m_addCxLastEval = addCxLastEval;
   }
 
-  public String getFirstDiseaseEvent() {
-    return m_firstDiseaseEvent;
-  }
-
-  public void setFirstDiseaseEvent(String firstDiseaseEvent) {
-    m_firstDiseaseEvent = firstDiseaseEvent;
-  }
-
   public String getFirstDiseaseEventCalc() {
     List<String> eventCodes = Lists.newArrayList();
     if (!(ItpcUtils.isBlank(getAddCxIpsilateral()) || getAddCxIpsilateral().equals("0"))) {
@@ -1357,7 +1347,8 @@ public class Subject {
     }
   }
 
-  public String getDiagToEventDaysCalc() { // RMW: calculated column BU
+  // calculated column
+  public String getDiagToEventDaysCalc() {
     if (getAdditionalCancer()==Value.Yes) {
       if (!ItpcUtils.isBlank(getAddCxContralateral())) {
         return getAddCxContralateral();
@@ -1408,45 +1399,6 @@ public class Subject {
     else {
       m_patientDied = Value.Unknown;
     }
-  }
-
-  public Value getHasDiseaseEvent() {
-    return m_hasDiseaseEvent;
-  }
-
-  public void setHasDiseaseEvent(Value hasDiseaseEvent) {
-    m_hasDiseaseEvent = hasDiseaseEvent;
-  }
-
-  public void setHasDiseaseEvent(String hasDiseaseEvent) {
-    if (hasDiseaseEvent == null) {
-      m_hasDiseaseEvent = Value.Unknown;
-    }
-    else if (hasDiseaseEvent.equals("0")) {
-      m_hasDiseaseEvent = Value.No;
-    }
-    else if (hasDiseaseEvent.equals("1")) {
-      m_hasDiseaseEvent = Value.Yes;
-    }
-    else {
-      m_hasDiseaseEvent = Value.Unknown;
-    }
-  }
-
-  public String getDiagToEventDays() {
-    return m_diagToEventDays;
-  }
-
-  public void setDiagToEventDays(String diagToEventDays) {
-    m_diagToEventDays = diagToEventDays;
-  }
-
-  public String getOldDaysDiagToDeath() {
-    return m_oldDaysDiagToDeath;
-  }
-
-  public void setOldDaysDiagToDeath(String oldDaysDiagToDeath) {
-    m_oldDaysDiagToDeath = oldDaysDiagToDeath;
   }
 
   enum Deletion {Unknown, None, Hetero, Homo}
