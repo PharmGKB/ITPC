@@ -66,4 +66,47 @@ public class ItpcUtils {
 
     return alleleClean;
   }
+
+  /**
+   * Covert a Value enum to be displayed in an inclusion field
+   * @param value a Value enum
+   * @return a String of either "Include" or "Exclude" or "Unknown"
+   */
+  public static String valueToInclusion(Value value) {
+    if (value == Value.Yes) {
+      return "Include";
+    }
+    else if (value == Value.No) {
+      return "Exclude";
+    }
+    else {
+      return "Unknown";
+    }
+  }
+
+  /**
+   * Covert a Value enum to be displayed in an exclusion field
+   * @param value a Value enum
+   * @return a String of either "Include" or "Exclude" or "Unknown"
+   */
+  public static String valueToExclusion(Value value) {
+    if (value == Value.Yes) {
+      return "Exclude";
+    }
+    else if (value == Value.No) {
+      return "Include";
+    }
+    else {
+      return "Unknown";
+    }
+  }
+
+  public static String floatDisplay(Float number) {
+    if (number == null) {
+      return Value.Unknown.toString();
+    }
+    else {
+      return number.toString();
+    }
+  }
 }

@@ -32,7 +32,14 @@ public class InclusionSummary extends AbstractSummary {
   private static final int inc7 = 10;
   private static final int inc8 = 11;
   private static final int inc9 = 12;
-  private static final int incFinal = 13;
+
+  private static final int exc1 = 0;
+  private static final int exc2 = 1;
+  private static final int exc3 = 2;
+
+  private static final int crit1 = 0;
+  private static final int crit2 = 1;
+  private static final int crit3 = 2;
 
   private static final Map<Integer,String> inclusions = Maps.newHashMap();
   static {
@@ -49,31 +56,30 @@ public class InclusionSummary extends AbstractSummary {
     inclusions.put(10, "Inc. 7");
     inclusions.put(11, "Inc. 8");
     inclusions.put(12, "Inc. 9");
-    inclusions.put(13, "Final Inclusion");
   }
 
   private static final Map<Integer,String> exclusions = Maps.newHashMap();
   static {
     exclusions.put(0, "Excl. 1");
-    exclusions.put(1, "Excl. 2a");
-    exclusions.put(2, "Excl. 2b");
-    exclusions.put(3, "Excl. 3");
-    exclusions.put(4, "Excl. 4");
-    exclusions.put(5, "Excl. 4a");
-    exclusions.put(6, "Excl. 4b");
-    exclusions.put(7, "Excl. 4c");
-    exclusions.put(8, "Excl. 5");
-    exclusions.put(9, "Excl. 6");
-    exclusions.put(10, "Excl. 7");
-    exclusions.put(11, "Excl. 8");
-    exclusions.put(12, "Excl. 9");
-    exclusions.put(13, "Final Exclusion");
+    exclusions.put(1, "Excl. 2");
+    exclusions.put(2, "Excl. 3");
+  }
+
+  private static final Map<Integer,String> criteriaLabels = Maps.newHashMap();
+  static {
+    criteriaLabels.put(0, "Criteria 1");
+    criteriaLabels.put(1, "Criteria 2");
+    criteriaLabels.put(2, "Criteria 3");
   }
 
   private List<Map<Integer,Map<Value,Integer>>> projectMap = null;
+  private List<Map<Integer,Map<Value,Integer>>> projectExcludeMap = null;
+  private List<Map<Integer,Map<Value,Integer>>> projectCritMap = null;
 
   public InclusionSummary() {
     projectMap = Lists.newArrayList();
+    projectExcludeMap = Lists.newArrayList();
+    projectCritMap = Lists.newArrayList();
 
     for (int i=0; i< ItpcUtils.SITE_COUNT; i++) {
       Map<Integer,Map<Value,Integer>> inclusionMap = Maps.newHashMap();
@@ -86,6 +92,28 @@ public class InclusionSummary extends AbstractSummary {
         valueMap.put(Value.Yes, 0);
         valueMap.put(Value.No, 0);
         valueMap.put(Value.Unknown, 0);
+      }
+
+      Map<Integer,Map<Value,Integer>> exclusionMap = Maps.newHashMap();
+      projectExcludeMap.add(exclusionMap);
+
+      for (int j=0; j<exclusions.size(); j++) {
+        Map<Value,Integer> valueMap = Maps.newHashMap();
+        exclusionMap.put(j, valueMap);
+
+        valueMap.put(Value.Yes,0);
+        valueMap.put(Value.No,0);
+      }
+
+      Map<Integer,Map<Value,Integer>> criteriaMap = Maps.newHashMap();
+      projectCritMap.add(exclusionMap);
+
+      for (int j=0; j<criteriaLabels.size(); j++) {
+        Map<Value,Integer> valueMap = Maps.newHashMap();
+        criteriaMap.put(j, valueMap);
+
+        valueMap.put(Value.Yes,0);
+        valueMap.put(Value.No,0);
       }
     }
   }
@@ -112,7 +140,14 @@ public class InclusionSummary extends AbstractSummary {
     addSubjectInclusion(site-1, inc7, subject.passInclusion7());
     addSubjectInclusion(site-1, inc8, subject.passInclusion8());
     addSubjectInclusion(site-1, inc9, subject.passInclusion9());
-    addSubjectInclusion(site-1, incFinal, subject.include());
+
+    addSubjectExclusion(site - 1, exc1, subject.exclude1());
+    addSubjectExclusion(site - 1, exc2, subject.exclude2());
+    addSubjectExclusion(site - 1, exc3, subject.exclude3());
+
+    addSubjectCriterium(site - 1, crit1, subject.includeCrit1());
+    addSubjectCriterium(site - 1, crit2, subject.includeCrit2());
+    addSubjectCriterium(site - 1, crit3, subject.includeCrit3());
   }
 
   private void addSubjectInclusion(int site, int criteria, Value value) {
@@ -128,28 +163,48 @@ public class InclusionSummary extends AbstractSummary {
     valueMap.put(useValue, valueMap.get(useValue)+1);
   }
 
+  private void addSubjectExclusion(int site, int criteria, Value value) {
+    Map<Integer, Map<Value,Integer>> exclusionMap = projectExcludeMap.get(site);
+    Map<Value, Integer> valueMap = exclusionMap.get(criteria);
+    valueMap.put(value, valueMap.get(value)+1);
+  }
+
+  private void addSubjectCriterium(int site, int criteria, Value value) {
+    Map<Integer, Map<Value,Integer>> criteriumMap = projectExcludeMap.get(site);
+    Map<Value, Integer> valueMap = criteriumMap.get(criteria);
+    valueMap.put(value, valueMap.get(value)+1);
+  }
+
   @Override
   public void writeToWorkbook(Workbook wb) {
     int currentRow = 0;
     Sheet sheet = getSheet(wb);
 
-    currentRow = writeTable(sheet, currentRow, Value.Yes);
+    currentRow = writeInclusionTable(sheet, currentRow, Value.Yes);
     currentRow += 3;
-    writeTable(sheet, currentRow, Value.No);
+    currentRow = writeInclusionTable(sheet, currentRow, Value.No);
+    currentRow += 3;
+    currentRow = writeExclusionTable(sheet, currentRow, Value.Yes);
+    currentRow += 3;
+    currentRow = writeExclusionTable(sheet, currentRow, Value.No);
+    currentRow += 3;
+    currentRow = writeCriteriaTable(sheet, currentRow, Value.Yes);
+    currentRow += 3;
+    writeCriteriaTable(sheet, currentRow, Value.No);
   }
 
-  private int writeTable(Sheet sheet, int currentRow, Value value) {
+  private int writeInclusionTable(Sheet sheet, int currentRow, Value value) {
     // initialize the inclusion totals to 0
     int totalSubjects = 0;
-    Map<Integer,String> useHeaders = value == Value.Yes ? inclusions : exclusions;
-    
+    Map<Integer,String> useHeaders = inclusions;
+
     Map<Integer, Integer> inclusionTotals = Maps.newHashMap();
     for (int i=0; i<useHeaders.size(); i++) {
       inclusionTotals.put(i,0);
     }
 
     Row title = sheet.createRow(currentRow++);
-    title.createCell(0).setCellValue("Inclusion Criteria Summary (criteria passed: "+value+")");
+    title.createCell(0).setCellValue("Inclusion Summary (criteria passed: "+ItpcUtils.valueToInclusion(value)+")");
 
     Row headerRow = sheet.createRow(currentRow++);
     headerRow.createCell(0).setCellValue("Site ID");
@@ -182,4 +237,84 @@ public class InclusionSummary extends AbstractSummary {
 
     return currentRow;
   }
+
+  private int writeExclusionTable(Sheet sheet, int currentRow, Value value) {
+    int totalSubjects = 0;
+
+    Map<Integer,Integer> exclusionTotals = Maps.newHashMap();
+    for (Integer i : exclusions.keySet()) {
+      exclusionTotals.put(i, 0);
+    }
+
+    Row titleRow = sheet.createRow(currentRow++);
+    titleRow.createCell(0).setCellValue("Exclusion Summary ("+ItpcUtils.valueToExclusion(value)+")");
+
+    Row headerRow = sheet.createRow(currentRow++);
+    headerRow.createCell(0).setCellValue("Site ID");
+    for (Integer i : exclusions.keySet()) {
+      headerRow.createCell(i+1).setCellValue(exclusions.get(i));
+    }
+    headerRow.createCell(exclusions.size()+1).setCellValue("Total Subjects");
+
+    for (int i=0; i<ItpcUtils.SITE_COUNT; i++) {
+      Row siteRow = sheet.createRow(currentRow++);
+      siteRow.createCell(0).setCellValue(i+1);
+
+      for (Integer j : exclusions.keySet()) {
+        siteRow.createCell(j+1).setCellValue(projectExcludeMap.get(i).get(j).get(value));
+        exclusionTotals.put(j, exclusionTotals.get(j)+projectExcludeMap.get(i).get(j).get(value));
+      }
+
+      Integer siteSubjectTotal = projectExcludeMap.get(i).get(0).get(Value.Yes) + projectExcludeMap.get(i).get(0).get(Value.No);
+      siteRow.createCell(exclusions.size()+1).setCellValue(siteSubjectTotal);
+      totalSubjects += siteSubjectTotal;
+    }
+
+    Row totalsRow = sheet.createRow(currentRow++);
+    totalsRow.createCell(0).setCellValue("Total");
+    for (int i=0; i<exclusions.size(); i++) {
+      totalsRow.createCell(i+1).setCellValue(exclusionTotals.get(i));
+    }
+    totalsRow.createCell(exclusions.size()+1).setCellValue(totalSubjects);
+
+    return currentRow;
+  }
+
+  
+  private int writeCriteriaTable(Sheet sheet, int currentRow, Value value) {
+
+    Map<Integer,Integer> criteriaTotals = Maps.newHashMap();
+    for (Integer i : criteriaLabels.keySet()) {
+      criteriaTotals.put(i, 0);
+    }
+
+    Row titleRow = sheet.createRow(currentRow++);
+    titleRow.createCell(0).setCellValue("Criteria ("+ItpcUtils.valueToInclusion(value)+")");
+
+    Row headerRow = sheet.createRow(currentRow++);
+    headerRow.createCell(0).setCellValue("Site ID");
+    for (Integer i : criteriaLabels.keySet()) {
+      headerRow.createCell(i+1).setCellValue(criteriaLabels.get(i));
+    }
+
+    for (int i=0; i<ItpcUtils.SITE_COUNT; i++) {
+      Row siteRow = sheet.createRow(currentRow++);
+      siteRow.createCell(0).setCellValue(i+1);
+
+      for (Integer j : criteriaLabels.keySet()) {
+        siteRow.createCell(j+1).setCellValue(projectCritMap.get(i).get(j).get(value));
+        criteriaTotals.put(j, criteriaTotals.get(j)+projectCritMap.get(i).get(j).get(value));
+      }
+    }
+
+    Row totalsRow = sheet.createRow(currentRow++);
+    totalsRow.createCell(0).setCellValue("Total");
+    for (int i=0; i<criteriaLabels.size(); i++) {
+      totalsRow.createCell(i + 1).setCellValue(criteriaTotals.get(i));
+    }
+
+    return currentRow;
+  }
+
+
 }

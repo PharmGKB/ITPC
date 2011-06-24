@@ -769,14 +769,11 @@ public class Subject {
   }
 
   public Value passInclusion2a() {
-    if (this.getMetastatic() != null && this.getMetastatic().equals("0") && isValidTumorDimension()) {
+    if (StringUtils.equals(getMetastatic(),"0") && isValidTumorDimension()) {
       return Value.Yes;
     }
-    else if ((this.getMetastatic() != null && this.getMetastatic().equals("1")) || !isValidTumorDimension()) {
-      return Value.No;
-    }
     else {
-      return Value.Unknown;
+      return Value.No;
     }
   }
 

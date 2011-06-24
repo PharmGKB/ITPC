@@ -29,7 +29,6 @@ public class ItpcSheet implements Iterator {
   private Sheet m_dataSheet = null;
   private int m_rowIndex = -1;
 
-  private CellStyle styleTitle = null, styleDescr = null;
   private CellStyle styleHighlight = null;
 
   protected int subjectId = -1;
@@ -102,6 +101,8 @@ public class ItpcSheet implements Iterator {
   protected int exclude1Idx = -1;
   protected int exclude2Idx = -1;
   protected int exclude3Idx = -1;
+  protected int newFirstDiseaseEventIdx = -1;
+  protected int newHasDiseaseEventIdx = -1;
 
   protected int incAgeIdx = -1;
   protected int incNonmetaIdx = -1;
@@ -199,7 +200,7 @@ public class ItpcSheet implements Iterator {
         ageIdx = idx;
       } else if (header.contains("race") && header.contains("omb")) {
         raceIdx = idx;
-      } else if (header.contains("metastatic disease")) {
+      } else if (header.equalsIgnoreCase("Metastatic Disease at Primary Disease")) {
         metastaticIdx = idx;
       } else if (header.contains("maximum dimension of tumor")) {
         tumorDimensionIdx = idx;
@@ -235,7 +236,7 @@ public class ItpcSheet implements Iterator {
         firstAdjEndoTherIdx = idx;
       } else if (header.contains("project notes")) {
         projectNotesIdx = idx;
-      } else if (header.equalsIgnoreCase("other genotyping")) {
+      } else if (header.equalsIgnoreCase("other cyp2d6 genotyping")) {
         otherGenoIdx = idx;
       } else if (header.contains("rs4986774")) {
         if (!header.contains("source")) {
@@ -307,37 +308,39 @@ public class ItpcSheet implements Iterator {
 
     // new columns to add to the end of the template
     int startPgkbColsIdx = projectNotesIdx+1;
-    allele1finalIdx = startPgkbColsIdx      + 0;
-    allele2finalIdx = startPgkbColsIdx      + 1;
-    genotypeIdx = startPgkbColsIdx          + 2;
-    genoMetabStatusIdx = startPgkbColsIdx   + 3;
-    weakIdx = startPgkbColsIdx              + 4;
-    potentIdx = startPgkbColsIdx            + 5;
-    scoreIdx = startPgkbColsIdx             + 6;
-    metabStatusIdx = startPgkbColsIdx       + 7;
 
-    incAgeIdx = startPgkbColsIdx            + 8;
-    incNonmetaIdx = startPgkbColsIdx        + 9;
-    incPriorHistIdx = startPgkbColsIdx      + 10;
-    incErPosIdx = startPgkbColsIdx          + 11;
-    incSysTherIdx = startPgkbColsIdx        + 12;
-    incAdjTamoxIdx = startPgkbColsIdx       + 13;
-    incDurationIdx = startPgkbColsIdx       + 14;
-    incTamoxDoseIdx = startPgkbColsIdx      + 15;
-    incChemoIdx = startPgkbColsIdx          + 16;
-    incHormoneIdx = startPgkbColsIdx        + 17;
-    incDnaCollectionIdx = startPgkbColsIdx  + 18;
-    incFollowupIdx = startPgkbColsIdx       + 19;
-    incGenoDataAvailIdx = startPgkbColsIdx  + 20;
-    // skip for "other genotyping"
+    newFirstDiseaseEventIdx = startPgkbColsIdx;
+    newHasDiseaseEventIdx = startPgkbColsIdx+ 1;
+    allele1finalIdx = startPgkbColsIdx      + 2;
+    allele2finalIdx = startPgkbColsIdx      + 3;
+    genotypeIdx = startPgkbColsIdx          + 4;
+    genoMetabStatusIdx = startPgkbColsIdx   + 5;
+    weakIdx = startPgkbColsIdx              + 6;
+    potentIdx = startPgkbColsIdx            + 7;
+    scoreIdx = startPgkbColsIdx             + 8;
+    metabStatusIdx = startPgkbColsIdx       + 9;
 
-    exclude1Idx = startPgkbColsIdx          + 22;
-    exclude2Idx = startPgkbColsIdx          + 23;
-    exclude3Idx = startPgkbColsIdx          + 24;
+    incAgeIdx = startPgkbColsIdx            + 10;
+    incNonmetaIdx = startPgkbColsIdx        + 11;
+    incPriorHistIdx = startPgkbColsIdx      + 12;
+    incErPosIdx = startPgkbColsIdx          + 13;
+    incSysTherIdx = startPgkbColsIdx        + 14;
+    incAdjTamoxIdx = startPgkbColsIdx       + 15;
+    incDurationIdx = startPgkbColsIdx       + 16;
+    incTamoxDoseIdx = startPgkbColsIdx      + 17;
+    incChemoIdx = startPgkbColsIdx          + 18;
+    incHormoneIdx = startPgkbColsIdx        + 19;
+    incDnaCollectionIdx = startPgkbColsIdx  + 20;
+    incFollowupIdx = startPgkbColsIdx       + 21;
+    incGenoDataAvailIdx = startPgkbColsIdx  + 22;
 
-    includeCrit1Idx = startPgkbColsIdx      + 25;
-    includeCrit2Idx = startPgkbColsIdx      + 26;
-    includeCrit3Idx = startPgkbColsIdx      + 27;
+    exclude1Idx = startPgkbColsIdx          + 23;
+    exclude2Idx = startPgkbColsIdx          + 24;
+    exclude3Idx = startPgkbColsIdx          + 25;
+
+    includeCrit1Idx = startPgkbColsIdx      + 26;
+    includeCrit2Idx = startPgkbColsIdx      + 27;
+    includeCrit3Idx = startPgkbColsIdx      + 28;
 
     writeCellTitles(headerRow);
     styleCells(headerRow, startPgkbColsIdx, headerRow.getCell(0).getCellStyle());
@@ -349,6 +352,9 @@ public class ItpcSheet implements Iterator {
   }
 
   private void writeCellTitles(Row headerRow) {
+    ExcelUtils.writeCell(headerRow, newFirstDiseaseEventIdx, "First Disease Event (calculated)");
+    ExcelUtils.writeCell(headerRow, newHasDiseaseEventIdx, "Has Disease Event (calculated)");
+    
     ExcelUtils.writeCell(headerRow, allele1finalIdx, "CYP2D6 Allele 1 (Final)");
     ExcelUtils.writeCell(headerRow, allele2finalIdx, "CYP2D6 Allele 2 (Final)");
     ExcelUtils.writeCell(headerRow, genotypeIdx, "CYP2D6 Genotype (PharmGKB)");
@@ -382,8 +388,36 @@ public class ItpcSheet implements Iterator {
   }
 
   private void writeCellDescr(Row descrRow) {
-    ExcelUtils.writeCell(descrRow, genoMetabStatusIdx, " Extensive, Intermediate, Poor, or Unknown");
-    ExcelUtils.writeCell(descrRow, metabStatusIdx, " Extensive, Intermediate, Poor, or Unknown");
+    ExcelUtils.writeCell(descrRow, newFirstDiseaseEventIdx, "none = 0, local/regional recurrence = 1,  distant recurrence = 2,  contralateral breast cancer = 3, other second non-breast primary = 4, death without recurrence, contralateral breast cancer or second non-breast primary cancer = 5 or not known = NA");
+    ExcelUtils.writeCell(descrRow, newHasDiseaseEventIdx, "");
+
+    ExcelUtils.writeCell(descrRow, allele1finalIdx, "");
+    ExcelUtils.writeCell(descrRow, allele2finalIdx, "");
+    ExcelUtils.writeCell(descrRow, genotypeIdx, "");
+    ExcelUtils.writeCell(descrRow, genoMetabStatusIdx, "Extensive (EM/EM, EM/IM); Intermediate (EM/PM, IM/IM, IM/PM); Poor (PM/PM); anything else is categorgized as unknown");
+    ExcelUtils.writeCell(descrRow, weakIdx, "");
+    ExcelUtils.writeCell(descrRow, potentIdx, "");
+    ExcelUtils.writeCell(descrRow, scoreIdx, "");
+    ExcelUtils.writeCell(descrRow, metabStatusIdx, "Extensive, Intermediate, Poor, or Unknown");
+
+    ExcelUtils.writeCell(descrRow, incAgeIdx, "");
+    ExcelUtils.writeCell(descrRow, incNonmetaIdx, "");
+    ExcelUtils.writeCell(descrRow, incPriorHistIdx, "");
+    ExcelUtils.writeCell(descrRow, incErPosIdx, "");
+    ExcelUtils.writeCell(descrRow, incSysTherIdx, "");
+    ExcelUtils.writeCell(descrRow, incAdjTamoxIdx, "");
+    ExcelUtils.writeCell(descrRow, incDurationIdx, "");
+    ExcelUtils.writeCell(descrRow, incTamoxDoseIdx, "");
+    ExcelUtils.writeCell(descrRow, incChemoIdx, "");
+    ExcelUtils.writeCell(descrRow, incHormoneIdx, "");
+    ExcelUtils.writeCell(descrRow, incDnaCollectionIdx, "");
+    ExcelUtils.writeCell(descrRow, incFollowupIdx, "");
+    ExcelUtils.writeCell(descrRow, incGenoDataAvailIdx, "");
+
+    ExcelUtils.writeCell(descrRow, exclude1Idx, "");
+    ExcelUtils.writeCell(descrRow, exclude2Idx, "");
+    ExcelUtils.writeCell(descrRow, exclude3Idx, "");
+
     ExcelUtils.writeCell(descrRow, includeCrit1Idx, "based on Inc 1, 2a, 3, 4b, 4c, 5, 6, 8, 9\nnot otherwise excluded");
     ExcelUtils.writeCell(descrRow, includeCrit2Idx, "based on Inc 2a, 3, 4c, 5, 6, 9\nnot otherwise excluded");
     ExcelUtils.writeCell(descrRow, includeCrit3Idx, "all subjects\nnot otherwise excluded");
@@ -516,41 +550,39 @@ public class ItpcSheet implements Iterator {
     CellStyle highlight = getHighlightStyle();
     subject.calculateGenotypeLimited();
 
+    ExcelUtils.writeCell(row, newFirstDiseaseEventIdx, subject.getFirstDiseaseEventCalc(), highlight);
+    ExcelUtils.writeCell(row, newHasDiseaseEventIdx, subject.hasAdditionalDiseaseEvent().toString(), highlight);
+
     ExcelUtils.writeCell(row, allele1finalIdx, subject.getGenotypeFinal().get(0), highlight);
     ExcelUtils.writeCell(row, allele2finalIdx, subject.getGenotypeFinal().get(1), highlight);
     ExcelUtils.writeCell(row, genotypeIdx, subject.getGenotypeFinal().getMetabolizerStatus(), highlight);
     ExcelUtils.writeCell(row, genoMetabStatusIdx, subject.getGenoMetabolizerGroup(), highlight);
     ExcelUtils.writeCell(row, weakIdx, subject.getWeak().toString(), highlight);
     ExcelUtils.writeCell(row, potentIdx, subject.getPotent().toString(), highlight);
-    if (subject.getScore()==null) {
-      ExcelUtils.writeCell(row, scoreIdx, Value.Unknown.toString(), highlight);
-    }
-    else {
-      ExcelUtils.writeCell(row, scoreIdx, subject.getScore(), highlight);
-    }
+    ExcelUtils.writeCell(row, scoreIdx, ItpcUtils.floatDisplay(subject.getScore()), highlight);
     ExcelUtils.writeCell(row, metabStatusIdx, subject.getMetabolizerGroup(), highlight);
 
-    ExcelUtils.writeCell(row, incAgeIdx, subject.passInclusion1().toString(), highlight);
-    ExcelUtils.writeCell(row, incNonmetaIdx, subject.passInclusion2a().toString(), highlight);
-    ExcelUtils.writeCell(row, incPriorHistIdx, subject.passInclusion2b().toString(), highlight);
-    ExcelUtils.writeCell(row, incErPosIdx, subject.passInclusion3().toString(), highlight);
-    ExcelUtils.writeCell(row, incSysTherIdx, subject.passInclusion4().toString(), highlight);
-    ExcelUtils.writeCell(row, incAdjTamoxIdx, subject.passInclusion4a().toString(), highlight);
-    ExcelUtils.writeCell(row, incDurationIdx, subject.passInclusion4b().toString(), highlight);
-    ExcelUtils.writeCell(row, incTamoxDoseIdx, subject.passInclusion4c().toString(), highlight);
-    ExcelUtils.writeCell(row, incChemoIdx, subject.passInclusion5().toString(), highlight);
-    ExcelUtils.writeCell(row, incHormoneIdx, subject.passInclusion6().toString(), highlight);
-    ExcelUtils.writeCell(row, incDnaCollectionIdx, subject.passInclusion7().toString(), highlight);
-    ExcelUtils.writeCell(row, incFollowupIdx, subject.passInclusion8().toString(), highlight);
-    ExcelUtils.writeCell(row, incGenoDataAvailIdx, subject.passInclusion9().toString(), highlight);
+    ExcelUtils.writeCell(row, incAgeIdx, ItpcUtils.valueToInclusion(subject.passInclusion1()), highlight);
+    ExcelUtils.writeCell(row, incNonmetaIdx, ItpcUtils.valueToInclusion(subject.passInclusion2a()), highlight);
+    ExcelUtils.writeCell(row, incPriorHistIdx, ItpcUtils.valueToInclusion(subject.passInclusion2b()), highlight);
+    ExcelUtils.writeCell(row, incErPosIdx, ItpcUtils.valueToInclusion(subject.passInclusion3()), highlight);
+    ExcelUtils.writeCell(row, incSysTherIdx, ItpcUtils.valueToInclusion(subject.passInclusion4()), highlight);
+    ExcelUtils.writeCell(row, incAdjTamoxIdx, ItpcUtils.valueToInclusion(subject.passInclusion4a()), highlight);
+    ExcelUtils.writeCell(row, incDurationIdx, ItpcUtils.valueToInclusion(subject.passInclusion4b()), highlight);
+    ExcelUtils.writeCell(row, incTamoxDoseIdx, ItpcUtils.valueToInclusion(subject.passInclusion4c()), highlight);
+    ExcelUtils.writeCell(row, incChemoIdx, ItpcUtils.valueToInclusion(subject.passInclusion5()), highlight);
+    ExcelUtils.writeCell(row, incHormoneIdx, ItpcUtils.valueToInclusion(subject.passInclusion6()), highlight);
+    ExcelUtils.writeCell(row, incDnaCollectionIdx, ItpcUtils.valueToInclusion(subject.passInclusion7()), highlight);
+    ExcelUtils.writeCell(row, incFollowupIdx, ItpcUtils.valueToInclusion(subject.passInclusion8()), highlight);
+    ExcelUtils.writeCell(row, incGenoDataAvailIdx, ItpcUtils.valueToInclusion(subject.passInclusion9()), highlight);
 
-    ExcelUtils.writeCell(row, exclude1Idx, subject.exclude1().toString(), highlight);
-    ExcelUtils.writeCell(row, exclude2Idx, subject.exclude2().toString(), highlight);
-    ExcelUtils.writeCell(row, exclude3Idx, subject.exclude3().toString(), highlight);
+    ExcelUtils.writeCell(row, exclude1Idx, ItpcUtils.valueToExclusion(subject.exclude1()), highlight);
+    ExcelUtils.writeCell(row, exclude2Idx, ItpcUtils.valueToExclusion(subject.exclude2()), highlight);
+    ExcelUtils.writeCell(row, exclude3Idx, ItpcUtils.valueToExclusion(subject.exclude3()), highlight);
 
-    ExcelUtils.writeCell(row, includeCrit1Idx, subject.includeCrit1().toString(), highlight);
-    ExcelUtils.writeCell(row, includeCrit2Idx, subject.includeCrit2().toString(), highlight);
-    ExcelUtils.writeCell(row, includeCrit3Idx, subject.includeCrit3().toString(), highlight);
+    ExcelUtils.writeCell(row, includeCrit1Idx, ItpcUtils.valueToInclusion(subject.includeCrit1()), highlight);
+    ExcelUtils.writeCell(row, includeCrit2Idx, ItpcUtils.valueToInclusion(subject.includeCrit2()), highlight);
+    ExcelUtils.writeCell(row, includeCrit3Idx, ItpcUtils.valueToInclusion(subject.includeCrit3()), highlight);
   }
 
   public File saveOutput() throws IOException {

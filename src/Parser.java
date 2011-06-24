@@ -4,8 +4,9 @@ import org.pharmgkb.Subject;
 import summary.*;
 import util.CliHelper;
 
-import java.io.*;
+import java.io.File;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -22,6 +23,8 @@ public class Parser {
 
   public static void main(String[] args) {
     try {
+      System.out.println("ITPC Parser run: " + new Date());
+
       Parser parser = new Parser();
       parser.parseArgs(args);
       parser.parseFile();
