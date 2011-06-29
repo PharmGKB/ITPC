@@ -1347,23 +1347,61 @@ public class Subject {
   // calculated column
   public String getDiagToEventDaysCalc() {
     if (getAdditionalCancer()==Value.Yes) {
+      int days = 999999;
       if (!ItpcUtils.isBlank(getAddCxContralateral())) {
-        return getAddCxContralateral();
+        Integer contraDays = parseDays(getAddCxContralateral());
+        if (contraDays != null && contraDays<days) {
+          days = contraDays;
+        }
       }
       else if (!ItpcUtils.isBlank(getAddCxDistantRecur())) {
-        return getAddCxDistantRecur();
+        Integer distantDays = parseDays(getAddCxDistantRecur());
+        if (distantDays != null && distantDays<days) {
+          days = distantDays;
+        }
       }
       else if (!ItpcUtils.isBlank(getAddCxIpsilateral())) {
-        return getAddCxIpsilateral();
+        Integer ipsiDays = parseDays(getAddCxIpsilateral());
+        if (ipsiDays != null && ipsiDays<days) {
+          days = ipsiDays;
+        }
       }
       else if (!ItpcUtils.isBlank(getAddCxSecondInvasive())) {
-        return getAddCxSecondInvasive();
+        Integer secondDays = parseDays(getAddCxSecondInvasive());
+        if (secondDays != null && secondDays<days) {
+          days = secondDays;
+        }
+      }
+      if (days<999999 && days>0) {
+        return String.valueOf(days);
       }
     }
     else if (getAdditionalCancer()==Value.No && getPatientDied()==Value.Yes) {
-        return getDaysDiagtoDeath();
+      Integer deathDays = parseDays(getDaysDiagtoDeath());
+      if (deathDays != null && deathDays>0) {
+        return String.valueOf(deathDays);
+      }
     }
     return null;
+  }
+
+  private Integer parseDays(String daysString) {
+    Integer daysInt = null;
+
+    if (!ItpcUtils.isBlank(daysString)) {
+      String workingString = daysString;
+      workingString = workingString.replaceAll(";","");
+      workingString = workingString.replaceAll("NI","");
+      workingString = StringUtils.trim(workingString);
+
+      try {
+        daysInt = Integer.valueOf(workingString);
+      } catch (NumberFormatException ex) {
+        return -1;
+      }
+    }
+
+    return daysInt;
   }
 
   public String getDaysDiagtoDeath() {

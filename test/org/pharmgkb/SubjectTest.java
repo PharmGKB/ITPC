@@ -263,7 +263,7 @@ public class SubjectTest extends TestCase {
 
   public void testInclusion2a() {
     Subject subject = new Subject();
-    Assert.assertEquals(Value.Unknown, subject.passInclusion2a());
+    Assert.assertEquals(Value.No, subject.passInclusion2a());
 
     subject.setMetastatic("0");
     Assert.assertEquals(Value.Yes, subject.passInclusion2a());
@@ -272,7 +272,7 @@ public class SubjectTest extends TestCase {
     Assert.assertEquals(Value.No, subject.passInclusion2a());
 
     subject.setMetastatic("SpongeBob");
-    Assert.assertEquals(Value.Unknown, subject.passInclusion2a());
+    Assert.assertEquals(Value.No, subject.passInclusion2a());
   }
 
   public void testInclusion2b() {
@@ -475,6 +475,15 @@ public class SubjectTest extends TestCase {
 
     subject.setGenotypeAmplichip("*41/*41");
     Assert.assertEquals("Intermediate", subject.getGenoMetabolizerGroup());
+  }
+
+  public void testGetDiagToEventDays() {
+    Subject subject = makeDefaultSubject();
+    subject.setAdditionalCancer(Value.Yes);
+    subject.setAddCxIpsilateral("1234");
+    subject.setPatientDied(Value.No);
+
+    assertEquals(new Integer(1234), subject.getDiagToEventDaysCalc());
   }
 
   private void setPhenotypes(Subject subject) {

@@ -103,6 +103,7 @@ public class ItpcSheet implements Iterator {
   protected int exclude3Idx = -1;
   protected int newFirstDiseaseEventIdx = -1;
   protected int newHasDiseaseEventIdx = -1;
+  protected int diagToEventCalcIdx = -1;
 
   protected int incAgeIdx = -1;
   protected int incNonmetaIdx = -1;
@@ -310,37 +311,38 @@ public class ItpcSheet implements Iterator {
     int startPgkbColsIdx = projectNotesIdx+1;
 
     newFirstDiseaseEventIdx = startPgkbColsIdx;
-    newHasDiseaseEventIdx = startPgkbColsIdx+ 1;
-    allele1finalIdx = startPgkbColsIdx      + 2;
-    allele2finalIdx = startPgkbColsIdx      + 3;
-    genotypeIdx = startPgkbColsIdx          + 4;
-    genoMetabStatusIdx = startPgkbColsIdx   + 5;
-    weakIdx = startPgkbColsIdx              + 6;
-    potentIdx = startPgkbColsIdx            + 7;
-    scoreIdx = startPgkbColsIdx             + 8;
-    metabStatusIdx = startPgkbColsIdx       + 9;
+    diagToEventCalcIdx = startPgkbColsIdx   + 1;
+    newHasDiseaseEventIdx = startPgkbColsIdx+ 2;
+    allele1finalIdx = startPgkbColsIdx      + 3;
+    allele2finalIdx = startPgkbColsIdx      + 4;
+    genotypeIdx = startPgkbColsIdx          + 5;
+    genoMetabStatusIdx = startPgkbColsIdx   + 6;
+    weakIdx = startPgkbColsIdx              + 7;
+    potentIdx = startPgkbColsIdx            + 8;
+    scoreIdx = startPgkbColsIdx             + 9;
+    metabStatusIdx = startPgkbColsIdx       + 10;
 
-    incAgeIdx = startPgkbColsIdx            + 10;
-    incNonmetaIdx = startPgkbColsIdx        + 11;
-    incPriorHistIdx = startPgkbColsIdx      + 12;
-    incErPosIdx = startPgkbColsIdx          + 13;
-    incSysTherIdx = startPgkbColsIdx        + 14;
-    incAdjTamoxIdx = startPgkbColsIdx       + 15;
-    incDurationIdx = startPgkbColsIdx       + 16;
-    incTamoxDoseIdx = startPgkbColsIdx      + 17;
-    incChemoIdx = startPgkbColsIdx          + 18;
-    incHormoneIdx = startPgkbColsIdx        + 19;
-    incDnaCollectionIdx = startPgkbColsIdx  + 20;
-    incFollowupIdx = startPgkbColsIdx       + 21;
-    incGenoDataAvailIdx = startPgkbColsIdx  + 22;
+    incAgeIdx = startPgkbColsIdx            + 11;
+    incNonmetaIdx = startPgkbColsIdx        + 12;
+    incPriorHistIdx = startPgkbColsIdx      + 13;
+    incErPosIdx = startPgkbColsIdx          + 14;
+    incSysTherIdx = startPgkbColsIdx        + 15;
+    incAdjTamoxIdx = startPgkbColsIdx       + 16;
+    incDurationIdx = startPgkbColsIdx       + 17;
+    incTamoxDoseIdx = startPgkbColsIdx      + 18;
+    incChemoIdx = startPgkbColsIdx          + 19;
+    incHormoneIdx = startPgkbColsIdx        + 20;
+    incDnaCollectionIdx = startPgkbColsIdx  + 21;
+    incFollowupIdx = startPgkbColsIdx       + 22;
+    incGenoDataAvailIdx = startPgkbColsIdx  + 23;
 
-    exclude1Idx = startPgkbColsIdx          + 23;
-    exclude2Idx = startPgkbColsIdx          + 24;
-    exclude3Idx = startPgkbColsIdx          + 25;
+    exclude1Idx = startPgkbColsIdx          + 24;
+    exclude2Idx = startPgkbColsIdx          + 25;
+    exclude3Idx = startPgkbColsIdx          + 26;
 
-    includeCrit1Idx = startPgkbColsIdx      + 26;
-    includeCrit2Idx = startPgkbColsIdx      + 27;
-    includeCrit3Idx = startPgkbColsIdx      + 28;
+    includeCrit1Idx = startPgkbColsIdx      + 27;
+    includeCrit2Idx = startPgkbColsIdx      + 28;
+    includeCrit3Idx = startPgkbColsIdx      + 29;
 
     writeCellTitles(headerRow);
     styleCells(headerRow, startPgkbColsIdx, headerRow.getCell(0).getCellStyle());
@@ -353,6 +355,7 @@ public class ItpcSheet implements Iterator {
 
   private void writeCellTitles(Row headerRow) {
     ExcelUtils.writeCell(headerRow, newFirstDiseaseEventIdx, "First Disease Event (calculated)");
+    ExcelUtils.writeCell(headerRow, diagToEventCalcIdx, "Days from Diagnosis to First Disease Event (calculated)");
     ExcelUtils.writeCell(headerRow, newHasDiseaseEventIdx, "Has Disease Event (calculated)");
     
     ExcelUtils.writeCell(headerRow, allele1finalIdx, "CYP2D6 Allele 1 (Final)");
@@ -389,6 +392,7 @@ public class ItpcSheet implements Iterator {
 
   private void writeCellDescr(Row descrRow) {
     ExcelUtils.writeCell(descrRow, newFirstDiseaseEventIdx, "none = 0, local/regional recurrence = 1,  distant recurrence = 2,  contralateral breast cancer = 3, other second non-breast primary = 4, death without recurrence, contralateral breast cancer or second non-breast primary cancer = 5 or not known = NA");
+    ExcelUtils.writeCell(descrRow, diagToEventCalcIdx, "If the patient has additional cancer, pick the smallest known interval in the columns BR-BU");
     ExcelUtils.writeCell(descrRow, newHasDiseaseEventIdx, "");
 
     ExcelUtils.writeCell(descrRow, allele1finalIdx, "");
@@ -551,6 +555,7 @@ public class ItpcSheet implements Iterator {
     subject.calculateGenotypeLimited();
 
     ExcelUtils.writeCell(row, newFirstDiseaseEventIdx, subject.getFirstDiseaseEventCalc(), highlight);
+    ExcelUtils.writeCell(row, diagToEventCalcIdx, subject.getDiagToEventDaysCalc(), highlight);
     ExcelUtils.writeCell(row, newHasDiseaseEventIdx, subject.hasAdditionalDiseaseEvent().toString(), highlight);
 
     ExcelUtils.writeCell(row, allele1finalIdx, subject.getGenotypeFinal().get(0), highlight);
