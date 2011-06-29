@@ -391,8 +391,8 @@ public class ItpcSheet implements Iterator {
   }
 
   private void writeCellDescr(Row descrRow) {
-    ExcelUtils.writeCell(descrRow, newFirstDiseaseEventIdx, "none = 0, local/regional recurrence = 1,  distant recurrence = 2,  contralateral breast cancer = 3, other second non-breast primary = 4, death without recurrence, contralateral breast cancer or second non-breast primary cancer = 5 or not known = NA");
-    ExcelUtils.writeCell(descrRow, diagToEventCalcIdx, "If the patient has additional cancer, pick the smallest known interval in the columns BR-BU");
+    ExcelUtils.writeCell(descrRow, newFirstDiseaseEventIdx, "none = 0, local/regional recurrence = 1,  distant recurrence = 2,  contralateral breast cancer = 3, other second non-breast primary = 4, death without recurrence, contralateral breast cancer or second non-breast primary cancer = 5");
+    ExcelUtils.writeCell(descrRow, diagToEventCalcIdx, "If the patient has additional cancer, pick the smallest known interval (days) in the columns BR-BU");
     ExcelUtils.writeCell(descrRow, newHasDiseaseEventIdx, "");
 
     ExcelUtils.writeCell(descrRow, allele1finalIdx, "");

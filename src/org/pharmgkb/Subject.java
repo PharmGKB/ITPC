@@ -1001,6 +1001,14 @@ public class Subject {
         ) {
       return Value.Yes;
     }
+    else if (getAdditionalCancer() == Value.No
+        && (!ItpcUtils.isBlank(getAddCxIpsilateral())
+            || !ItpcUtils.isBlank(getAddCxDistantRecur())
+            || !ItpcUtils.isBlank(getAddCxContralateral())
+            || !ItpcUtils.isBlank(getAddCxSecondInvasive()))
+      ) {
+      return Value.Yes;
+    }
     else {
       return Value.No;
     }
@@ -1331,6 +1339,13 @@ public class Subject {
         && (ItpcUtils.isBlank(getAddCxSecondInvasive()) || getAddCxSecondInvasive().equals("0"))) {
       eventCodes.add("5");
     }
+    if (getAdditionalCancer() == Value.No && getPatientDied()==Value.Yes) {
+      eventCodes.add("0");
+    }
+    if ((getAdditionalCancer() == Value.No && getPatientDied()==Value.Unknown)
+        || getAdditionalCancer() == Value.Unknown) {
+      return Value.Unknown.toString();
+    }
 
     return Joiner.on(";").join(eventCodes);
   }
@@ -1338,6 +1353,9 @@ public class Subject {
   public Value hasAdditionalDiseaseEvent() {
     if (StringUtils.isBlank(getFirstDiseaseEventCalc())) {
       return Value.No;
+    }
+    else if (getFirstDiseaseEventCalc().equals("Unknown")) {
+      return Value.Unknown;
     }
     else {
       return Value.Yes;
