@@ -75,13 +75,16 @@ public class InclusionSummary extends AbstractSummary {
   private List<Map<Integer,Map<Value,Integer>>> projectMap = null;
   private List<Map<Integer,Map<Value,Integer>>> projectExcludeMap = null;
   private List<Map<Integer,Map<Value,Integer>>> projectCritMap = null;
+  private Map<Integer, Integer> projectSubjectCount = null;
 
   public InclusionSummary() {
     projectMap = Lists.newArrayList();
     projectExcludeMap = Lists.newArrayList();
     projectCritMap = Lists.newArrayList();
+    projectSubjectCount = Maps.newHashMap();
 
     for (int i=0; i< ItpcUtils.SITE_COUNT; i++) {
+      projectSubjectCount.put(i, 0);
       Map<Integer,Map<Value,Integer>> inclusionMap = Maps.newHashMap();
       projectMap.add(inclusionMap);
 
@@ -106,7 +109,7 @@ public class InclusionSummary extends AbstractSummary {
       }
 
       Map<Integer,Map<Value,Integer>> criteriaMap = Maps.newHashMap();
-      projectCritMap.add(exclusionMap);
+      projectCritMap.add(criteriaMap);
 
       for (int j=0; j<criteriaLabels.size(); j++) {
         Map<Value,Integer> valueMap = Maps.newHashMap();
@@ -126,6 +129,7 @@ public class InclusionSummary extends AbstractSummary {
   @Override
   public void addSubject(Subject subject) {
     int site = Integer.valueOf(subject.getProjectSite());
+    projectSubjectCount.put(site-1, projectSubjectCount.get(site-1)+1);
 
     addSubjectInclusion(site-1, inc1, subject.passInclusion1());
     addSubjectInclusion(site-1, inc2a, subject.passInclusion2a());
@@ -170,7 +174,7 @@ public class InclusionSummary extends AbstractSummary {
   }
 
   private void addSubjectCriterium(int site, int criteria, Value value) {
-    Map<Integer, Map<Value,Integer>> criteriumMap = projectExcludeMap.get(site);
+    Map<Integer, Map<Value,Integer>> criteriumMap = projectCritMap.get(site);
     Map<Value, Integer> valueMap = criteriumMap.get(criteria);
     valueMap.put(value, valueMap.get(value)+1);
   }
@@ -239,7 +243,6 @@ public class InclusionSummary extends AbstractSummary {
   }
 
   private int writeExclusionTable(Sheet sheet, int currentRow, Value value) {
-    int totalSubjects = 0;
 
     Map<Integer,Integer> exclusionTotals = Maps.newHashMap();
     for (Integer i : exclusions.keySet()) {
@@ -265,9 +268,7 @@ public class InclusionSummary extends AbstractSummary {
         exclusionTotals.put(j, exclusionTotals.get(j)+projectExcludeMap.get(i).get(j).get(value));
       }
 
-      Integer siteSubjectTotal = projectExcludeMap.get(i).get(0).get(Value.Yes) + projectExcludeMap.get(i).get(0).get(Value.No);
-      siteRow.createCell(exclusions.size()+1).setCellValue(siteSubjectTotal);
-      totalSubjects += siteSubjectTotal;
+      siteRow.createCell(exclusions.size()+1).setCellValue(projectSubjectCount.get(i));
     }
 
     Row totalsRow = sheet.createRow(currentRow++);
@@ -275,7 +276,7 @@ public class InclusionSummary extends AbstractSummary {
     for (int i=0; i<exclusions.size(); i++) {
       totalsRow.createCell(i+1).setCellValue(exclusionTotals.get(i));
     }
-    totalsRow.createCell(exclusions.size()+1).setCellValue(totalSubjects);
+    totalsRow.createCell(exclusions.size()+1).setCellValue(getSubjectTotal());
 
     return currentRow;
   }
@@ -316,5 +317,11 @@ public class InclusionSummary extends AbstractSummary {
     return currentRow;
   }
 
-
+  private int getSubjectTotal() {
+    int totalSubjects = 0;
+    for (Integer siteId : projectSubjectCount.keySet()) {
+      totalSubjects += projectSubjectCount.get(siteId);
+    }
+    return totalSubjects;
+  }
 }
