@@ -355,7 +355,7 @@ public class ItpcSheet implements Iterator {
 
   private void writeCellTitles(Row headerRow) {
     ExcelUtils.writeCell(headerRow, newFirstDiseaseEventIdx, "First Disease Event (calculated)");
-    ExcelUtils.writeCell(headerRow, diagToEventCalcIdx, "Days from Diagnosis to First Disease Event (calculated)");
+    ExcelUtils.writeCell(headerRow, diagToEventCalcIdx, "Time from Primary Diagnosis to First Disease Event (calculated)");
     ExcelUtils.writeCell(headerRow, newHasDiseaseEventIdx, "Has Disease Event (calculated)");
     
     ExcelUtils.writeCell(headerRow, allele1finalIdx, "CYP2D6 Allele 1 (Final)");
@@ -391,9 +391,9 @@ public class ItpcSheet implements Iterator {
   }
 
   private void writeCellDescr(Row descrRow) {
-    ExcelUtils.writeCell(descrRow, newFirstDiseaseEventIdx, "none = 0, local/regional recurrence = 1,  distant recurrence = 2,  contralateral breast cancer = 3, other second non-breast primary = 4, death without recurrence, contralateral breast cancer or second non-breast primary cancer = 5");
-    ExcelUtils.writeCell(descrRow, diagToEventCalcIdx, "If the patient has additional cancer, pick the smallest known interval (days) in the columns BR-BU");
-    ExcelUtils.writeCell(descrRow, newHasDiseaseEventIdx, "");
+    ExcelUtils.writeCell(descrRow, newFirstDiseaseEventIdx, "none = 0, local/regional recurrence = 1,  distant recurrence = 2,  contralateral breast cancer = 3, other second non-breast primary = 4, death without recurrence, contralateral breast cancer or second non-breast primary cancer = 5, based on columns BR-BU");
+    ExcelUtils.writeCell(descrRow, diagToEventCalcIdx, "time to the first of a local/regional/distant recurrence, contralateral breast disease or a second primary cancer, death without recurrence, or, if none of these, then time to last disease evaluation (days)");
+    ExcelUtils.writeCell(descrRow, newHasDiseaseEventIdx, "based on First Disease Event");
 
     ExcelUtils.writeCell(descrRow, allele1finalIdx, "");
     ExcelUtils.writeCell(descrRow, allele2finalIdx, "");

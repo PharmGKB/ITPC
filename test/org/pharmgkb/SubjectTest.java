@@ -483,7 +483,7 @@ public class SubjectTest extends TestCase {
     subject.setAddCxIpsilateral("1234");
     subject.setPatientDied(Value.No);
 
-    assertEquals(new Integer(1234), subject.getDiagToEventDaysCalc());
+    assertEquals("1234", subject.getDiagToEventDaysCalc());
   }
 
   private void setPhenotypes(Subject subject) {

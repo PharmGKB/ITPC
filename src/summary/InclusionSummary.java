@@ -199,7 +199,6 @@ public class InclusionSummary extends AbstractSummary {
 
   private int writeInclusionTable(Sheet sheet, int currentRow, Value value) {
     // initialize the inclusion totals to 0
-    int totalSubjects = 0;
     Map<Integer,String> useHeaders = inclusions;
 
     Map<Integer, Integer> inclusionTotals = Maps.newHashMap();
@@ -212,32 +211,29 @@ public class InclusionSummary extends AbstractSummary {
 
     Row headerRow = sheet.createRow(currentRow++);
     headerRow.createCell(0).setCellValue("Site ID");
+    headerRow.createCell(1).setCellValue("N");
     for (int i=0; i<useHeaders.size(); i++) {
-      headerRow.createCell(i+1).setCellValue(useHeaders.get(i));
+      headerRow.createCell(i+2).setCellValue(useHeaders.get(i));
     }
-    headerRow.createCell(useHeaders.size()+1).setCellValue("Total Subjects");
 
     for (int i=0; i<ItpcUtils.SITE_COUNT; i++) {
       Row siteRow = sheet.createRow(currentRow++);
       String siteName = (new Integer(i+1)).toString();
       siteRow.createCell(0).setCellValue(siteName);
+      siteRow.createCell(1).setCellValue(projectSubjectCount.get(i));
 
       for (int j=0; j<useHeaders.size(); j++) {
-        siteRow.createCell(j+1).setCellValue(projectMap.get(i).get(j).get(value));
+        siteRow.createCell(j+2).setCellValue(projectMap.get(i).get(j).get(value));
         inclusionTotals.put(j, inclusionTotals.get(j) + projectMap.get(i).get(j).get(value));
       }
-
-      Integer siteSubjectTotal = projectMap.get(i).get(0).get(Value.Yes) + projectMap.get(i).get(0).get(Value.No) + projectMap.get(i).get(0).get(Value.Unknown);
-      siteRow.createCell(useHeaders.size()+1).setCellValue(siteSubjectTotal);
-      totalSubjects += siteSubjectTotal;
     }
 
     Row totalsRow = sheet.createRow(currentRow++);
     totalsRow.createCell(0).setCellValue("Total");
+    totalsRow.createCell(1).setCellValue(getSubjectTotal());
     for (int i=0; i<useHeaders.size(); i++) {
-      totalsRow.createCell(i+1).setCellValue(inclusionTotals.get(i));
+      totalsRow.createCell(i+2).setCellValue(inclusionTotals.get(i));
     }
-    totalsRow.createCell(useHeaders.size()+1).setCellValue(totalSubjects);
 
     return currentRow;
   }
@@ -254,29 +250,28 @@ public class InclusionSummary extends AbstractSummary {
 
     Row headerRow = sheet.createRow(currentRow++);
     headerRow.createCell(0).setCellValue("Site ID");
+    headerRow.createCell(1).setCellValue("N");
     for (Integer i : exclusions.keySet()) {
-      headerRow.createCell(i+1).setCellValue(exclusions.get(i));
+      headerRow.createCell(i+2).setCellValue(exclusions.get(i));
     }
-    headerRow.createCell(exclusions.size()+1).setCellValue("Total Subjects");
 
     for (int i=0; i<ItpcUtils.SITE_COUNT; i++) {
       Row siteRow = sheet.createRow(currentRow++);
       siteRow.createCell(0).setCellValue(i+1);
+      siteRow.createCell(1).setCellValue(projectSubjectCount.get(i));
 
       for (Integer j : exclusions.keySet()) {
-        siteRow.createCell(j+1).setCellValue(projectExcludeMap.get(i).get(j).get(value));
+        siteRow.createCell(j+2).setCellValue(projectExcludeMap.get(i).get(j).get(value));
         exclusionTotals.put(j, exclusionTotals.get(j)+projectExcludeMap.get(i).get(j).get(value));
       }
-
-      siteRow.createCell(exclusions.size()+1).setCellValue(projectSubjectCount.get(i));
     }
 
     Row totalsRow = sheet.createRow(currentRow++);
     totalsRow.createCell(0).setCellValue("Total");
+    totalsRow.createCell(1).setCellValue(getSubjectTotal());
     for (int i=0; i<exclusions.size(); i++) {
-      totalsRow.createCell(i+1).setCellValue(exclusionTotals.get(i));
+      totalsRow.createCell(i+2).setCellValue(exclusionTotals.get(i));
     }
-    totalsRow.createCell(exclusions.size()+1).setCellValue(getSubjectTotal());
 
     return currentRow;
   }

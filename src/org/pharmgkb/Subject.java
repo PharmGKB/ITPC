@@ -1319,35 +1319,11 @@ public class Subject {
   }
 
   public String getFirstDiseaseEventCalc() {
-    List<String> eventCodes = Lists.newArrayList();
-    if (!(ItpcUtils.isBlank(getAddCxIpsilateral()) || getAddCxIpsilateral().equals("0"))) {
-      eventCodes.add("1");
-    }
-    if (!(ItpcUtils.isBlank(getAddCxDistantRecur()) || getAddCxDistantRecur().equals("0"))) {
-      eventCodes.add("2");
-    }
-    if (!(ItpcUtils.isBlank(getAddCxContralateral()) || getAddCxContralateral().equals("0"))) {
-      eventCodes.add("3");
-    }
-    if (!(ItpcUtils.isBlank(getAddCxSecondInvasive()) || getAddCxSecondInvasive().equals("0"))) {
-      eventCodes.add("4");
-    }
-    if (!(ItpcUtils.isBlank(getDaysDiagtoDeath()) || getDaysDiagtoDeath().equals("0"))
-        && (ItpcUtils.isBlank(getAddCxIpsilateral()) || getAddCxIpsilateral().equals("0"))
-        && (ItpcUtils.isBlank(getAddCxDistantRecur()) || getAddCxDistantRecur().equals("0"))
-        && (ItpcUtils.isBlank(getAddCxContralateral()) || getAddCxContralateral().equals("0"))
-        && (ItpcUtils.isBlank(getAddCxSecondInvasive()) || getAddCxSecondInvasive().equals("0"))) {
-      eventCodes.add("5");
-    }
-    if (getAdditionalCancer() == Value.No && getPatientDied()==Value.Yes) {
-      eventCodes.add("0");
-    }
-    if ((getAdditionalCancer() == Value.No && getPatientDied()==Value.Unknown)
-        || getAdditionalCancer() == Value.Unknown) {
-      return Value.Unknown.toString();
-    }
+    return getFirstEventData()[0];
+  }
 
-    return Joiner.on(";").join(eventCodes);
+  public String getDiagToEventDaysCalc() {
+    return getFirstEventData()[1];
   }
 
   public Value hasAdditionalDiseaseEvent() {
@@ -1362,45 +1338,69 @@ public class Subject {
     }
   }
 
-  // calculated column
-  public String getDiagToEventDaysCalc() {
+  public String[] getFirstEventData() {
+    String code = "0";
+    
     if (getAdditionalCancer()==Value.Yes) {
+      List<String> eventCodes = Lists.newArrayList();
+
       int days = 999999;
-      if (!ItpcUtils.isBlank(getAddCxContralateral())) {
+      if (!(ItpcUtils.isBlank(getAddCxContralateral()) || getAddCxContralateral().equals("0"))) {
+        eventCodes.add("3");
         Integer contraDays = parseDays(getAddCxContralateral());
         if (contraDays != null && contraDays<days) {
           days = contraDays;
+          code = "3";
         }
       }
-      else if (!ItpcUtils.isBlank(getAddCxDistantRecur())) {
+      if (!(ItpcUtils.isBlank(getAddCxDistantRecur()) || getAddCxDistantRecur().equals("0"))) {
+        eventCodes.add("2");
         Integer distantDays = parseDays(getAddCxDistantRecur());
         if (distantDays != null && distantDays<days) {
           days = distantDays;
+          code = "2";
         }
       }
-      else if (!ItpcUtils.isBlank(getAddCxIpsilateral())) {
+      if (!(ItpcUtils.isBlank(getAddCxIpsilateral()) || getAddCxIpsilateral().equals("0"))) {
+        eventCodes.add("1");
         Integer ipsiDays = parseDays(getAddCxIpsilateral());
         if (ipsiDays != null && ipsiDays<days) {
           days = ipsiDays;
+          code = "1";
         }
       }
-      else if (!ItpcUtils.isBlank(getAddCxSecondInvasive())) {
+      if (!(ItpcUtils.isBlank(getAddCxSecondInvasive()) || getAddCxSecondInvasive().equals("0"))) {
+        eventCodes.add("4");
         Integer secondDays = parseDays(getAddCxSecondInvasive());
         if (secondDays != null && secondDays<days) {
           days = secondDays;
+          code = "4";
         }
       }
       if (days<999999 && days>0) {
-        return String.valueOf(days);
+        return new String[]{code, Integer.toString(days)};
+      }
+      else {
+        String events = eventCodes.isEmpty() ? Value.Unknown.toString() : Joiner.on("; ").join(eventCodes);
+        return new String[]{events, Value.Unknown.toString()};
       }
     }
     else if (getAdditionalCancer()==Value.No && getPatientDied()==Value.Yes) {
       Integer deathDays = parseDays(getDaysDiagtoDeath());
       if (deathDays != null && deathDays>0) {
-        return String.valueOf(deathDays);
+        return new String[]{"5", String.valueOf(deathDays)};
       }
     }
-    return null;
+    else if (getAdditionalCancer()==Value.No && getPatientDied()==Value.No) {
+      Integer days = parseDays(getAddCxLastEval());
+      if (days != null && days>0) {
+        return new String[]{"0", String.valueOf(days)};
+      }
+      else {
+        return new String[]{"0", Value.Unknown.toString()};
+      }
+    }
+    return new String[]{Value.Unknown.toString(), Value.Unknown.toString()};
   }
 
   private Integer parseDays(String daysString) {
