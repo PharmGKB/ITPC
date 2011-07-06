@@ -50,6 +50,8 @@ public class Subject {
   private String m_addCxLastEval = null;
   private String m_daysDiagtoDeath = null;
   private Value m_patientDied = null;
+  private String m_diseaseFreeSurvivalTime = null;
+  private String m_survivalNotDied = null;
 
   private Value m_hasParoxetine = Value.Unknown;
   private Value m_hasFluoxetine = Value.Unknown;
@@ -1045,6 +1047,39 @@ public class Subject {
     }
   }
 
+  // joan suggestion 1
+  public Value exclude4() {
+    if ((getAdditionalCancer()==Value.Yes || getPatientDied()==Value.Yes) && !ItpcUtils.isBlank(getDiseaseFreeSurvivalTime())) {
+      return Value.Yes;
+    }
+    return Value.No;
+  }
+
+  // joan suggestion 3
+  public Value exclude5() {
+    if (getPatientDied()==Value.Yes && !ItpcUtils.isBlank(getSurvivalNotDied())) {
+      return Value.Yes;
+    }
+    return Value.No;
+  }
+
+  // joan suggestion 5
+  public Value exclude6() {
+    Integer dfst = parseDays(getDiseaseFreeSurvivalTime());
+    Integer lde = parseDays(getAddCxLastEval());
+    Integer snd = parseDays(getSurvivalNotDied());
+
+    if (dfst != null && lde != null && dfst<lde) {
+      return Value.Yes;
+    }
+
+    if (lde != null && snd != null && lde>snd) {
+      return Value.Yes;
+    }
+
+    return Value.No;
+  }
+
   public Value excludeSummary() {
     if (exclude1() == Value.Yes
         || exclude2() == Value.Yes
@@ -1452,6 +1487,22 @@ public class Subject {
     else {
       m_patientDied = Value.Unknown;
     }
+  }
+
+  public String getDiseaseFreeSurvivalTime() {
+    return m_diseaseFreeSurvivalTime;
+  }
+
+  public void setDiseaseFreeSurvivalTime(String diseaseFreeSurvivalTime) {
+    m_diseaseFreeSurvivalTime = diseaseFreeSurvivalTime;
+  }
+
+  public String getSurvivalNotDied() {
+    return m_survivalNotDied;
+  }
+
+  public void setSurvivalNotDied(String survivalNotDied) {
+    m_survivalNotDied = survivalNotDied;
   }
 
   enum Deletion {Unknown, None, Hetero, Homo}

@@ -486,6 +486,54 @@ public class SubjectTest extends TestCase {
     assertEquals("1234", subject.getDiagToEventDaysCalc());
   }
 
+  public void testExclude4() {
+    Subject subject = makeDefaultSubject();
+    subject.setAdditionalCancer(Value.Yes);
+    subject.setDiseaseFreeSurvivalTime("123");
+
+    assertEquals(Value.Yes, subject.exclude4());
+
+    subject = makeDefaultSubject();
+    subject.setDiseaseFreeSurvivalTime("456");
+
+    assertEquals(Value.No, subject.exclude4());
+  }
+
+  public void testExclude5() {
+    Subject subject = makeDefaultSubject();
+    subject.setPatientDied(Value.Yes);
+    subject.setSurvivalNotDied("122");
+    
+    assertEquals(Value.Yes, subject.exclude5());
+
+    subject.setPatientDied(Value.No);
+    subject.setSurvivalNotDied("122");
+
+    assertEquals(Value.No, subject.exclude5());
+
+    subject.setPatientDied(Value.Yes);
+    subject.setSurvivalNotDied(null);
+
+    assertEquals(Value.No, subject.exclude5());
+  }
+
+  public void testExclude6() {
+    Subject subject = makeDefaultSubject();
+    subject.setDiseaseFreeSurvivalTime("10");
+    subject.setAddCxLastEval("12");
+    subject.setSurvivalNotDied("14");
+
+    assertEquals(Value.Yes, subject.exclude6());
+
+    subject.setDiseaseFreeSurvivalTime("15");
+
+    assertEquals(Value.No, subject.exclude6());
+
+    subject.setAddCxLastEval("16");
+
+    assertEquals(Value.Yes, subject.exclude6());
+  }
+
   private void setPhenotypes(Subject subject) {
     subject.setMenoStatus("2");
     subject.setMetastatic("0");

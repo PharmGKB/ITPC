@@ -65,6 +65,8 @@ public class ItpcSheet implements Iterator {
   protected int addCxLastEvalIdx = -1;
   protected int daysDiagToDeathIdx = -1;
   protected int patientDiedIdx = -1;
+  protected int diseaseFreeSurvivalTimeIdx = -1;
+  protected int survivalNotDiedIdx = -1;
 
   protected int fluoxetineCol = -1;
   protected int paroxetineCol = -1;
@@ -101,6 +103,7 @@ public class ItpcSheet implements Iterator {
   protected int exclude1Idx = -1;
   protected int exclude2Idx = -1;
   protected int exclude3Idx = -1;
+  protected int exclude4Idx = -1;
   protected int newFirstDiseaseEventIdx = -1;
   protected int newHasDiseaseEventIdx = -1;
   protected int diagToEventCalcIdx = -1;
@@ -304,6 +307,10 @@ public class ItpcSheet implements Iterator {
         daysDiagToDeathIdx = idx;
       } else if (header.equalsIgnoreCase("Has the patient died?")) {
         patientDiedIdx = idx;
+      } else if (header.contains("enter disease-free survival time")) {
+        diseaseFreeSurvivalTimeIdx = idx;
+      } else if (header.contains("survival time if patient has not died")) {
+        survivalNotDiedIdx = idx;
       }
     }
 
@@ -339,10 +346,11 @@ public class ItpcSheet implements Iterator {
     exclude1Idx = startPgkbColsIdx          + 24;
     exclude2Idx = startPgkbColsIdx          + 25;
     exclude3Idx = startPgkbColsIdx          + 26;
+    exclude4Idx = startPgkbColsIdx          + 27;
 
-    includeCrit1Idx = startPgkbColsIdx      + 27;
-    includeCrit2Idx = startPgkbColsIdx      + 28;
-    includeCrit3Idx = startPgkbColsIdx      + 29;
+    includeCrit1Idx = startPgkbColsIdx      + 28;
+    includeCrit2Idx = startPgkbColsIdx      + 29;
+    includeCrit3Idx = startPgkbColsIdx      + 30;
 
     writeCellTitles(headerRow);
     styleCells(headerRow, startPgkbColsIdx, headerRow.getCell(0).getCellStyle());
@@ -381,9 +389,10 @@ public class ItpcSheet implements Iterator {
     ExcelUtils.writeCell(headerRow, incFollowupIdx, "Inc 8\nAdequate follow-up");
     ExcelUtils.writeCell(headerRow, incGenoDataAvailIdx, "Inc 9\nCYP2D6 *4 genotype data available for assessment");
 
-    ExcelUtils.writeCell(headerRow, exclude1Idx, "Exclusion 1: time of event unknown");
-    ExcelUtils.writeCell(headerRow, exclude2Idx, "Exclusion 2: no followup data");
-    ExcelUtils.writeCell(headerRow, exclude3Idx, "Exclusion 3: inconsistent death data");
+    ExcelUtils.writeCell(headerRow, exclude1Idx, "Exclusion 1:\ntime of event unknown");
+    ExcelUtils.writeCell(headerRow, exclude2Idx, "Exclusion 2:\nDFST agrees with Additional Cancer and Patient Death");
+    ExcelUtils.writeCell(headerRow, exclude3Idx, "Exclusion 3:\nCheck survival time against Patient Death");
+    ExcelUtils.writeCell(headerRow, exclude4Idx, "Exclusion 4:\nDFST agrees with Additional Cancer and survival time");
 
     ExcelUtils.writeCell(headerRow, includeCrit1Idx, "Criterion 1");
     ExcelUtils.writeCell(headerRow, includeCrit2Idx, "Criterion 2");
@@ -418,9 +427,10 @@ public class ItpcSheet implements Iterator {
     ExcelUtils.writeCell(descrRow, incFollowupIdx, "");
     ExcelUtils.writeCell(descrRow, incGenoDataAvailIdx, "");
 
-    ExcelUtils.writeCell(descrRow, exclude1Idx, "");
-    ExcelUtils.writeCell(descrRow, exclude2Idx, "");
-    ExcelUtils.writeCell(descrRow, exclude3Idx, "");
+    ExcelUtils.writeCell(descrRow, exclude1Idx, "Column BP is Yes and all of BR-BU has no data or Column BP is No and one of BR-BU has data");
+    ExcelUtils.writeCell(descrRow, exclude2Idx, "Column BO has days and either Column BP is yes or Column CD is yes");
+    ExcelUtils.writeCell(descrRow, exclude3Idx, "Column CD is yes and Column CI has days");
+    ExcelUtils.writeCell(descrRow, exclude4Idx, "Column BO is less than Column BX, or Column BX is greater than Column CI");
 
     ExcelUtils.writeCell(descrRow, includeCrit1Idx, "based on Inc 1, 2a, 3, 4b, 4c, 5, 6, 8, 9\nnot otherwise excluded");
     ExcelUtils.writeCell(descrRow, includeCrit2Idx, "based on Inc 2a, 3, 4c, 5, 6, 9\nnot otherwise excluded");
@@ -485,6 +495,8 @@ public class ItpcSheet implements Iterator {
     subject.setAddCxLastEval(fields.get(addCxLastEvalIdx));
     subject.setDaysDiagtoDeath(fields.get(daysDiagToDeathIdx));
     subject.setPatientDied(fields.get(patientDiedIdx));
+    subject.setDiseaseFreeSurvivalTime(fields.get(diseaseFreeSurvivalTimeIdx));
+    subject.setSurvivalNotDied(fields.get(survivalNotDiedIdx));
 
     if (!StringUtils.isBlank(fields.get(genoSourceIdx1)) && !fields.get(genoSourceIdx1).equals("NA")) {
       subject.setGenoSource(fields.get(genoSourceIdx1));
@@ -582,8 +594,9 @@ public class ItpcSheet implements Iterator {
     ExcelUtils.writeCell(row, incGenoDataAvailIdx, ItpcUtils.valueToInclusion(subject.passInclusion9()), highlight);
 
     ExcelUtils.writeCell(row, exclude1Idx, ItpcUtils.valueToExclusion(subject.exclude1()), highlight);
-    ExcelUtils.writeCell(row, exclude2Idx, ItpcUtils.valueToExclusion(subject.exclude2()), highlight);
-    ExcelUtils.writeCell(row, exclude3Idx, ItpcUtils.valueToExclusion(subject.exclude3()), highlight);
+    ExcelUtils.writeCell(row, exclude2Idx, ItpcUtils.valueToExclusion(subject.exclude4()), highlight);
+    ExcelUtils.writeCell(row, exclude3Idx, ItpcUtils.valueToExclusion(subject.exclude5()), highlight);
+    ExcelUtils.writeCell(row, exclude4Idx, ItpcUtils.valueToExclusion(subject.exclude6()), highlight);
 
     ExcelUtils.writeCell(row, includeCrit1Idx, ItpcUtils.valueToInclusion(subject.includeCrit1()), highlight);
     ExcelUtils.writeCell(row, includeCrit2Idx, ItpcUtils.valueToInclusion(subject.includeCrit2()), highlight);
