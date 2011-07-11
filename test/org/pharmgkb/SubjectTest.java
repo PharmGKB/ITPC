@@ -2,6 +2,7 @@ package org.pharmgkb;
 
 import junit.framework.Assert;
 import junit.framework.TestCase;
+import util.Med;
 import util.Value;
 
 /**
@@ -33,8 +34,8 @@ public class SubjectTest extends TestCase {
 
     /* Test where a subject has both a potent and a weak inhibitor, Potents should always make score 0 */
 
-    subject.setHasCimetidine(Value.Yes);
-    subject.setHasParoxetine(Value.Yes);
+    subject.addMedStatus(Med.Cimetidine, Value.Yes);
+    subject.addMedStatus(Med.Paroxetine, Value.Yes);
 
     Assert.assertEquals(0f, subject.getScore());
     Assert.assertEquals("Poor", subject.getMetabolizerGroup());
@@ -486,6 +487,15 @@ public class SubjectTest extends TestCase {
     assertEquals("1234", subject.getDiagToEventDaysCalc());
   }
 
+
+  public void testExclude1() {
+    Subject subject = makeDefaultSubject();
+    subject.setAdditionalCancer(Value.Unknown);
+    subject.setAddCxIpsilateral("123");
+
+    assertEquals(Value.Yes, subject.exclude1());
+  }
+
   public void testExclude4() {
     Subject subject = makeDefaultSubject();
     subject.setAdditionalCancer(Value.Yes);
@@ -553,17 +563,17 @@ public class SubjectTest extends TestCase {
   }
 
   private void weaksToNo(Subject subject) {
-    subject.setHasCimetidine(Value.No);
-    subject.setHasSertraline(Value.No);
-    subject.setHasCitalopram(Value.No);
+    subject.addMedStatus(Med.Cimetidine, Value.No);
+    subject.addMedStatus(Med.Sertraline, Value.No);
+    subject.addMedStatus(Med.Citalopram, Value.No);
   }
 
   private void potentToNo(Subject subject) {
-    subject.setHasParoxetine(Value.No);
-    subject.setHasFluoxetine(Value.No);
-    subject.setHasQuinidine(Value.No);
-    subject.setHasBuproprion(Value.No);
-    subject.setHasDuloxetine(Value.No);
+    subject.addMedStatus(Med.Paroxetine, Value.No);
+    subject.addMedStatus(Med.Fluoxetine, Value.No);
+    subject.addMedStatus(Med.Quinidine, Value.No);
+    subject.addMedStatus(Med.Buproprion, Value.No);
+    subject.addMedStatus(Med.Duloxetine, Value.No);
   }
 
   private Subject makeDefaultSubject() {

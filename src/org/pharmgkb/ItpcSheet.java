@@ -1,19 +1,19 @@
 package org.pharmgkb;
 
+import com.google.common.collect.Maps;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.apache.poi.hssf.usermodel.HSSFCellStyle;
 import org.apache.poi.hssf.util.HSSFColor;
 import org.apache.poi.ss.usermodel.*;
-import util.ExcelUtils;
-import util.ItpcUtils;
-import util.PoiWorksheetIterator;
-import util.Value;
+import util.*;
 
 import java.io.*;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
+import java.util.regex.Pattern;
 
 
 /**
@@ -105,7 +105,6 @@ public class ItpcSheet implements Iterator {
   protected int exclude3Idx = -1;
   protected int exclude4Idx = -1;
   protected int newFirstDiseaseEventIdx = -1;
-  protected int newHasDiseaseEventIdx = -1;
   protected int diagToEventCalcIdx = -1;
 
   protected int incAgeIdx = -1;
@@ -123,6 +122,25 @@ public class ItpcSheet implements Iterator {
   protected int incGenoDataAvailIdx = -1;
 
   private PoiWorksheetIterator m_sampleIterator = null;
+
+  protected static final Map<Pattern,Med> sf_medPatterns = Maps.newHashMap();
+  static {
+    sf_medPatterns.put(Pattern.compile("Fluoxetine"), Med.Fluoxetine);
+    sf_medPatterns.put(Pattern.compile("Paroxetine"), Med.Paroxetine);
+    sf_medPatterns.put(Pattern.compile("Quinidine"), Med.Quinidine);
+    sf_medPatterns.put(Pattern.compile("Buproprion"), Med.Buproprion);
+    sf_medPatterns.put(Pattern.compile("Duloxetine"), Med.Duloxetine);
+    sf_medPatterns.put(Pattern.compile("Sertraline"), Med.Sertraline);
+    sf_medPatterns.put(Pattern.compile("Diphenhydramine"), Med.Diphenhydramine);
+    sf_medPatterns.put(Pattern.compile("Thioridazine"), Med.Thioridazine);
+    sf_medPatterns.put(Pattern.compile("Amiodarone"), Med.Amiodarone);
+    sf_medPatterns.put(Pattern.compile("Trazodone"), Med.Trazodone);
+    sf_medPatterns.put(Pattern.compile("Cimetidine"), Med.Cimetidine);
+    sf_medPatterns.put(Pattern.compile("Venlafaxine"), Med.Venlafaxine);
+    sf_medPatterns.put(Pattern.compile("Citalopram"), Med.Citalopram);
+    sf_medPatterns.put(Pattern.compile("Escitalopram"), Med.Escitalopram);
+  }
+  protected Map<Med,Integer> medIdx = Maps.newHashMap();
 
   /**
    * Constructor for an ITPC data file
@@ -190,6 +208,12 @@ public class ItpcSheet implements Iterator {
       Cell headerCell = headerCells.next();
       String header = headerCell.getStringCellValue();
       int idx = headerCell.getColumnIndex();
+
+      for (Pattern pattern : sf_medPatterns.keySet()) {
+        if (pattern.matcher(header).matches()) {
+          medIdx.put(sf_medPatterns.get(pattern), idx);
+        }
+      }
 
       if (StringUtils.isNotEmpty(header)) {
         header = header.trim().toLowerCase();
@@ -319,38 +343,37 @@ public class ItpcSheet implements Iterator {
 
     newFirstDiseaseEventIdx = startPgkbColsIdx;
     diagToEventCalcIdx = startPgkbColsIdx   + 1;
-    newHasDiseaseEventIdx = startPgkbColsIdx+ 2;
-    allele1finalIdx = startPgkbColsIdx      + 3;
-    allele2finalIdx = startPgkbColsIdx      + 4;
-    genotypeIdx = startPgkbColsIdx          + 5;
-    genoMetabStatusIdx = startPgkbColsIdx   + 6;
-    weakIdx = startPgkbColsIdx              + 7;
-    potentIdx = startPgkbColsIdx            + 8;
-    scoreIdx = startPgkbColsIdx             + 9;
-    metabStatusIdx = startPgkbColsIdx       + 10;
+    allele1finalIdx = startPgkbColsIdx      + 2;
+    allele2finalIdx = startPgkbColsIdx      + 3;
+    genotypeIdx = startPgkbColsIdx          + 4;
+    genoMetabStatusIdx = startPgkbColsIdx   + 5;
+    weakIdx = startPgkbColsIdx              + 6;
+    potentIdx = startPgkbColsIdx            + 7;
+    scoreIdx = startPgkbColsIdx             + 8;
+    metabStatusIdx = startPgkbColsIdx       + 9;
 
-    incAgeIdx = startPgkbColsIdx            + 11;
-    incNonmetaIdx = startPgkbColsIdx        + 12;
-    incPriorHistIdx = startPgkbColsIdx      + 13;
-    incErPosIdx = startPgkbColsIdx          + 14;
-    incSysTherIdx = startPgkbColsIdx        + 15;
-    incAdjTamoxIdx = startPgkbColsIdx       + 16;
-    incDurationIdx = startPgkbColsIdx       + 17;
-    incTamoxDoseIdx = startPgkbColsIdx      + 18;
-    incChemoIdx = startPgkbColsIdx          + 19;
-    incHormoneIdx = startPgkbColsIdx        + 20;
-    incDnaCollectionIdx = startPgkbColsIdx  + 21;
-    incFollowupIdx = startPgkbColsIdx       + 22;
-    incGenoDataAvailIdx = startPgkbColsIdx  + 23;
+    incAgeIdx = startPgkbColsIdx            + 10;
+    incNonmetaIdx = startPgkbColsIdx        + 11;
+    incPriorHistIdx = startPgkbColsIdx      + 12;
+    incErPosIdx = startPgkbColsIdx          + 13;
+    incSysTherIdx = startPgkbColsIdx        + 14;
+    incAdjTamoxIdx = startPgkbColsIdx       + 15;
+    incDurationIdx = startPgkbColsIdx       + 16;
+    incTamoxDoseIdx = startPgkbColsIdx      + 17;
+    incChemoIdx = startPgkbColsIdx          + 18;
+    incHormoneIdx = startPgkbColsIdx        + 19;
+    incDnaCollectionIdx = startPgkbColsIdx  + 20;
+    incFollowupIdx = startPgkbColsIdx       + 21;
+    incGenoDataAvailIdx = startPgkbColsIdx  + 22;
 
-    exclude1Idx = startPgkbColsIdx          + 24;
-    exclude2Idx = startPgkbColsIdx          + 25;
-    exclude3Idx = startPgkbColsIdx          + 26;
-    exclude4Idx = startPgkbColsIdx          + 27;
+    exclude1Idx = startPgkbColsIdx          + 23;
+    exclude2Idx = startPgkbColsIdx          + 24;
+    exclude3Idx = startPgkbColsIdx          + 25;
+    exclude4Idx = startPgkbColsIdx          + 26;
 
-    includeCrit1Idx = startPgkbColsIdx      + 28;
-    includeCrit2Idx = startPgkbColsIdx      + 29;
-    includeCrit3Idx = startPgkbColsIdx      + 30;
+    includeCrit1Idx = startPgkbColsIdx      + 27;
+    includeCrit2Idx = startPgkbColsIdx      + 28;
+    includeCrit3Idx = startPgkbColsIdx      + 29;
 
     writeCellTitles(headerRow);
     styleCells(headerRow, startPgkbColsIdx, headerRow.getCell(0).getCellStyle());
@@ -364,8 +387,7 @@ public class ItpcSheet implements Iterator {
   private void writeCellTitles(Row headerRow) {
     ExcelUtils.writeCell(headerRow, newFirstDiseaseEventIdx, "First Disease Event (calculated)");
     ExcelUtils.writeCell(headerRow, diagToEventCalcIdx, "Time from Primary Diagnosis to First Disease Event (calculated)");
-    ExcelUtils.writeCell(headerRow, newHasDiseaseEventIdx, "Has Disease Event (calculated)");
-    
+
     ExcelUtils.writeCell(headerRow, allele1finalIdx, "CYP2D6 Allele 1 (Final)");
     ExcelUtils.writeCell(headerRow, allele2finalIdx, "CYP2D6 Allele 2 (Final)");
     ExcelUtils.writeCell(headerRow, genotypeIdx, "CYP2D6 Genotype (PharmGKB)");
@@ -402,7 +424,6 @@ public class ItpcSheet implements Iterator {
   private void writeCellDescr(Row descrRow) {
     ExcelUtils.writeCell(descrRow, newFirstDiseaseEventIdx, "none = 0, local/regional recurrence = 1,  distant recurrence = 2,  contralateral breast cancer = 3, other second non-breast primary = 4, death without recurrence, contralateral breast cancer or second non-breast primary cancer = 5, based on columns BR-BU");
     ExcelUtils.writeCell(descrRow, diagToEventCalcIdx, "time to the first of a local/regional/distant recurrence, contralateral breast disease or a second primary cancer, death without recurrence, or, if none of these, then time to last disease evaluation (days)");
-    ExcelUtils.writeCell(descrRow, newHasDiseaseEventIdx, "based on First Disease Event");
 
     ExcelUtils.writeCell(descrRow, allele1finalIdx, "");
     ExcelUtils.writeCell(descrRow, allele2finalIdx, "");
@@ -508,15 +529,6 @@ public class ItpcSheet implements Iterator {
       subject.setGenoSource(fields.get(genoSourceIdx3));
     }
 
-    subject.setHasFluoxetine(translateDrugFieldToValue(fields.get(fluoxetineCol)));
-    subject.setHasParoxetine(translateDrugFieldToValue(fields.get(paroxetineCol)));
-    subject.setHasQuinidine(translateDrugFieldToValue(fields.get(quinidienCol)));
-    subject.setHasBuproprion(translateDrugFieldToValue(fields.get(buproprionCol)));
-    subject.setHasDuloxetine(translateDrugFieldToValue(fields.get(duloxetineCol)));
-    subject.setHasCimetidine(translateDrugFieldToValue(fields.get(cimetidineCol)));
-    subject.setHasSertraline(translateDrugFieldToValue(fields.get(sertralineCol)));
-    subject.setHasCitalopram(translateDrugFieldToValue(fields.get(citalopramCol)));
-
     subject.setRs4986774(new VariantAlleles(fields.get(rs4986774idx)));
     subject.setRs1065852(new VariantAlleles(fields.get(rs1065852idx)));
     subject.setRs3892097(new VariantAlleles(fields.get(rs3892097idx)));
@@ -529,6 +541,10 @@ public class ItpcSheet implements Iterator {
     subject.setGenotypeAmplichip(fields.get(amplichipidx));
     if (fields.size()>otherGenoIdx && !StringUtils.isBlank(fields.get(otherGenoIdx))) {
       subject.setGenotypeAmplichip(fields.get(otherGenoIdx));
+    }
+
+    for (Med med : medIdx.keySet()) {
+      subject.addMedStatus(med, translateDrugFieldToValue(fields.get(medIdx.get(med))));
     }
 
     return subject;
@@ -568,7 +584,6 @@ public class ItpcSheet implements Iterator {
 
     ExcelUtils.writeCell(row, newFirstDiseaseEventIdx, subject.getFirstDiseaseEventCalc(), highlight);
     ExcelUtils.writeCell(row, diagToEventCalcIdx, subject.getDiagToEventDaysCalc(), highlight);
-    ExcelUtils.writeCell(row, newHasDiseaseEventIdx, subject.hasAdditionalDiseaseEvent().toString(), highlight);
 
     ExcelUtils.writeCell(row, allele1finalIdx, subject.getGenotypeFinal().get(0), highlight);
     ExcelUtils.writeCell(row, allele2finalIdx, subject.getGenotypeFinal().get(1), highlight);

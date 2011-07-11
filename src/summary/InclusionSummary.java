@@ -36,6 +36,7 @@ public class InclusionSummary extends AbstractSummary {
   private static final int exc1 = 0;
   private static final int exc2 = 1;
   private static final int exc3 = 2;
+  private static final int exc4 = 3;
 
   private static final int crit1 = 0;
   private static final int crit2 = 1;
@@ -63,6 +64,7 @@ public class InclusionSummary extends AbstractSummary {
     exclusions.put(0, "Excl. 1");
     exclusions.put(1, "Excl. 2");
     exclusions.put(2, "Excl. 3");
+    exclusions.put(3, "Excl. 4");
   }
 
   private static final Map<Integer,String> criteriaLabels = Maps.newHashMap();
@@ -146,8 +148,9 @@ public class InclusionSummary extends AbstractSummary {
     addSubjectInclusion(site-1, inc9, subject.passInclusion9());
 
     addSubjectExclusion(site - 1, exc1, subject.exclude1());
-    addSubjectExclusion(site - 1, exc2, subject.exclude2());
-    addSubjectExclusion(site - 1, exc3, subject.exclude3());
+    addSubjectExclusion(site - 1, exc2, subject.exclude4());
+    addSubjectExclusion(site - 1, exc3, subject.exclude5());
+    addSubjectExclusion(site - 1, exc4, subject.exclude6());
 
     addSubjectCriterium(site - 1, crit1, subject.includeCrit1());
     addSubjectCriterium(site - 1, crit2, subject.includeCrit2());

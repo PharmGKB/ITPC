@@ -2,13 +2,16 @@ package org.pharmgkb;
 
 import com.google.common.base.Joiner;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import util.ItpcUtils;
+import util.Med;
 import util.Value;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by IntelliJ IDEA.
@@ -53,16 +56,6 @@ public class Subject {
   private String m_diseaseFreeSurvivalTime = null;
   private String m_survivalNotDied = null;
 
-  private Value m_hasParoxetine = Value.Unknown;
-  private Value m_hasFluoxetine = Value.Unknown;
-  private Value m_hasQuinidine = Value.Unknown;
-  private Value m_hasBuproprion = Value.Unknown;
-  private Value m_hasDuloxetine = Value.Unknown;
-
-  private Value m_hasCimetidine = Value.Unknown;
-  private Value m_hasSertraline = Value.Unknown;
-  private Value m_hasCitalopram = Value.Unknown;
-
   private Genotype m_genotypePgkb = new Genotype();
   private Genotype m_genotypeAmplichip = new Genotype();
   private Genotype m_genotypeLimited = new Genotype();
@@ -74,6 +67,8 @@ public class Subject {
   private VariantAlleles m_rs16947 = new VariantAlleles();
   private VariantAlleles m_rs28371706 = new VariantAlleles();
   private VariantAlleles m_rs28371725 = new VariantAlleles();
+
+  private Map<Med,Value> m_medStatus = Maps.newHashMap();
 
   public Subject() {
     this.calculateGenotypePgkb();
@@ -123,14 +118,14 @@ public class Subject {
   }
 
   public Value getWeak() {
-    if (this.hasCimetidine() == Value.Yes
-        || this.hasSertraline() == Value.Yes
-        || this.hasCitalopram() == Value.Yes) {
+    if (hasMed(Med.Cimetidine) == Value.Yes
+        || hasMed(Med.Sertraline) == Value.Yes
+        || hasMed(Med.Citalopram) == Value.Yes) {
       return Value.Yes;
     }
-    else if (this.hasCimetidine() == Value.No
-        && this.hasSertraline() == Value.No
-        && this.hasCitalopram() == Value.No) {
+    else if (hasMed(Med.Cimetidine) == Value.No
+        && hasMed(Med.Sertraline) == Value.No
+        && hasMed(Med.Citalopram) == Value.No) {
       return Value.No;
     }
     else {
@@ -139,18 +134,18 @@ public class Subject {
   }
 
   public Value getPotent() {
-    if (this.hasParoxetine() == Value.Yes
-        || this.hasFluoxetine() == Value.Yes
-        || this.hasQuinidine() == Value.Yes
-        || this.hasBuproprion() == Value.Yes
-        || this.hasDuloxetine() == Value.Yes) {
+    if (hasMed(Med.Paroxetine) == Value.Yes
+        || hasMed(Med.Fluoxetine) == Value.Yes
+        || hasMed(Med.Quinidine) == Value.Yes
+        || hasMed(Med.Buproprion) == Value.Yes
+        || hasMed(Med.Duloxetine) == Value.Yes) {
       return Value.Yes;
     }
-    else if (this.hasParoxetine() == Value.No
-        && this.hasFluoxetine() == Value.No
-        && this.hasQuinidine() == Value.No
-        && this.hasBuproprion() == Value.No
-        && this.hasDuloxetine() == Value.No) {
+    else if (hasMed(Med.Paroxetine) == Value.No
+        && hasMed(Med.Fluoxetine) == Value.No
+        && hasMed(Med.Quinidine) == Value.No
+        && hasMed(Med.Buproprion) == Value.No
+        && hasMed(Med.Duloxetine) == Value.No) {
       return Value.No;
     }
     else {
@@ -296,70 +291,6 @@ public class Subject {
     }
 
     return group;
-  }
-
-  public Value hasParoxetine() {
-    return m_hasParoxetine;
-  }
-
-  public void setHasParoxetine(Value hasParoxetine) {
-    m_hasParoxetine = hasParoxetine;
-  }
-
-  public Value hasFluoxetine() {
-    return m_hasFluoxetine;
-  }
-
-  public void setHasFluoxetine(Value hasFluoxetine) {
-    m_hasFluoxetine = hasFluoxetine;
-  }
-
-  public Value hasQuinidine() {
-    return m_hasQuinidine;
-  }
-
-  public void setHasQuinidine(Value hasQuinidine) {
-    m_hasQuinidine = hasQuinidine;
-  }
-
-  public Value hasBuproprion() {
-    return m_hasBuproprion;
-  }
-
-  public void setHasBuproprion(Value hasBuproprion) {
-    m_hasBuproprion = hasBuproprion;
-  }
-
-  public Value hasDuloxetine() {
-    return m_hasDuloxetine;
-  }
-
-  public void setHasDuloxetine(Value hasDuloxetine) {
-    m_hasDuloxetine = hasDuloxetine;
-  }
-
-  public Value hasCimetidine() {
-    return m_hasCimetidine;
-  }
-
-  public void setHasCimetidine(Value hasCimetidine) {
-    m_hasCimetidine = hasCimetidine;
-  }
-
-  public Value hasSertraline() {
-    return m_hasSertraline;
-  }
-
-  public void setHasSertraline(Value hasSertraline) {
-    m_hasSertraline = hasSertraline;
-  }
-
-  public Value hasCitalopram() {
-    return m_hasCitalopram;
-  }
-
-  public void setHasCitalopram(Value hasCitalopram) {
-    m_hasCitalopram = hasCitalopram;
   }
 
   public boolean deletionDetectable() {
@@ -1003,43 +934,12 @@ public class Subject {
         ) {
       return Value.Yes;
     }
-    else if (getAdditionalCancer() == Value.No
-        && (!ItpcUtils.isBlank(getAddCxIpsilateral())
-            || !ItpcUtils.isBlank(getAddCxDistantRecur())
-            || !ItpcUtils.isBlank(getAddCxContralateral())
-            || !ItpcUtils.isBlank(getAddCxSecondInvasive()))
+    else if ((getAdditionalCancer() == Value.No || getAdditionalCancer() == Value.Unknown)
+        && (!(ItpcUtils.isBlank(getAddCxIpsilateral()) || getAddCxIpsilateral().equals("0"))
+            || !(ItpcUtils.isBlank(getAddCxDistantRecur()) || getAddCxDistantRecur().equals("0"))
+            || !(ItpcUtils.isBlank(getAddCxContralateral()) || getAddCxContralateral().equals("0"))
+            || !(ItpcUtils.isBlank(getAddCxSecondInvasive()) || getAddCxSecondInvasive().equals("0")))
       ) {
-      return Value.Yes;
-    }
-    else {
-      return Value.No;
-    }
-  }
-
-  public Value exclude2() {
-    if (
-        getAdditionalCancer() == Value.Unknown
-        && (ItpcUtils.isBlank(getAddCxLastEval()) || getAddCxLastEval().equals("0"))
-        ) {
-      return Value.Yes;
-    }
-    else if (
-        (getAdditionalCancer()==Value.Unknown || getAdditionalCancer()==Value.No)
-        && (ItpcUtils.isBlank(getAddCxLastEval()) || getAddCxLastEval().equals("0"))
-        && getPatientDied()==Value.Yes
-        ) {
-      return Value.Yes;
-    }
-    else {
-      return Value.No;
-    }
-  }
-
-  public Value exclude3() {
-    if (getAdditionalCancer() == Value.No
-        && !ItpcUtils.isBlank(getAddCxLastEval())
-        && getAddCxLastEval().equals("0")
-        && getPatientDied() == Value.No) {
       return Value.Yes;
     }
     else {
@@ -1082,8 +982,9 @@ public class Subject {
 
   public Value excludeSummary() {
     if (exclude1() == Value.Yes
-        || exclude2() == Value.Yes
-        || exclude3() == Value.Yes) {
+        || exclude4() == Value.Yes
+        || exclude6() == Value.Yes
+        || exclude5() == Value.Yes) {
       return Value.Yes;
     }
     else {
@@ -1503,6 +1404,31 @@ public class Subject {
 
   public void setSurvivalNotDied(String survivalNotDied) {
     m_survivalNotDied = survivalNotDied;
+  }
+
+  public Map<Med, Value> getMedStatus() {
+    return m_medStatus;
+  }
+
+  public void setMedStatus(Map<Med, Value> medStatus) {
+    m_medStatus = medStatus;
+  }
+
+  public void addMedStatus(Med med, Value value) {
+    m_medStatus.put(med, value);
+  }
+
+  public void removeMedStatus(Med med) {
+    m_medStatus.remove(med);
+  }
+
+  public Value hasMed(Med med) {
+    if (med != null && m_medStatus.keySet().contains(med)) {
+      return m_medStatus.get(med);
+    }
+    else {
+      return Value.Unknown;
+    }
   }
 
   enum Deletion {Unknown, None, Hetero, Homo}
