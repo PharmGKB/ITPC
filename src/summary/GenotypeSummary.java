@@ -24,7 +24,7 @@ public class GenotypeSummary extends AbstractSummary {
   public void addSubject(Subject subject) {
     if (subject != null) {
 
-      String key = subject.getMetabolizerGroup()
+      String key = subject.getGenoMetabolizerGroup()
           + "|" + subject.getWeak()
           + "|" + subject.getPotent();
 
@@ -41,7 +41,7 @@ public class GenotypeSummary extends AbstractSummary {
     Sheet sheet = getSheet(wb);
 
     Row header = sheet.createRow(0);
-    header.createCell(0).setCellValue("Genotype");
+    header.createCell(0).setCellValue("Metabolizer Group based on Genotype Only");
     header.createCell(1).setCellValue("Weak");
     header.createCell(2).setCellValue("Potent");
     header.createCell(3).setCellValue("Count");

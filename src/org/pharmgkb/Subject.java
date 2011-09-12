@@ -1274,6 +1274,10 @@ public class Subject {
     }
   }
 
+  /**
+   * Returns information ont eh first disease event in a String array
+   * @return String array: element 0: code of the first disease event, element 1: days to first disease event
+   */
   public String[] getFirstEventData() {
     String code = "0";
     
@@ -1281,7 +1285,7 @@ public class Subject {
       List<String> eventCodes = Lists.newArrayList();
 
       int days = 999999;
-      if (!(ItpcUtils.isBlank(getAddCxContralateral()) || getAddCxContralateral().equals("0"))) {
+      if (isInvasive(getAddCxContralateral()) && !(ItpcUtils.isBlank(getAddCxContralateral()) || getAddCxContralateral().equals("0"))) {
         eventCodes.add("3");
         Integer contraDays = parseDays(getAddCxContralateral());
         if (contraDays != null && contraDays<days) {
@@ -1297,7 +1301,7 @@ public class Subject {
           code = "2";
         }
       }
-      if (!(ItpcUtils.isBlank(getAddCxIpsilateral()) || getAddCxIpsilateral().equals("0"))) {
+      if (isInvasive(getAddCxIpsilateral()) && !(ItpcUtils.isBlank(getAddCxIpsilateral()) || getAddCxIpsilateral().equals("0"))) {
         eventCodes.add("1");
         Integer ipsiDays = parseDays(getAddCxIpsilateral());
         if (ipsiDays != null && ipsiDays<days) {
@@ -1429,6 +1433,10 @@ public class Subject {
     else {
       return Value.Unknown;
     }
+  }
+
+  public boolean isInvasive(String days) {
+    return !days.contains("NI");
   }
 
   enum Deletion {Unknown, None, Hetero, Homo}

@@ -315,25 +315,25 @@ public class ItpcSheet implements Iterator {
         citalopramCol = idx;
       } else if (header.contains("amplichip call")) {
         amplichipidx = idx;
-      } else if (header.equalsIgnoreCase("Additional cancer?")) {
+      } else if (header.equalsIgnoreCase("Additional cancer?")) {  // column BP
         additionalCancerIdx = idx;
-      } else if (header.contains("time from diagnosis to ipsilateral local or regional recurrence")) {
+      } else if (header.contains("time from diagnosis to ipsilateral local or regional recurrence")) {  // column BR
         addCxIpsilateralIdx = idx;
-      } else if (header.contains("time from diagnosis to distant recurrence")) {
+      } else if (header.contains("time from diagnosis to distant recurrence")) {  // column BS
         addCxDistantRecurIdx = idx;
-      } else if (header.contains("time from diagnosis to contralateral breast cancer")) {
+      } else if (header.contains("time from diagnosis to contralateral breast cancer")) {  // column BT
         addCxContralateralIdx = idx;
-      } else if (header.contains("time from diagnosis to second primary invasive cancer")) {
+      } else if (header.contains("time from diagnosis to second primary invasive cancer")) {  // column BU
         addCxSecondInvasiveIdx = idx;
-      } else if (header.contains("time from diagnosis to date of last disease evaluation")) {
+      } else if (header.contains("time from diagnosis to date of last disease evaluation")) {  // column BX
         addCxLastEvalIdx = idx;
-      } else if (header.equalsIgnoreCase("Time from diagnosis until death if the patient has died")) {
+      } else if (header.equalsIgnoreCase("Time from diagnosis until death if the patient has died")) {  // column CE
         daysDiagToDeathIdx = idx;
-      } else if (header.equalsIgnoreCase("Has the patient died?")) {
+      } else if (header.equalsIgnoreCase("Has the patient died?")) {  // column CD
         patientDiedIdx = idx;
-      } else if (header.contains("enter disease-free survival time")) {
+      } else if (header.contains("enter disease-free survival time")) {  // column BO
         diseaseFreeSurvivalTimeIdx = idx;
-      } else if (header.contains("survival time if patient has not died")) {
+      } else if (header.contains("survival time if patient has not died")) {  // column CI
         survivalNotDiedIdx = idx;
       }
     }
