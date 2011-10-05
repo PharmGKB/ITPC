@@ -67,6 +67,7 @@ public class ItpcSheet implements Iterator {
   protected int patientDiedIdx = -1;
   protected int diseaseFreeSurvivalTimeIdx = -1;
   protected int survivalNotDiedIdx = -1;
+  protected int causeOfDeathIdx = -1;
 
   protected int fluoxetineCol = -1;
   protected int paroxetineCol = -1;
@@ -120,6 +121,7 @@ public class ItpcSheet implements Iterator {
   protected int incDnaCollectionIdx = -1;
   protected int incFollowupIdx = -1;
   protected int incGenoDataAvailIdx = -1;
+  protected int bfciIdx = -1;
 
   private PoiWorksheetIterator m_sampleIterator = null;
 
@@ -335,6 +337,8 @@ public class ItpcSheet implements Iterator {
         diseaseFreeSurvivalTimeIdx = idx;
       } else if (header.contains("survival time if patient has not died")) {  // column CI
         survivalNotDiedIdx = idx;
+      } else if (header.equalsIgnoreCase("Cause of death if the patient has died")) {
+        causeOfDeathIdx = idx;
       }
     }
 
@@ -374,6 +378,8 @@ public class ItpcSheet implements Iterator {
     includeCrit1Idx = startPgkbColsIdx      + 27;
     includeCrit2Idx = startPgkbColsIdx      + 28;
     includeCrit3Idx = startPgkbColsIdx      + 29;
+
+    bfciIdx = startPgkbColsIdx              + 30;
 
     writeCellTitles(headerRow);
     styleCells(headerRow, startPgkbColsIdx, headerRow.getCell(0).getCellStyle());
@@ -419,6 +425,7 @@ public class ItpcSheet implements Iterator {
     ExcelUtils.writeCell(headerRow, includeCrit1Idx, "Criterion 1");
     ExcelUtils.writeCell(headerRow, includeCrit2Idx, "Criterion 2");
     ExcelUtils.writeCell(headerRow, includeCrit3Idx, "Criterion 3");
+    ExcelUtils.writeCell(headerRow, bfciIdx, "BCFI(Breast-Cancer Free Interval)");
   }
 
   private void writeCellDescr(Row descrRow) {
@@ -456,6 +463,7 @@ public class ItpcSheet implements Iterator {
     ExcelUtils.writeCell(descrRow, includeCrit1Idx, "based on Inc 1, 2a, 3, 4b, 4c, 5, 6, 8, 9\nnot otherwise excluded");
     ExcelUtils.writeCell(descrRow, includeCrit2Idx, "based on Inc 2a, 3, 4c, 5, 6, 9\nnot otherwise excluded");
     ExcelUtils.writeCell(descrRow, includeCrit3Idx, "all subjects\nnot otherwise excluded");
+    ExcelUtils.writeCell(descrRow, bfciIdx, "as per Huddis et al. 2000 (based on CG,BR,BS,BT)");
   }
 
   private PoiWorksheetIterator getSampleIterator() {
@@ -518,6 +526,7 @@ public class ItpcSheet implements Iterator {
     subject.setPatientDied(fields.get(patientDiedIdx));
     subject.setDiseaseFreeSurvivalTime(fields.get(diseaseFreeSurvivalTimeIdx));
     subject.setSurvivalNotDied(fields.get(survivalNotDiedIdx));
+    subject.setCauseOfDeath(fields.get(causeOfDeathIdx));
 
     if (!StringUtils.isBlank(fields.get(genoSourceIdx1)) && !fields.get(genoSourceIdx1).equals("NA")) {
       subject.setGenoSource(fields.get(genoSourceIdx1));
@@ -616,6 +625,8 @@ public class ItpcSheet implements Iterator {
     ExcelUtils.writeCell(row, includeCrit1Idx, ItpcUtils.valueToInclusion(subject.includeCrit1()), highlight);
     ExcelUtils.writeCell(row, includeCrit2Idx, ItpcUtils.valueToInclusion(subject.includeCrit2()), highlight);
     ExcelUtils.writeCell(row, includeCrit3Idx, ItpcUtils.valueToInclusion(subject.includeCrit3()), highlight);
+
+    ExcelUtils.writeCell(row, bfciIdx, subject.getBreastCancerFreeInterval(), highlight);
   }
 
   public File saveOutput() throws IOException {

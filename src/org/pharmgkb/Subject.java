@@ -3,6 +3,7 @@ package org.pharmgkb;
 import com.google.common.base.Joiner;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import com.google.common.collect.Sets;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import util.ItpcUtils;
@@ -12,6 +13,7 @@ import util.Value;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+import java.util.SortedSet;
 
 /**
  * Created by IntelliJ IDEA.
@@ -55,6 +57,7 @@ public class Subject {
   private Value m_patientDied = null;
   private String m_diseaseFreeSurvivalTime = null;
   private String m_survivalNotDied = null;
+  private String m_causeOfDeath = null;
 
   private Genotype m_genotypePgkb = new Genotype();
   private Genotype m_genotypeAmplichip = new Genotype();
@@ -1436,7 +1439,37 @@ public class Subject {
   }
 
   public boolean isInvasive(String days) {
-    return !days.contains("NI");
+    return days != null && !days.contains("NI");
+  }
+
+  public String getBreastCancerFreeInterval() {
+    SortedSet<Integer> freeIntervals = Sets.newTreeSet();
+
+    if (getCauseOfDeath()!=null && getCauseOfDeath().equals("1")) {
+      freeIntervals.add(parseDays(getDaysDiagtoDeath()));
+    }
+
+    String[] firstEventData = getFirstEventData();
+    if (firstEventData != null) {
+      if (firstEventData[0].equals("1") || firstEventData[0].equals("2") || firstEventData[0].equals("3")) {
+        freeIntervals.add(parseDays(firstEventData[1]));
+      }
+    }
+
+    if (!freeIntervals.isEmpty()) {
+      return Integer.toString(freeIntervals.first());
+    }
+    else {
+      return "";
+    }
+  }
+
+  public String getCauseOfDeath() {
+    return m_causeOfDeath;
+  }
+
+  public void setCauseOfDeath(String causeOfDeath) {
+    m_causeOfDeath = causeOfDeath;
   }
 
   enum Deletion {Unknown, None, Hetero, Homo}
