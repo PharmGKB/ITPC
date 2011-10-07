@@ -1288,7 +1288,7 @@ public class Subject {
       List<String> eventCodes = Lists.newArrayList();
 
       int days = 999999;
-      if (isInvasive(getAddCxContralateral()) && !(ItpcUtils.isBlank(getAddCxContralateral()) || getAddCxContralateral().equals("0"))) {
+      if (!isInvasive(getAddCxContralateral()) || !(ItpcUtils.isBlank(getAddCxContralateral()) || getAddCxContralateral().equals("0"))) {
         eventCodes.add("3");
         Integer contraDays = parseDays(getAddCxContralateral());
         if (contraDays != null && contraDays<days) {
@@ -1304,7 +1304,7 @@ public class Subject {
           code = "2";
         }
       }
-      if (isInvasive(getAddCxIpsilateral()) && !(ItpcUtils.isBlank(getAddCxIpsilateral()) || getAddCxIpsilateral().equals("0"))) {
+      if (!isInvasive(getAddCxIpsilateral()) || !(ItpcUtils.isBlank(getAddCxIpsilateral()) || getAddCxIpsilateral().equals("0"))) {
         eventCodes.add("1");
         Integer ipsiDays = parseDays(getAddCxIpsilateral());
         if (ipsiDays != null && ipsiDays<days) {
@@ -1449,11 +1449,14 @@ public class Subject {
       freeIntervals.add(parseDays(getDaysDiagtoDeath()));
     }
 
-    String[] firstEventData = getFirstEventData();
-    if (firstEventData != null) {
-      if (firstEventData[0].equals("1") || firstEventData[0].equals("2") || firstEventData[0].equals("3")) {
-        freeIntervals.add(parseDays(firstEventData[1]));
-      }
+    if (!ItpcUtils.isBlank(getAddCxIpsilateral())) {
+      freeIntervals.add(parseDays(getAddCxIpsilateral()));
+    }
+    if (!ItpcUtils.isBlank(getAddCxDistantRecur())) {
+      freeIntervals.add(parseDays(getAddCxDistantRecur()));
+    }
+    if (!ItpcUtils.isBlank(getAddCxContralateral())) {
+      freeIntervals.add(parseDays(getAddCxContralateral()));
     }
 
     if (!freeIntervals.isEmpty()) {

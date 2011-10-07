@@ -429,7 +429,7 @@ public class ItpcSheet implements Iterator {
   }
 
   private void writeCellDescr(Row descrRow) {
-    ExcelUtils.writeCell(descrRow, newFirstDiseaseEventIdx, "none = 0, local/regional recurrence = 1,  distant recurrence = 2,  contralateral breast cancer = 3, other second non-breast primary = 4, death without recurrence, contralateral breast cancer or second non-breast primary cancer = 5, based on columns BR-BU");
+    ExcelUtils.writeCell(descrRow, newFirstDiseaseEventIdx, "none = 0, local/regional recurrence = 1,  distant recurrence = 2,  contralateral breast cancer = 3, other second non-breast primary = 4, death without recurrence, contralateral breast cancer or second non-breast primary cancer = 5, based on columns BR-BU and CD");
     ExcelUtils.writeCell(descrRow, diagToEventCalcIdx, "time to the first of a local/regional/distant recurrence, contralateral breast disease or a second primary cancer, death without recurrence, or, if none of these, then time to last disease evaluation (days)");
 
     ExcelUtils.writeCell(descrRow, allele1finalIdx, "");
@@ -463,7 +463,7 @@ public class ItpcSheet implements Iterator {
     ExcelUtils.writeCell(descrRow, includeCrit1Idx, "based on Inc 1, 2a, 3, 4b, 4c, 5, 6, 8, 9\nnot otherwise excluded");
     ExcelUtils.writeCell(descrRow, includeCrit2Idx, "based on Inc 2a, 3, 4c, 5, 6, 9\nnot otherwise excluded");
     ExcelUtils.writeCell(descrRow, includeCrit3Idx, "all subjects\nnot otherwise excluded");
-    ExcelUtils.writeCell(descrRow, bfciIdx, "as per Huddis et al. 2000 (based on CG,BR,BS,BT)");
+    ExcelUtils.writeCell(descrRow, bfciIdx, "as per Huddis et al. 2000 (based on CE,CG,BR,BS,BT)");
   }
 
   private PoiWorksheetIterator getSampleIterator() {
