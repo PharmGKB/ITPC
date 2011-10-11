@@ -1450,13 +1450,22 @@ public class Subject {
     }
 
     if (!ItpcUtils.isBlank(getAddCxIpsilateral())) {
-      freeIntervals.add(parseDays(getAddCxIpsilateral()));
+      Integer ipsiDays = parseDays(getAddCxIpsilateral());
+      if (ipsiDays>0) {
+        freeIntervals.add(ipsiDays);
+      }
     }
     if (!ItpcUtils.isBlank(getAddCxDistantRecur())) {
-      freeIntervals.add(parseDays(getAddCxDistantRecur()));
+      Integer days = parseDays(getAddCxDistantRecur());
+      if (days>0) {
+        freeIntervals.add(days);
+      }
     }
     if (!ItpcUtils.isBlank(getAddCxContralateral())) {
-      freeIntervals.add(parseDays(getAddCxContralateral()));
+      Integer days = parseDays(getAddCxContralateral());
+      if (days>0) {
+        freeIntervals.add(days);
+      }
     }
 
     if (!freeIntervals.isEmpty()) {
