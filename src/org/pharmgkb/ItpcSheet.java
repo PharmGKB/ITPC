@@ -556,6 +556,8 @@ public class ItpcSheet implements Iterator {
       subject.addMedStatus(med, translateDrugFieldToValue(fields.get(medIdx.get(med))));
     }
 
+    subject.setDcisStatus(isDcis(fields.get(projectNotesIdx)));
+
     return subject;
   }
 
@@ -675,5 +677,24 @@ public class ItpcSheet implements Iterator {
         headerCell.setCellStyle(style);
       }
     }
+  }
+
+  /**
+   * Returns whether a given String contains the DCIS descriptor
+   * @param notes the Subject's notes field as a String
+   * @return a Value if the note contains DCIS test
+   */
+  private Value isDcis(String notes) {
+    Value isDcis = Value.Unknown;
+
+    if (!StringUtils.isBlank(notes)) {
+      if (notes.contains("DCIS, no invasive component")) {
+        isDcis = Value.Yes;
+      }
+      else {
+        isDcis = Value.No;
+      }
+    }
+    return isDcis;
   }
 }

@@ -58,6 +58,7 @@ public class Subject {
   private String m_diseaseFreeSurvivalTime = null;
   private String m_survivalNotDied = null;
   private String m_causeOfDeath = null;
+  private Value m_dcisStatus = Value.Unknown;
 
   private Genotype m_genotypePgkb = new Genotype();
   private Genotype m_genotypeAmplichip = new Genotype();
@@ -705,7 +706,7 @@ public class Subject {
   }
 
   public Value passInclusion2a() {
-    if (StringUtils.equals(getMetastatic(),"0") && isValidTumorDimension()) {
+    if ((StringUtils.equals(getMetastatic(),"0") && isValidTumorDimension()) && getDcisStatus()!=Value.Yes) {
       return Value.Yes;
     }
     else {
@@ -1482,6 +1483,14 @@ public class Subject {
 
   public void setCauseOfDeath(String causeOfDeath) {
     m_causeOfDeath = causeOfDeath;
+  }
+
+  public Value getDcisStatus() {
+    return m_dcisStatus;
+  }
+
+  public void setDcisStatus(Value dcisStatus) {
+    m_dcisStatus = dcisStatus;
   }
 
   enum Deletion {Unknown, None, Hetero, Homo}
