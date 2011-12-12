@@ -281,13 +281,13 @@ public class Subject {
   public String getGenoMetabolizerGroup() {
     String group = "Unknown";
 
-    if (getGenotypeFinal().getMetabolizerStatus().equals("EM/EM")
-        || getGenotypeFinal().getMetabolizerStatus().equals("EM/IM")) {
+    if (getGenotypeFinal().getMetabolizerStatus().equals("EM/EM")) {
       group = "Extensive";
     }
     else if (getGenotypeFinal().getMetabolizerStatus().equals("EM/PM")
         || getGenotypeFinal().getMetabolizerStatus().equals("IM/IM")
-        || getGenotypeFinal().getMetabolizerStatus().equals("IM/PM")) {
+        || getGenotypeFinal().getMetabolizerStatus().equals("IM/PM")
+        || getGenotypeFinal().getMetabolizerStatus().equals("EM/IM")) {
       group = "Intermediate";
     }
     else if (getGenotypeFinal().getMetabolizerStatus().equals("PM/PM")) {
