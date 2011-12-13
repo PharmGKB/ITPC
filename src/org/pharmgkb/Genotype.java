@@ -224,6 +224,27 @@ public class Genotype extends StringPair {
     }
     return genoBuilder.toString();
   }
+  
+  public String getMetabolizerGroup() {
+    String group = "Unknown";
+
+    if (getMetabolizerStatus().equals("EM/EM")
+            || getMetabolizerStatus().equals("EM/UM")
+            || getMetabolizerStatus().equals("UM/UM")) {
+      group = "Extensive";
+    }
+    else if (getMetabolizerStatus().equals("EM/PM")
+            || getMetabolizerStatus().equals("IM/IM")
+            || getMetabolizerStatus().equals("IM/PM")
+            || getMetabolizerStatus().equals("EM/IM")) {
+      group = "Intermediate";
+    }
+    else if (getMetabolizerStatus().equals("PM/PM")) {
+      group = "Poor";
+    }
+
+    return group;
+  }
 
   public boolean isHeteroDeletion() {
     return this.getStrings().contains("*5");

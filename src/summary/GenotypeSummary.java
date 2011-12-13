@@ -24,7 +24,7 @@ public class GenotypeSummary extends AbstractSummary {
   public void addSubject(Subject subject) {
     if (subject != null) {
 
-      String key = subject.getGenoMetabolizerGroup()
+      String key = subject.getGenotypeFinal().getMetabolizerGroup()
           + "|" + subject.getWeak()
           + "|" + subject.getPotent();
 

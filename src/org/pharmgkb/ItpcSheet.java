@@ -599,7 +599,7 @@ public class ItpcSheet implements Iterator {
     ExcelUtils.writeCell(row, allele1finalIdx, subject.getGenotypeFinal().get(0), highlight);
     ExcelUtils.writeCell(row, allele2finalIdx, subject.getGenotypeFinal().get(1), highlight);
     ExcelUtils.writeCell(row, genotypeIdx, subject.getGenotypeFinal().getMetabolizerStatus(), highlight);
-    ExcelUtils.writeCell(row, genoMetabStatusIdx, subject.getGenoMetabolizerGroup(), highlight);
+    ExcelUtils.writeCell(row, genoMetabStatusIdx, subject.getGenotypeFinal().getMetabolizerGroup(), highlight);
     ExcelUtils.writeCell(row, weakIdx, subject.getWeak().toString(), highlight);
     ExcelUtils.writeCell(row, potentIdx, subject.getPotent().toString(), highlight);
     ExcelUtils.writeCell(row, scoreIdx, ItpcUtils.floatDisplay(subject.getScore()), highlight);

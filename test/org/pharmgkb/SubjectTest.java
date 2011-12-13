@@ -469,13 +469,13 @@ public class SubjectTest extends TestCase {
   public void testGenoMetabolizerGroup() {
     Subject subject = makeDefaultSubject();
     subject.setGenotypeAmplichip("*1/*1");
-    Assert.assertEquals("Extensive", subject.getGenoMetabolizerGroup());
+    Assert.assertEquals("Extensive", subject.getGenotypeFinal().getMetabolizerGroup());
 
     subject.setGenotypeAmplichip("*4/*4");
-    Assert.assertEquals("Poor", subject.getGenoMetabolizerGroup());
+    Assert.assertEquals("Poor", subject.getGenotypeFinal().getMetabolizerGroup());
 
     subject.setGenotypeAmplichip("*41/*41");
-    Assert.assertEquals("Intermediate", subject.getGenoMetabolizerGroup());
+    Assert.assertEquals("Intermediate", subject.getGenotypeFinal().getMetabolizerGroup());
   }
 
   public void testGetDiagToEventDays() {

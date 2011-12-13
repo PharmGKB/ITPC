@@ -282,25 +282,6 @@ public class Subject {
     }
   }
 
-  public String getGenoMetabolizerGroup() {
-    String group = "Unknown";
-
-    if (getGenotypeFinal().getMetabolizerStatus().equals("EM/EM")) {
-      group = "Extensive";
-    }
-    else if (getGenotypeFinal().getMetabolizerStatus().equals("EM/PM")
-        || getGenotypeFinal().getMetabolizerStatus().equals("IM/IM")
-        || getGenotypeFinal().getMetabolizerStatus().equals("IM/PM")
-        || getGenotypeFinal().getMetabolizerStatus().equals("EM/IM")) {
-      group = "Intermediate";
-    }
-    else if (getGenotypeFinal().getMetabolizerStatus().equals("PM/PM")) {
-      group = "Poor";
-    }
-
-    return group;
-  }
-
   public boolean deletionDetectable() {
     return this.getDeletion()!=Deletion.Unknown
         || this.getRs4986774().is("-","a")
