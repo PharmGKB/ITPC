@@ -400,8 +400,8 @@ public class ItpcSheet implements Iterator {
     ExcelUtils.writeCell(headerRow, genoMetabStatusIdx, "Metabolizer Status based on Genotypes only (PharmGKB)");
     ExcelUtils.writeCell(headerRow, weakIdx, "Weak Drug (PharmGKB)");
     ExcelUtils.writeCell(headerRow, potentIdx, "Potent Drug (PharmGKB)");
-    ExcelUtils.writeCell(headerRow, scoreIdx, "Drug and CYP2D6 Genotype Score");
-    ExcelUtils.writeCell(headerRow, metabStatusIdx, "Metabolizer Status based on Drug and CYP2D6 Genotypes (PharmGKB)");
+    ExcelUtils.writeCell(headerRow, scoreIdx, "CYP2D6 Genotype Score");
+    ExcelUtils.writeCell(headerRow, metabStatusIdx, "Metabolizer Status based on CYP2D6 Genotypes (PharmGKB)");
 
     ExcelUtils.writeCell(headerRow, incAgeIdx, "Inc 1\nPostmenopausal");
     ExcelUtils.writeCell(headerRow, incNonmetaIdx, "Inc 2a\nNon-metastatic invasive cancer");
@@ -435,7 +435,7 @@ public class ItpcSheet implements Iterator {
     ExcelUtils.writeCell(descrRow, allele1finalIdx, "");
     ExcelUtils.writeCell(descrRow, allele2finalIdx, "");
     ExcelUtils.writeCell(descrRow, genotypeIdx, "");
-    ExcelUtils.writeCell(descrRow, genoMetabStatusIdx, "Extensive (EM/EM, EM/IM); Intermediate (EM/PM, IM/IM, IM/PM); Poor (PM/PM); anything else is categorgized as unknown");
+    ExcelUtils.writeCell(descrRow, genoMetabStatusIdx, "Extensive (EM/EM); Intermediate (EM/PM, EM/IM, IM/IM, IM/PM); Poor (PM/PM); anything else is categorgized as unknown");
     ExcelUtils.writeCell(descrRow, weakIdx, "");
     ExcelUtils.writeCell(descrRow, potentIdx, "");
     ExcelUtils.writeCell(descrRow, scoreIdx, "");

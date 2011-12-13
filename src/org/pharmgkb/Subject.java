@@ -221,6 +221,10 @@ public class Subject {
   }
 
   public Float getScore() {
+    return getGenotypeFinal().getScore();
+  }
+
+  public Float getScoreWithDrugs() {
     Float score = null;
 
     if (getPotent()==Value.Yes) {
