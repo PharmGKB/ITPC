@@ -1,5 +1,6 @@
 package summary;
 
+import com.google.common.collect.Maps;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
@@ -16,6 +17,7 @@ import java.util.Map;
 public class GenotypeSummary extends AbstractSummary {
   private static final String sf_sheetTitle = "Genotype Summary";
   private Map<String,Integer> countMap = new HashMap<String,Integer>();
+  private Map<Subject.SampleSource, Integer> sourceMap = Maps.newHashMap();
 
   public String getSheetTitle() {
     return sf_sheetTitle;
@@ -33,6 +35,13 @@ public class GenotypeSummary extends AbstractSummary {
       }
       else {
         countMap.put(key, countMap.get(key)+1);
+      }
+
+      if (!sourceMap.containsKey(subject.getSampleSource())) {
+        sourceMap.put(subject.getSampleSource(), 1);
+      }
+      else {
+        sourceMap.put(subject.getSampleSource(), sourceMap.get(subject.getSampleSource())+1);
       }
     }
   }
@@ -57,5 +66,20 @@ public class GenotypeSummary extends AbstractSummary {
 
       rowNum++;
     }
+    Row row = sheet.createRow(++rowNum);
+    row.createCell(0).setCellValue("Tumor Source");
+    row.createCell(1).setCellValue("Count");
+
+    row = sheet.createRow(++rowNum);
+    row.createCell(0).setCellValue(Subject.SampleSource.TUMOR.toString());
+    row.createCell(1).setCellValue(sourceMap.get(Subject.SampleSource.TUMOR));
+
+    row = sheet.createRow(++rowNum);
+    row.createCell(0).setCellValue(Subject.SampleSource.BLOOD.toString());
+    row.createCell(1).setCellValue(sourceMap.get(Subject.SampleSource.BLOOD));
+
+    row = sheet.createRow(++rowNum);
+    row.createCell(0).setCellValue(Subject.SampleSource.UNKNOWN.toString());
+    row.createCell(1).setCellValue(sourceMap.get(Subject.SampleSource.UNKNOWN));
   }
 }

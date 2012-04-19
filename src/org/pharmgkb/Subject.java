@@ -1478,5 +1478,22 @@ public class Subject {
     m_dcisStatus = dcisStatus;
   }
 
+  public SampleSource getSampleSource() {
+    if ((ItpcUtils.isBlank(getTumorSource()) || getTumorSource().equals("3")) && (ItpcUtils.isBlank(getBloodSource()) || getBloodSource().equals("3"))) {
+      return SampleSource.UNKNOWN;
+    }
+    else if (!(ItpcUtils.isBlank(getTumorSource()) || getTumorSource().equals("3")) && (ItpcUtils.isBlank(getBloodSource()) || getBloodSource().equals("3"))) {
+      return SampleSource.TUMOR;
+    }
+    else if ((ItpcUtils.isBlank(getTumorSource()) || getTumorSource().equals("3")) && !(ItpcUtils.isBlank(getBloodSource()) || getBloodSource().equals("3"))) {
+      return SampleSource.BLOOD;
+    }
+    else {
+      return SampleSource.UNKNOWN;
+    }
+  }
+
   enum Deletion {Unknown, None, Hetero, Homo}
+
+  public enum SampleSource {TUMOR, BLOOD, UNKNOWN}
 }

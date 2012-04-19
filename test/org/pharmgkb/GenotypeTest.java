@@ -80,6 +80,14 @@ public class GenotypeTest extends TestCase {
 
     genotype = new Genotype("*1XN","*3");
     Assert.assertEquals("PM/UM", genotype.getMetabolizerStatus());
+
+    genotype = new Genotype("*1XN","*9");
+    Assert.assertEquals("IM/UM", genotype.getMetabolizerStatus());
+    Assert.assertEquals("Unknown", genotype.getMetabolizerGroup());
+
+    genotype = new Genotype("*3","*1XN");
+    Assert.assertEquals("PM/UM", genotype.getMetabolizerStatus());
+    Assert.assertEquals("Unknown", genotype.getMetabolizerGroup());
   }
 
   public void testToString() {

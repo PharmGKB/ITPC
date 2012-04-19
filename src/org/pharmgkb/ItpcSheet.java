@@ -122,6 +122,7 @@ public class ItpcSheet implements Iterator {
   protected int incFollowupIdx = -1;
   protected int incGenoDataAvailIdx = -1;
   protected int bfciIdx = -1;
+  protected int genoSourceIdx = -1;
 
   private PoiWorksheetIterator m_sampleIterator = null;
 
@@ -380,6 +381,7 @@ public class ItpcSheet implements Iterator {
     includeCrit3Idx = startPgkbColsIdx      + 29;
 
     bfciIdx = startPgkbColsIdx              + 30;
+    genoSourceIdx = startPgkbColsIdx        + 31;
 
     writeCellTitles(headerRow);
     styleCells(headerRow, startPgkbColsIdx, headerRow.getCell(0).getCellStyle());
@@ -426,6 +428,7 @@ public class ItpcSheet implements Iterator {
     ExcelUtils.writeCell(headerRow, includeCrit2Idx, "Criterion 2");
     ExcelUtils.writeCell(headerRow, includeCrit3Idx, "Criterion 3");
     ExcelUtils.writeCell(headerRow, bfciIdx, "BCFI(Breast-Cancer Free Interval)");
+    ExcelUtils.writeCell(headerRow, genoSourceIdx, "Genotyping Source");
   }
 
   private void writeCellDescr(Row descrRow) {
@@ -629,6 +632,7 @@ public class ItpcSheet implements Iterator {
     ExcelUtils.writeCell(row, includeCrit3Idx, ItpcUtils.valueToInclusion(subject.includeCrit3()), highlight);
 
     ExcelUtils.writeCell(row, bfciIdx, subject.getBreastCancerFreeInterval(), highlight);
+    ExcelUtils.writeCell(row, genoSourceIdx, subject.getSampleSource().toString(), highlight);
   }
 
   public File saveOutput() throws IOException {
