@@ -228,6 +228,7 @@ public class Genotype extends StringPair {
   public String getMetabolizerGroup() {
     String group = "Unknown";
 
+    // modify genoMetabStatusIdx description field if this changes
     if (getMetabolizerStatus().equals("EM/EM")
             || getMetabolizerStatus().equals("EM/UM")
             || getMetabolizerStatus().equals("UM/UM")) {
