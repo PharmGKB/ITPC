@@ -438,7 +438,7 @@ public class ItpcSheet implements Iterator {
     ExcelUtils.writeCell(descrRow, allele1finalIdx, "");
     ExcelUtils.writeCell(descrRow, allele2finalIdx, "");
     ExcelUtils.writeCell(descrRow, genotypeIdx, "");
-    ExcelUtils.writeCell(descrRow, genoMetabStatusIdx, "Extensive (EM/EM, EM/UM, UM/UM); Intermediate (EM/PM, EM/IM, IM/IM, IM/PM); Poor (PM/PM); anything else is categorized as unknown");
+    ExcelUtils.writeCell(descrRow, genoMetabStatusIdx, "Extensive (EM/EM, EM/UM, IM/UM, UM/UM); Intermediate (EM/PM, EM/IM, IM/IM, IM/PM, PM/UM); Poor (PM/PM); anything else is categorized as unknown");
     ExcelUtils.writeCell(descrRow, weakIdx, "");
     ExcelUtils.writeCell(descrRow, potentIdx, "");
     ExcelUtils.writeCell(descrRow, scoreIdx, "The score of each allele added together");

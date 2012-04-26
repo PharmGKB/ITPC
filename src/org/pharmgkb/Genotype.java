@@ -231,12 +231,14 @@ public class Genotype extends StringPair {
     // modify genoMetabStatusIdx description field if this changes
     if (getMetabolizerStatus().equals("EM/EM")
             || getMetabolizerStatus().equals("EM/UM")
+            || getMetabolizerStatus().equals("IM/UM")
             || getMetabolizerStatus().equals("UM/UM")) {
       group = "Extensive";
     }
     else if (getMetabolizerStatus().equals("EM/PM")
             || getMetabolizerStatus().equals("IM/IM")
             || getMetabolizerStatus().equals("IM/PM")
+            || getMetabolizerStatus().equals("PM/UM")
             || getMetabolizerStatus().equals("EM/IM")) {
       group = "Intermediate";
     }
