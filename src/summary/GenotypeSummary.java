@@ -8,6 +8,7 @@ import org.pharmgkb.Subject;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.SortedMap;
 
 /**
  * Created by IntelliJ IDEA.
@@ -22,6 +23,7 @@ public class GenotypeSummary extends AbstractSummary {
   private static final int fourHeto  = 1;
   private static final int fourNon   = 2;
   private static final int fourTotal = 3;
+  private SortedMap<Integer,int[]> tumorFreqMap = Maps.newTreeMap();
 
   public GenotypeSummary() {
     int[] starFour = new int[]{0,0,0,0};
@@ -30,6 +32,9 @@ public class GenotypeSummary extends AbstractSummary {
     sourceMap.put(Subject.SampleSource.BLOOD, starFour);
     starFour = new int[]{0,0,0,0};
     sourceMap.put(Subject.SampleSource.UNKNOWN, starFour);
+    for (int i=0; i<12; i++) {
+      tumorFreqMap.put(i, new int[]{0,0,0});
+    }
   }
 
   public String getSheetTitle() {
@@ -38,6 +43,7 @@ public class GenotypeSummary extends AbstractSummary {
 
   public void addSubject(Subject subject) {
     if (subject != null) {
+      int siteIdx = Integer.parseInt(subject.getProjectSite())-1;
 
       String key = subject.getGenotypeFinal().getMetabolizerGroup()
           + "|" + subject.getWeak()
@@ -73,6 +79,8 @@ public class GenotypeSummary extends AbstractSummary {
         default:
           totals[fourNon]++;
       }
+
+      tumorFreqMap.get(siteIdx)[subject.getSampleSource().ordinal()]++;
     }
   }
 
@@ -99,7 +107,9 @@ public class GenotypeSummary extends AbstractSummary {
 
     // Tumor source table
     Row row = sheet.createRow(++rowNum);
-    row.createCell(0).setCellValue("Tumor Source");
+    row.createCell(0).setCellValue("*4 Status by Sample Source");
+    row = sheet.createRow(++rowNum);
+    row.createCell(0).setCellValue("Source");
     row.createCell(1).setCellValue("Count");
     row.createCell(2).setCellValue("*4 Homozygous");
     row.createCell(3).setCellValue("*4 Heterozygous");
@@ -125,6 +135,46 @@ public class GenotypeSummary extends AbstractSummary {
     row.createCell(2).setCellValue(sourceMap.get(Subject.SampleSource.UNKNOWN)[fourHomo]);
     row.createCell(3).setCellValue(sourceMap.get(Subject.SampleSource.UNKNOWN)[fourHeto]);
     row.createCell(4).setCellValue(sourceMap.get(Subject.SampleSource.UNKNOWN)[fourNon]);
+
+    rowNum++;
+    row = sheet.createRow(++rowNum);
+    row.createCell(0).setCellValue("Sample Source by Site");
+    row = sheet.createRow(++rowNum);
+    row.createCell(0).setCellValue("Site");
+    row.createCell(1).setCellValue("Tumor N");
+    row.createCell(2).setCellValue("Tumor %");
+    row.createCell(3).setCellValue("Blood N");
+    row.createCell(4).setCellValue("Blood %");
+    row.createCell(5).setCellValue("Unknown N");
+    row.createCell(6).setCellValue("Unknown %");
+
+    int[] totals = new int[]{0,0,0};
+
+    for (Integer i : tumorFreqMap.keySet()) {
+      row = sheet.createRow(++rowNum);
+      Integer tumorTotal = tumorFreqMap.get(i)[Subject.SampleSource.TUMOR.ordinal()];
+      Float tumorPct = (float)tumorFreqMap.get(i)[Subject.SampleSource.TUMOR.ordinal()] / (float)sourceMap.get(Subject.SampleSource.TUMOR)[fourTotal];
+      Integer bloodTotal = tumorFreqMap.get(i)[Subject.SampleSource.BLOOD.ordinal()];
+      Float bloodPct = (float)tumorFreqMap.get(i)[Subject.SampleSource.BLOOD.ordinal()] / (float)sourceMap.get(Subject.SampleSource.BLOOD)[fourTotal];
+      Integer unkTotal = tumorFreqMap.get(i)[Subject.SampleSource.UNKNOWN.ordinal()];
+      Float unkPct = (float)tumorFreqMap.get(i)[Subject.SampleSource.UNKNOWN.ordinal()] / (float)sourceMap.get(Subject.SampleSource.UNKNOWN)[fourTotal];
+
+      row.createCell(0).setCellValue(i+1);
+      row.createCell(1).setCellValue(tumorTotal);
+      row.createCell(2).setCellValue(tumorPct);
+      row.createCell(3).setCellValue(bloodTotal);
+      row.createCell(4).setCellValue(bloodPct);
+      row.createCell(5).setCellValue(unkTotal);
+      row.createCell(6).setCellValue(unkPct);
+
+      totals[Subject.SampleSource.TUMOR.ordinal()]+=tumorTotal;
+      totals[Subject.SampleSource.BLOOD.ordinal()]+=bloodTotal;
+      totals[Subject.SampleSource.UNKNOWN.ordinal()]+=unkTotal;
+    }
+    row = sheet.createRow(++rowNum);
+    row.createCell(1).setCellValue(totals[Subject.SampleSource.TUMOR.ordinal()]);
+    row.createCell(3).setCellValue(totals[Subject.SampleSource.BLOOD.ordinal()]);
+    row.createCell(5).setCellValue(totals[Subject.SampleSource.UNKNOWN.ordinal()]);
   }
 
   enum StarFourStatus {Homozygous, Heterozygous, NonFour}

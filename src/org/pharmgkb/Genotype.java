@@ -211,6 +211,9 @@ public class Genotype extends StringPair {
 
     List<String> genotypes = new ArrayList<String>();
     for (String allele : this.getStrings()) {
+      if (allele != null && !allele.equals("Unknown") && !metabMap.keySet().contains(ItpcUtils.alleleStrip(allele))) {
+        sf_logger.warn("Can't find map for allele: " + ItpcUtils.alleleStrip(allele));
+      }
       genotypes.add(getText(metabMap.get(ItpcUtils.alleleStrip(allele))));
     }
 
