@@ -41,7 +41,6 @@ public class Genotype extends StringPair {
     metabMap.put("*42",Metabolizer.PM);
     metabMap.put("*44",Metabolizer.PM);
     metabMap.put("*56",Metabolizer.PM);
-    metabMap.put("*36",Metabolizer.PM);
     metabMap.put("*38",Metabolizer.PM);
     metabMap.put("*4XN",Metabolizer.PM);
 
@@ -64,7 +63,6 @@ public class Genotype extends StringPair {
     metabMap.put("*9XN",Metabolizer.EM);
     metabMap.put("*10XN",Metabolizer.EM);
     metabMap.put("*41XN",Metabolizer.EM);
-    metabMap.put("*45XN",Metabolizer.EM);
 
     metabMap.put("*1XN",Metabolizer.UM);
     metabMap.put("*2XN",Metabolizer.UM);
