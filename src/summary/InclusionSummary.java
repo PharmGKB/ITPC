@@ -74,9 +74,12 @@ public class InclusionSummary extends AbstractSummary {
     criteriaLabels.put(2, "Criteria 3");
   }
 
+  //
   private List<Map<Integer,Map<Value,Integer>>> projectMap = null;
+  private Map<Integer,Map<Value,Integer>> studyMap = null;
   private List<Map<Integer,Map<Value,Integer>>> projectExcludeMap = null;
   private List<Map<Integer,Map<Value,Integer>>> projectCritMap = null;
+  private Map<Integer,Map<Value,Integer>> studyCritMap = null;
   private Map<Integer, Integer> projectSubjectCount = null;
 
   public InclusionSummary() {
@@ -84,6 +87,9 @@ public class InclusionSummary extends AbstractSummary {
     projectExcludeMap = Lists.newArrayList();
     projectCritMap = Lists.newArrayList();
     projectSubjectCount = Maps.newHashMap();
+
+    studyMap = Maps.newHashMap();
+    studyCritMap = Maps.newHashMap();
 
     for (int i=0; i< ItpcUtils.SITE_COUNT; i++) {
       projectSubjectCount.put(i, 0);
@@ -93,6 +99,13 @@ public class InclusionSummary extends AbstractSummary {
       for (int j=0; j< inclusions.size(); j++) {
         Map<Value, Integer> valueMap = Maps.newHashMap();
         inclusionMap.put(j, valueMap);
+
+        valueMap.put(Value.Yes, 0);
+        valueMap.put(Value.No, 0);
+        valueMap.put(Value.Unknown, 0);
+
+        valueMap = Maps.newHashMap();
+        studyMap.put(j, valueMap);
 
         valueMap.put(Value.Yes, 0);
         valueMap.put(Value.No, 0);
@@ -116,6 +129,12 @@ public class InclusionSummary extends AbstractSummary {
       for (int j=0; j<criteriaLabels.size(); j++) {
         Map<Value,Integer> valueMap = Maps.newHashMap();
         criteriaMap.put(j, valueMap);
+
+        valueMap.put(Value.Yes,0);
+        valueMap.put(Value.No,0);
+
+        valueMap = Maps.newHashMap();
+        studyCritMap.put(j, valueMap);
 
         valueMap.put(Value.Yes,0);
         valueMap.put(Value.No,0);
@@ -166,8 +185,10 @@ public class InclusionSummary extends AbstractSummary {
 
     Map<Integer, Map<Value, Integer>> inclusionMap = projectMap.get(site);
     Map<Value, Integer> valueMap = inclusionMap.get(criteria);
+    Map<Value, Integer> studyValueMap = studyMap.get(criteria);
 
     valueMap.put(useValue, valueMap.get(useValue)+1);
+    studyValueMap.put(useValue, studyValueMap.get(useValue)+1);
   }
 
   private void addSubjectExclusion(int site, int criteria, Value value) {
@@ -179,7 +200,9 @@ public class InclusionSummary extends AbstractSummary {
   private void addSubjectCriterium(int site, int criteria, Value value) {
     Map<Integer, Map<Value,Integer>> criteriumMap = projectCritMap.get(site);
     Map<Value, Integer> valueMap = criteriumMap.get(criteria);
+    Map<Value, Integer> studyValueMap = studyCritMap.get(criteria);
     valueMap.put(value, valueMap.get(value)+1);
+    studyValueMap.put(value, studyValueMap.get(value)+1);
   }
 
   @Override
@@ -197,7 +220,49 @@ public class InclusionSummary extends AbstractSummary {
     currentRow += 3;
     currentRow = writeCriteriaTable(sheet, currentRow, Value.Yes);
     currentRow += 3;
-    writeCriteriaTable(sheet, currentRow, Value.No);
+    currentRow = writeCriteriaTable(sheet, currentRow, Value.No);
+    currentRow += 3;
+    currentRow = writeStudyInclusionTable(sheet, currentRow);
+    currentRow += 3;
+    writeStudyCriteriaTable(sheet, currentRow);
+  }
+
+  private int writeStudyInclusionTable(Sheet sheet, int currentRow) {
+    Row title = sheet.createRow(currentRow++);
+    title.createCell(0).setCellValue("Inclusion Summary");
+
+    Row header = sheet.createRow(currentRow++);
+    header.createCell(0).setCellValue("Inclusion Criteria");
+    header.createCell(1).setCellValue("Include");
+    header.createCell(2).setCellValue("Exclude");
+
+    for (Integer siteIdx : inclusions.keySet()) {
+      Row dataRow = sheet.createRow(currentRow++);
+      dataRow.createCell(0).setCellValue(inclusions.get(siteIdx));
+      dataRow.createCell(1).setCellValue(studyMap.get(siteIdx).get(Value.Yes));
+      dataRow.createCell(2).setCellValue(studyMap.get(siteIdx).get(Value.No));
+    }
+
+    return currentRow;
+  }
+
+  private int writeStudyCriteriaTable(Sheet sheet, int currentRow) {
+    Row title = sheet.createRow(currentRow++);
+    title.createCell(0).setCellValue("Criteria Summary");
+
+    Row header = sheet.createRow(currentRow++);
+    header.createCell(0).setCellValue("Criteria");
+    header.createCell(1).setCellValue("Include");
+    header.createCell(2).setCellValue("Exclude");
+
+    for (Integer siteIdx : criteriaLabels.keySet()) {
+      Row dataRow = sheet.createRow(currentRow++);
+      dataRow.createCell(0).setCellValue(criteriaLabels.get(siteIdx));
+      dataRow.createCell(1).setCellValue(studyCritMap.get(siteIdx).get(Value.Yes));
+      dataRow.createCell(2).setCellValue(studyCritMap.get(siteIdx).get(Value.No));
+    }
+
+    return currentRow;
   }
 
   private int writeInclusionTable(Sheet sheet, int currentRow, Value value) {
