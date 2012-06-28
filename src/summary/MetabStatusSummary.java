@@ -1,11 +1,15 @@
 package summary;
 
+import com.google.common.collect.Maps;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.pharmgkb.Genotype;
 import org.pharmgkb.Subject;
+import util.GenotypeComparator;
 import util.Value;
+
+import java.util.SortedMap;
 
 /**
  * Created by IntelliJ IDEA.
@@ -42,9 +46,15 @@ public class MetabStatusSummary extends AbstractSummary {
       "Uncategorized\t\t\t"                               //24
   };
   protected int[] metabStatusTotals;
+  protected SortedMap<String,Integer> metabStatusByAssignment = Maps.newTreeMap();
+  protected SortedMap<Genotype,Integer> metabTypeMap = Maps.newTreeMap(GenotypeComparator.getComparator());
 
   public MetabStatusSummary() {
     metabStatusTotals = new int[]{0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0};
+    metabStatusByAssignment.put(Genotype.EXTENSIVE, 0);
+    metabStatusByAssignment.put(Genotype.INTERMEDIATE, 0);
+    metabStatusByAssignment.put(Genotype.POOR, 0);
+    metabStatusByAssignment.put(Genotype.UNKNOWN, 0);
   }
 
   public String getSheetTitle() {
@@ -60,121 +70,137 @@ public class MetabStatusSummary extends AbstractSummary {
       else if (subject.getPotent() == Value.Yes) {
         metabStatusTotals[18]++;
       }
-
       else if (subject.getGenotypeFinal().is(Genotype.Metabolizer.UM,Genotype.Metabolizer.UM) && subject.getWeak() == Value.No) {
         metabStatusTotals[0]++;
       }
-
       else if (subject.getGenotypeFinal().is(Genotype.Metabolizer.UM,Genotype.Metabolizer.UM) && subject.getWeak() == Value.Yes) {
         metabStatusTotals[1]++;
       }
-
       else if (subject.getGenotypeFinal().is(Genotype.Metabolizer.EM,Genotype.Metabolizer.UM) && subject.getWeak() == Value.No) {
         metabStatusTotals[2]++;
       }
-
       else if (subject.getGenotypeFinal().is(Genotype.Metabolizer.IM,Genotype.Metabolizer.UM) && subject.getWeak() == Value.No) {
         metabStatusTotals[3]++;
       }
-
       else if (subject.getGenotypeFinal().is(Genotype.Metabolizer.EM,Genotype.Metabolizer.UM) && subject.getWeak() == Value.Yes) {
         metabStatusTotals[4]++;
       }
-
       else if (subject.getGenotypeFinal().is(Genotype.Metabolizer.EM,Genotype.Metabolizer.EM) && subject.getWeak() == Value.No) {
         metabStatusTotals[5]++;
       }
-
       else if (subject.getGenotypeFinal().is(Genotype.Metabolizer.IM,Genotype.Metabolizer.UM) && subject.getWeak() == Value.Yes) {
         metabStatusTotals[6]++;
       }
-
       else if (subject.getGenotypeFinal().is(Genotype.Metabolizer.PM,Genotype.Metabolizer.UM) && subject.getWeak() == Value.No) {
         metabStatusTotals[7]++;
       }
-
       else if (subject.getGenotypeFinal().is(Genotype.Metabolizer.IM,Genotype.Metabolizer.PM) && subject.getWeak() == Value.Yes) {
         metabStatusTotals[8]++;
       }
-
       else if (subject.getGenotypeFinal().is(Genotype.Metabolizer.EM, Genotype.Metabolizer.IM) && subject.getWeak() == Value.No) {
         metabStatusTotals[9]++;
       }
-
       else if (subject.getGenotypeFinal().is(Genotype.Metabolizer.EM,Genotype.Metabolizer.EM) && subject.getWeak() == Value.Yes) {
         metabStatusTotals[10]++;
       }
-
       else if (subject.getGenotypeFinal().is(Genotype.Metabolizer.IM,Genotype.Metabolizer.IM) && subject.getWeak() == Value.No) {
         metabStatusTotals[11]++;
       }
-
       else if (subject.getGenotypeFinal().is(Genotype.Metabolizer.EM,Genotype.Metabolizer.PM) && subject.getWeak() == Value.No) {
         metabStatusTotals[12]++;
       }
-
       else if (subject.getGenotypeFinal().is(Genotype.Metabolizer.EM,Genotype.Metabolizer.IM) && subject.getWeak() == Value.Yes) {
         metabStatusTotals[13]++;
       }
-
       else if (subject.getGenotypeFinal().is(Genotype.Metabolizer.EM,Genotype.Metabolizer.PM) && subject.getWeak() == Value.Yes) {
         metabStatusTotals[14]++;
       }
-
       else if (subject.getGenotypeFinal().is(Genotype.Metabolizer.IM,Genotype.Metabolizer.IM) && subject.getWeak() == Value.Yes) {
         metabStatusTotals[15]++;
       }
-
       else if (subject.getGenotypeFinal().is(Genotype.Metabolizer.IM,Genotype.Metabolizer.PM) && subject.getWeak() == Value.No) {
         metabStatusTotals[16]++;
       }
-
       else if (subject.getGenotypeFinal().is(Genotype.Metabolizer.IM,Genotype.Metabolizer.PM) && subject.getWeak() == Value.Yes) {
         metabStatusTotals[19]++;
       }
-
       else if (subject.getGenotypeFinal().is(Genotype.Metabolizer.PM,Genotype.Metabolizer.PM) && subject.getWeak() == Value.Yes) {
         metabStatusTotals[20]++;
       }
-
       else if (subject.getGenotypeFinal().is(Genotype.Metabolizer.PM,Genotype.Metabolizer.PM) && subject.getWeak() == Value.No) {
         metabStatusTotals[21]++;
       }
-
       else if (subject.getGenotypeFinal().is(Genotype.Metabolizer.PM,Genotype.Metabolizer.PM) && subject.getWeak() == Value.Unknown && subject.getPotent() == Value.Unknown) {
         metabStatusTotals[22]++;
       }
-
       else if (subject.getWeak() == Value.Unknown && subject.getPotent() == Value.Unknown) {
         metabStatusTotals[23]++;
       }
-
       else if (!(subject.getGenotypeFinal().isUnknown() && subject.getWeak() == Value.No && subject.getPotent() == Value.No)) {
         // sf_logger.warn("No metab. status for: " + row.get(subjectId) + " :: " + metab.toString() + " :: " + subject.getWeak() + "/" + subject.getPotent());
         metabStatusTotals[24]++;
       }
-
       else {
         // sf_logger.warn("No matching logic for: " + row.get(subjectId) + " :: " + metab.toString() + " :: " + subject.getWeak() + "/" + subject.getPotent());
         metabStatusTotals[24]++;
+      }
+
+      String metabGroup = subject.getGenotypeFinal().getMetabolizerGroup();
+      metabStatusByAssignment.put(metabGroup, metabStatusByAssignment.get(metabGroup) + 1);
+
+      if (!metabTypeMap.containsKey(subject.getGenotypeFinal())) {
+        metabTypeMap.put(subject.getGenotypeFinal(), 1);
+      }
+      else {
+        metabTypeMap.put(subject.getGenotypeFinal(), metabTypeMap.get(subject.getGenotypeFinal())+1);
       }
     }
   }
 
   public void writeToWorkbook(Workbook wb) {
     Sheet sheet = getSheet(wb);
+    int currentRow = 0;
 
-    Row header = sheet.createRow(0);
-    header.createCell(0).setCellValue("Final CYP2D6 org.pharmgkb.Metabolizer Status and Score");
-    header.createCell(1).setCellValue("org.pharmgkb.Genotype and org.pharmgkb.Genotype Score");
+    Row header = sheet.createRow(currentRow++);
+    header.createCell(0).setCellValue("CYP2D6 Metabolizer Status (column DQ)");
+    header = sheet.createRow(currentRow++);
+    header.createCell(0).setCellValue("Status");
+    header.createCell(1).setCellValue("n");
+
+    for (String group : metabStatusByAssignment.keySet()) {
+      Row data = sheet.createRow(currentRow++);
+      data.createCell(0).setCellValue(group);
+      data.createCell(1).setCellValue(metabStatusByAssignment.get(group));
+    }
+
+    currentRow += 3;
+
+    header = sheet.createRow(currentRow++);
+    header.createCell(0).setCellValue("CYP2D6 Metabolizer Types");
+    header = sheet.createRow(currentRow++);
+    header.createCell(0).setCellValue("Type");
+    header.createCell(1).setCellValue("n");
+
+    for (Genotype geno : metabTypeMap.keySet()) {
+      Row data = sheet.createRow(currentRow++);
+      data.createCell(0).setCellValue(geno.getMetabolizerStatus());
+      data.createCell(1).setCellValue(metabTypeMap.get(geno));
+    }
+
+    currentRow += 3;
+
+    header = sheet.createRow(currentRow++);
+    header.createCell(0).setCellValue("CYP2D6 Metabolizer Status based on Score (columns DR-DU)");
+    header = sheet.createRow(currentRow++);
+    header.createCell(0).setCellValue("Status (score)");
+    header.createCell(1).setCellValue("Function (score)");
     header.createCell(2).setCellValue("Weak CYP2D6 Inhibitor Administered");
     header.createCell(3).setCellValue("Potent CYP2D6 Inhibitor Administered");
     header.createCell(4).setCellValue("n");
 
-    int rowNum = 1;
     for (int i=0; i<metabTable.length; i++) {
       String fields[] = metabTable[i].split("\t");
-      Row data = sheet.createRow(rowNum);
+      Row data = sheet.createRow(currentRow++);
       data.createCell(0).setCellValue(fields[0]);
       if (fields.length==4) {
         data.createCell(1).setCellValue(fields[1]);
@@ -182,7 +208,6 @@ public class MetabStatusSummary extends AbstractSummary {
         data.createCell(3).setCellValue(fields[3]);
       }
       data.createCell(4).setCellValue(metabStatusTotals[i]);
-      rowNum++;
     }
   }
 }

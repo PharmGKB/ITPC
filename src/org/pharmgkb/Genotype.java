@@ -17,6 +17,11 @@ import java.util.regex.Pattern;
  */
 public class Genotype extends StringPair {
   public enum Metabolizer {Unknown, PM, IM, EM, UM}
+  public static final String EXTENSIVE = "Extensive";
+  public static final String INTERMEDIATE = "Intermediate";
+  public static final String POOR = "Poor";
+  public static final String UNKNOWN = "Unknown";
+
   private static final Pattern sf_numberPattern = Pattern.compile("\\D*(\\d+)\\D*");
   private static final Logger sf_logger = Logger.getLogger(Genotype.class);
 
