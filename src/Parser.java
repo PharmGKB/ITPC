@@ -43,7 +43,6 @@ public class Parser {
     List<AbstractSummary> summaries = Arrays.asList(
         new GenotypeSummary(),
         new MetabStatusSummary(),
-        new NonFourSummary(),
         new InclusionSummary()
     );
 

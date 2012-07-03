@@ -183,7 +183,12 @@ public class MetabStatusSummary extends AbstractSummary {
 
     for (Genotype geno : metabTypeMap.keySet()) {
       Row data = sheet.createRow(currentRow++);
-      data.createCell(0).setCellValue(geno.getMetabolizerStatus());
+      if (geno.isUnknown()) {
+        data.createCell(0).setCellValue("Unknown");
+      }
+      else {
+        data.createCell(0).setCellValue(geno.getMetabolizerStatus());
+      }
       data.createCell(1).setCellValue(metabTypeMap.get(geno));
     }
 
