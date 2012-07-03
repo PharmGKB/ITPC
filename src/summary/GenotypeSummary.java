@@ -1,9 +1,7 @@
 package summary;
 
 import com.google.common.collect.Maps;
-import org.apache.poi.ss.usermodel.Row;
-import org.apache.poi.ss.usermodel.Sheet;
-import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.ss.usermodel.*;
 import org.pharmgkb.Subject;
 
 import java.util.HashMap;
@@ -149,32 +147,64 @@ public class GenotypeSummary extends AbstractSummary {
     row.createCell(6).setCellValue("Unknown %");
 
     int[] totals = new int[]{0,0,0};
+    CellStyle pctStyle = sheet.getWorkbook().createCellStyle();
+    DataFormat format = sheet.getWorkbook().createDataFormat();
+    pctStyle.setDataFormat(format.getFormat("0.0%"));
 
     for (Integer i : tumorFreqMap.keySet()) {
       row = sheet.createRow(++rowNum);
-      Integer tumorTotal = tumorFreqMap.get(i)[Subject.SampleSource.TUMOR.ordinal()];
-      Float tumorPct = (float)tumorFreqMap.get(i)[Subject.SampleSource.TUMOR.ordinal()] / (float)sourceMap.get(Subject.SampleSource.TUMOR)[fourTotal];
-      Integer bloodTotal = tumorFreqMap.get(i)[Subject.SampleSource.BLOOD.ordinal()];
-      Float bloodPct = (float)tumorFreqMap.get(i)[Subject.SampleSource.BLOOD.ordinal()] / (float)sourceMap.get(Subject.SampleSource.BLOOD)[fourTotal];
-      Integer unkTotal = tumorFreqMap.get(i)[Subject.SampleSource.UNKNOWN.ordinal()];
-      Float unkPct = (float)tumorFreqMap.get(i)[Subject.SampleSource.UNKNOWN.ordinal()] / (float)sourceMap.get(Subject.SampleSource.UNKNOWN)[fourTotal];
+      Integer siteTotal = tumorFreqMap.get(i)[Subject.SampleSource.TUMOR.ordinal()] + tumorFreqMap.get(i)[Subject.SampleSource.BLOOD.ordinal()] + tumorFreqMap.get(i)[Subject.SampleSource.UNKNOWN.ordinal()];
 
+      Integer tumorTotal = tumorFreqMap.get(i)[Subject.SampleSource.TUMOR.ordinal()];
+      Float tumorPct = (float)tumorFreqMap.get(i)[Subject.SampleSource.TUMOR.ordinal()] / (float)siteTotal;
+      Integer bloodTotal = tumorFreqMap.get(i)[Subject.SampleSource.BLOOD.ordinal()];
+      Float bloodPct = (float)tumorFreqMap.get(i)[Subject.SampleSource.BLOOD.ordinal()] / (float)siteTotal;
+      Integer unkTotal = tumorFreqMap.get(i)[Subject.SampleSource.UNKNOWN.ordinal()];
+      Float unkPct = (float)tumorFreqMap.get(i)[Subject.SampleSource.UNKNOWN.ordinal()] / (float)siteTotal;
+
+      Cell cell;
       row.createCell(0).setCellValue(i+1);
       row.createCell(1).setCellValue(tumorTotal);
-      row.createCell(2).setCellValue(tumorPct);
+
+      cell = row.createCell(2);
+      cell.setCellValue(tumorPct);
+      cell.setCellStyle(pctStyle);
+
       row.createCell(3).setCellValue(bloodTotal);
-      row.createCell(4).setCellValue(bloodPct);
+
+      cell = row.createCell(4);
+      cell.setCellValue(bloodPct);
+      cell.setCellStyle(pctStyle);
+
       row.createCell(5).setCellValue(unkTotal);
-      row.createCell(6).setCellValue(unkPct);
+
+      cell = row.createCell(6);
+      cell.setCellValue(unkPct);
+      cell.setCellStyle(pctStyle);
 
       totals[Subject.SampleSource.TUMOR.ordinal()]+=tumorTotal;
       totals[Subject.SampleSource.BLOOD.ordinal()]+=bloodTotal;
       totals[Subject.SampleSource.UNKNOWN.ordinal()]+=unkTotal;
     }
     row = sheet.createRow(++rowNum);
+    int projectTotal = totals[Subject.SampleSource.TUMOR.ordinal()] + totals[Subject.SampleSource.BLOOD.ordinal()] + totals[Subject.SampleSource.UNKNOWN.ordinal()];
     row.createCell(1).setCellValue(totals[Subject.SampleSource.TUMOR.ordinal()]);
+
+    Cell cell = row.createCell(2);
+    cell.setCellValue((float)totals[Subject.SampleSource.TUMOR.ordinal()] / (float)projectTotal);
+    cell.setCellStyle(pctStyle);
+
     row.createCell(3).setCellValue(totals[Subject.SampleSource.BLOOD.ordinal()]);
+
+    cell = row.createCell(4);
+    cell.setCellValue((float)totals[Subject.SampleSource.BLOOD.ordinal()] / (float)projectTotal);
+    cell.setCellStyle(pctStyle);
+
     row.createCell(5).setCellValue(totals[Subject.SampleSource.UNKNOWN.ordinal()]);
+
+    cell = row.createCell(6);
+    cell.setCellValue((float)totals[Subject.SampleSource.UNKNOWN.ordinal()] / (float)projectTotal);
+    cell.setCellStyle(pctStyle);
   }
 
   enum StarFourStatus {Homozygous, Heterozygous, NonFour}
