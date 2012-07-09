@@ -10,10 +10,7 @@ import util.ItpcUtils;
 import util.Med;
 import util.Value;
 
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
-import java.util.SortedSet;
+import java.util.*;
 
 /**
  * Created by IntelliJ IDEA.
@@ -46,6 +43,10 @@ public class Subject {
   private String m_firstAdjEndoTher = null;
   private String m_genoSource = null;
   private String m_tumorDimension = null;
+  private String m_numPositiveNodes = null;
+  private String m_tumorGrading = null;
+  private String progesteroneReceptor = null;
+  private String radiotherapy = null;
   private Deletion m_deletion = Deletion.Unknown;
   private Value m_additionalCancer = null;
   private String m_addCxIpsilateral = null;
@@ -71,6 +72,7 @@ public class Subject {
   private VariantAlleles m_rs16947 = new VariantAlleles();
   private VariantAlleles m_rs28371706 = new VariantAlleles();
   private VariantAlleles m_rs28371725 = new VariantAlleles();
+  private Set<SampleSource> m_sampleSources = Sets.newHashSet();
 
   private Map<Med,Value> m_medStatus = Maps.newHashMap();
 
@@ -1493,7 +1495,86 @@ public class Subject {
     }
   }
 
+  public String makeSqlInsert() {
+    String insertStmt = "insert into tamoxdata(subjectid," +
+            "projectid," +
+            "ageatdiagnosis," +
+            "menostatusatdx," +
+            "maxtumordim," +
+            "numposnodes," +
+            "grading," +
+            "erstatus," +
+            "pgrstatus," +
+            "radiotherapy," +
+            "cyp2d6_1," +
+            "cyp2d6_2," +
+            "crit1," +
+            "crit2," +
+            "crit3," +
+            "genosource) values (%s);";
+    List<String> fields = Lists.newArrayList();
+
+    fields.add("'"+getSubjectId()+"'");
+    fields.add("'"+getProjectSite()+"'");
+    fields.add("'"+getAge()+"'");
+    fields.add("'"+getMenoStatus()+"'");
+    fields.add("'"+getTumorDimension()+"'");
+    fields.add("'"+getNumPositiveNodes()+"'");
+    fields.add("'"+getTumorGrading()+"'");
+    fields.add("'"+getErStatus()+"'");
+    fields.add("'"+getProgesteroneReceptor()+"'");
+    fields.add("'"+getRadiotherapy()+"'");
+    fields.add("'"+getGenotypeFinal().get(0)+"'");
+    fields.add("'"+getGenotypeFinal().get(1)+"'");
+    fields.add("'"+includeCrit1()+"'");
+    fields.add("'"+includeCrit2()+"'");
+    fields.add("'"+includeCrit3()+"'");
+    fields.add("'"+Joiner.on(",").join(getSampleSources())+"'");
+
+    return String.format(insertStmt, Joiner.on(",").join(fields));
+  }
+
+  public String getNumPositiveNodes() {
+    return m_numPositiveNodes;
+  }
+
+  public void setNumPositiveNodes(String m_numPositiveNodes) {
+    this.m_numPositiveNodes = m_numPositiveNodes;
+  }
+
+  public String getTumorGrading() {
+    return m_tumorGrading;
+  }
+
+  public void setTumorGrading(String m_tumorGrading) {
+    this.m_tumorGrading = m_tumorGrading;
+  }
+
+  public String getProgesteroneReceptor() {
+    return progesteroneReceptor;
+  }
+
+  public void setProgesteroneReceptor(String progesteroneReceptor) {
+    this.progesteroneReceptor = progesteroneReceptor;
+  }
+
+  public String getRadiotherapy() {
+    return radiotherapy;
+  }
+
+  public void setRadiotherapy(String radiotherapy) {
+    this.radiotherapy = radiotherapy;
+  }
+
+  public Set<SampleSource> getSampleSources() {
+    return m_sampleSources;
+  }
+
+  public void addSampleSource(SampleSource sampleSource) {
+    m_sampleSources.add(sampleSource);
+  }
+
   enum Deletion {Unknown, None, Hetero, Homo}
 
-  public enum SampleSource {TUMOR, BLOOD, UNKNOWN}
+  public enum SampleSource {TUMOR, BLOOD, BUCCAL, FROZEN, PARAFFIN, UNKNOWN}
 }

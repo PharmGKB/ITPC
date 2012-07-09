@@ -1,3 +1,4 @@
+import org.apache.commons.io.IOUtils;
 import org.apache.log4j.Logger;
 import org.pharmgkb.ItpcSheet;
 import org.pharmgkb.Subject;
@@ -5,6 +6,7 @@ import summary.*;
 import util.CliHelper;
 
 import java.io.File;
+import java.io.FileWriter;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
@@ -39,6 +41,9 @@ public class Parser {
       throw new Exception("Input file doesn't exist");
     }
 
+    File sqlFile = new File(getFileInput().getAbsolutePath().replaceAll("\\.xls", ".sql"));
+    FileWriter fw = new FileWriter(sqlFile);
+
     dataSheet = new ItpcSheet(getFileInput(), m_doHighlight);
     List<AbstractSummary> summaries = Arrays.asList(
         new GenotypeSummary(),
@@ -52,6 +57,9 @@ public class Parser {
         Subject subject = dataSheet.next();
         dataSheet.writeSubjectCalculatedColumns(subject);
 
+        fw.write(subject.makeSqlInsert());
+        fw.write("\n");
+
         for (AbstractSummary summ : summaries) {
           summ.addSubject(subject);
         }
@@ -63,6 +71,9 @@ public class Parser {
       }
     }
     sf_logger.info("Parsed " + sampleCount + " samples");
+
+    fw.write("commit;\n");
+    IOUtils.closeQuietly(fw);
 
     for (AbstractSummary summ : summaries) {
       summ.writeToWorkbook(dataSheet.getWorkbook());

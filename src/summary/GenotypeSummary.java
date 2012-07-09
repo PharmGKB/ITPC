@@ -31,7 +31,7 @@ public class GenotypeSummary extends AbstractSummary {
     starFour = new int[]{0,0,0,0};
     sourceMap.put(Subject.SampleSource.UNKNOWN, starFour);
     for (int i=0; i<12; i++) {
-      tumorFreqMap.put(i, new int[]{0,0,0});
+      tumorFreqMap.put(i, new int[]{0,0,0,0,0,0});
     }
   }
 
@@ -146,7 +146,7 @@ public class GenotypeSummary extends AbstractSummary {
     row.createCell(5).setCellValue("Unknown N");
     row.createCell(6).setCellValue("Unknown %");
 
-    int[] totals = new int[]{0,0,0};
+    int[] totals = new int[]{0,0,0,0,0,0};
     CellStyle pctStyle = sheet.getWorkbook().createCellStyle();
     DataFormat format = sheet.getWorkbook().createDataFormat();
     pctStyle.setDataFormat(format.getFormat("0.0%"));

@@ -1,6 +1,7 @@
 package org.pharmgkb;
 
 import com.google.common.collect.Maps;
+import com.google.common.collect.Sets;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
@@ -13,6 +14,7 @@ import java.io.*;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.regex.Pattern;
 
 
@@ -57,6 +59,10 @@ public class ItpcSheet implements Iterator {
   protected int genoSourceIdx3 = -1;
   protected int projectNotesIdx = -1;
   protected int tumorDimensionIdx = -1;
+  protected int numPositiveNodesIdx = -1;
+  protected int tumorGradingIdx = -1;
+  protected int pgrStatusIdx = -1;
+  protected int radioIdx = -1;
   protected int additionalCancerIdx = -1;
   protected int addCxIpsilateralIdx = -1;
   protected int addCxDistantRecurIdx = -1;
@@ -86,6 +92,7 @@ public class ItpcSheet implements Iterator {
   protected int rs16947idx = -1;
   protected int rs28371706idx = -1;
   protected int rs28371725idx = -1;
+  protected Set<Integer> sampleSourceIdxs = Sets.newHashSet();
 
   protected int amplichipidx = -1;
   protected int otherGenoIdx = -1;
@@ -235,6 +242,14 @@ public class ItpcSheet implements Iterator {
         metastaticIdx = idx;
       } else if (header.contains("maximum dimension of tumor")) {
         tumorDimensionIdx = idx;
+      } else if (header.equalsIgnoreCase("Number of Positive Nodes")) {
+        numPositiveNodesIdx = idx;
+      } else if (header.equalsIgnoreCase("Nottingham Grade")) {
+        tumorGradingIdx = idx;
+      } else if (header.equalsIgnoreCase("Progesterone Receptor")) {
+        pgrStatusIdx = idx;
+      } else if (header.equalsIgnoreCase("Radiation Treatment")) {
+        radioIdx = idx;
       } else if (header.contains("menopause status at diagnosis")) {
         menoStatusIdx = idx;
       } else if (header.equals("estrogen receptor")) {
@@ -298,6 +313,8 @@ public class ItpcSheet implements Iterator {
         rs28371706idx = idx;
       } else if (header.contains("rs28371725") && !header.contains("source")) {
         rs28371725idx = idx;
+      } else if (header.endsWith("genotyping source")) {
+        sampleSourceIdxs.add(idx);
       } else if (header.contains("cyp2d6 *5") && !header.contains("source")) {
         star5idx = idx;
       } else if (header.contains("fluoxetine")) {
@@ -519,6 +536,10 @@ public class ItpcSheet implements Iterator {
     subject.setTimeBtwSurgTamox(fields.get(timeBtwSurgTamoxIdx));
     subject.setFirstAdjEndoTher(fields.get(firstAdjEndoTherIdx));
     subject.setTumorDimension(fields.get(tumorDimensionIdx));
+    subject.setNumPositiveNodes(fields.get(numPositiveNodesIdx));
+    subject.setTumorGrading(fields.get(tumorGradingIdx));
+    subject.setProgesteroneReceptor(fields.get(pgrStatusIdx));
+    subject.setRadiotherapy(fields.get(radioIdx));
     subject.setAdditionalCancer(fields.get(additionalCancerIdx));
     subject.setAddCxIpsilateral(fields.get(addCxIpsilateralIdx));
     subject.setAddCxDistantRecur(fields.get(addCxDistantRecurIdx));
@@ -549,6 +570,29 @@ public class ItpcSheet implements Iterator {
     subject.setRs28371706(new VariantAlleles(fields.get(rs28371706idx)));
     subject.setRs28371725(new VariantAlleles(fields.get(rs28371725idx)));
     subject.setDeletion(fields.get(star5idx));
+
+    for (Integer idx : sampleSourceIdxs) {
+      if (fields.get(idx) != null) {
+        if (fields.get(idx).contains("0")) {
+          subject.addSampleSource(Subject.SampleSource.TUMOR);
+        }
+        if (fields.get(idx).contains("1")) {
+          subject.addSampleSource(Subject.SampleSource.BLOOD);
+        }
+        if (fields.get(idx).contains("2")) {
+          subject.addSampleSource(Subject.SampleSource.BUCCAL);
+        }
+        if (fields.get(idx).contains("3")) {
+          subject.addSampleSource(Subject.SampleSource.FROZEN);
+        }
+        if (fields.get(idx).contains("4")) {
+          subject.addSampleSource(Subject.SampleSource.PARAFFIN);
+        }
+      }
+    }
+    if (subject.getSampleSources().isEmpty()) {
+      subject.addSampleSource(Subject.SampleSource.UNKNOWN);
+    }
 
     subject.setGenotypeAmplichip(fields.get(amplichipidx));
     if (fields.size()>otherGenoIdx && !StringUtils.isBlank(fields.get(otherGenoIdx))) {
