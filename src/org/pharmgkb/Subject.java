@@ -41,7 +41,6 @@ public class Subject {
   private String m_followup = null;
   private String m_timeBtwSurgTamox = null;
   private String m_firstAdjEndoTher = null;
-  private String m_genoSource = null;
   private String m_tumorDimension = null;
   private String m_numPositiveNodes = null;
   private String m_tumorGrading = null;
@@ -224,27 +223,6 @@ public class Subject {
 
   public Float getScore() {
     return getGenotypeFinal().getScore();
-  }
-
-  public Float getScoreWithDrugs() {
-    Float score = null;
-
-    if (getPotent()==Value.Yes) {
-      score = 0f;
-    }
-    else if (!getGenotypeFinal().isUncertain()
-             && ((getWeak()!=Value.Unknown && getPotent()!=Value.Unknown)
-                 || getGenotypeFinal().getMetabolizerStatus().equals("PM/PM"))) 
-    {
-      Float genoScore = getGenotypeFinal().getScore();
-      Float weakPenalty = getWeak()==Value.Yes ? -0.5f : 0f;
-
-      score = genoScore + weakPenalty;
-
-      if (score<0f) {score=0f;}
-    }
-
-    return score;
   }
 
   public String getMetabolizerGroup() {
@@ -693,7 +671,7 @@ public class Subject {
   }
 
   public Value passInclusion2a() {
-    if ((StringUtils.equals(getMetastatic(),"0") && isValidTumorDimension()) && getDcisStatus()!=Value.Yes) {
+    if ((StringUtils.equals(getMetastatic(), "0") && isValidTumorDimension()) && getDcisStatus()!=Value.Yes) {
       return Value.Yes;
     }
     else {
@@ -795,19 +773,28 @@ public class Subject {
   }
 
   public Value passInclusion7() {
-    List<String> bloodSourceCodes = Arrays.asList("1","2");
-    List<String> passingBloodTimings = Arrays.asList("1","2");
+    Value inclusion = Value.No;
 
-    if (ItpcUtils.isBlank(getGenoSource())) {
-      return Value.No;
+    List<String> passingBloodTimings = Arrays.asList("1","2","7");
+    List<String> passingTumorTimings = Arrays.asList("1");
+
+    if (getSampleSources().isEmpty() || (getSampleSources().size()==1 && getSampleSources().contains(SampleSource.UNKNOWN))) {
+      return inclusion;
     }
 
-    if (bloodSourceCodes.contains(getGenoSource())) {
-      if (!passingBloodTimings.contains(getBloodSource())) {
-        return Value.No;
+    if (getSampleSources().contains(SampleSource.BLOOD) || getSampleSources().contains(SampleSource.BUCCAL)) {
+      if (passingBloodTimings.contains(getBloodSource())) {
+        inclusion = Value.Yes;
       }
     }
-    return Value.Yes;
+    if (getSampleSources().contains(SampleSource.TUMOR_FFP)
+            || getSampleSources().contains(SampleSource.TUMOR_FROZEN)
+            || getSampleSources().contains(SampleSource.NORMAL_PARAFFIN)) {
+      if (passingTumorTimings.contains(getTumorSource())) {
+        inclusion = Value.Yes;
+      }
+    }
+    return inclusion;
   }
 
   public Value passInclusion8() {
@@ -1127,14 +1114,6 @@ public class Subject {
     m_bloodSource = StringUtils.replace(bloodSource,"*","");
   }
 
-  public String getGenoSource() {
-    return m_genoSource;
-  }
-
-  public void setGenoSource(String genoSource) {
-    m_genoSource = StringUtils.replace(genoSource,"*","");
-  }
-
   public String getFollowup() {
     return m_followup;
   }
@@ -1251,18 +1230,6 @@ public class Subject {
 
   public String getDiagToEventDaysCalc() {
     return getFirstEventData()[1];
-  }
-
-  public Value hasAdditionalDiseaseEvent() {
-    if (StringUtils.isBlank(getFirstDiseaseEventCalc())) {
-      return Value.No;
-    }
-    else if (getFirstDiseaseEventCalc().equals("Unknown")) {
-      return Value.Unknown;
-    }
-    else {
-      return Value.Yes;
-    }
   }
 
   /**
@@ -1401,20 +1368,8 @@ public class Subject {
     m_survivalNotDied = survivalNotDied;
   }
 
-  public Map<Med, Value> getMedStatus() {
-    return m_medStatus;
-  }
-
-  public void setMedStatus(Map<Med, Value> medStatus) {
-    m_medStatus = medStatus;
-  }
-
   public void addMedStatus(Med med, Value value) {
     m_medStatus.put(med, value);
-  }
-
-  public void removeMedStatus(Med med) {
-    m_medStatus.remove(med);
   }
 
   public Value hasMed(Med med) {
@@ -1485,7 +1440,7 @@ public class Subject {
       return SampleSource.UNKNOWN;
     }
     else if (!(ItpcUtils.isBlank(getTumorSource()) || getTumorSource().equals("3")) && (ItpcUtils.isBlank(getBloodSource()) || getBloodSource().equals("3"))) {
-      return SampleSource.TUMOR;
+      return SampleSource.TUMOR_FFP;
     }
     else if ((ItpcUtils.isBlank(getTumorSource()) || getTumorSource().equals("3")) && !(ItpcUtils.isBlank(getBloodSource()) || getBloodSource().equals("3"))) {
       return SampleSource.BLOOD;
@@ -1576,5 +1531,5 @@ public class Subject {
 
   enum Deletion {Unknown, None, Hetero, Homo}
 
-  public enum SampleSource {TUMOR, BLOOD, BUCCAL, FROZEN, PARAFFIN, UNKNOWN}
+  public enum SampleSource {TUMOR_FFP, BLOOD, BUCCAL, TUMOR_FROZEN, NORMAL_PARAFFIN, UNKNOWN}
 }

@@ -22,7 +22,7 @@ public class SubjectTest extends TestCase {
     Genotype genotype = new Genotype("*1/*1");
     subject.setGenotypePgkb(genotype);
 
-    assertNull(subject.getScore());
+    assertEquals(2.0f, subject.getScore());
 
     /* First successful test, genotype and drug information is all available */
 
@@ -31,22 +31,6 @@ public class SubjectTest extends TestCase {
 
     Assert.assertEquals(2f, subject.getScore());
     Assert.assertEquals("Extensive two", subject.getMetabolizerGroup());
-
-    /* Test where a subject has both a potent and a weak inhibitor, Potents should always make score 0 */
-
-    subject.addMedStatus(Med.Cimetidine, Value.Yes);
-    subject.addMedStatus(Med.Paroxetine, Value.Yes);
-
-    Assert.assertEquals(0f, subject.getScore());
-    Assert.assertEquals("Poor", subject.getMetabolizerGroup());
-
-    /* Keeps the inhibitor information but tries an unknown genotype
-     * The rule states that Potents always cause 0 score, even if genotype is unknown */
-
-    Genotype unknownGenotype = new Genotype("Unknown/*1");
-    subject.setGenotypePgkb(unknownGenotype);
-
-    Assert.assertEquals(0f, subject.getScore());
 
     /* Test to see if PM/PM with unknown inhibitors returns the correct values */
 
@@ -233,7 +217,7 @@ public class SubjectTest extends TestCase {
       subject.setRs3892097(new VariantAlleles(""));
       Assert.assertEquals("*1/*2A",subject.getGenotypeAmplichip().toString());
       Assert.assertEquals("*1/*2A",subject.getGenotypeFinal().toString());
-      Assert.assertEquals("EM/UM",subject.getGenotypeFinal().getMetabolizerStatus());
+      Assert.assertEquals("EM/EM",subject.getGenotypeFinal().getMetabolizerStatus());
     }
     catch (Exception ex) {
       fail("Couldn't parse amplichip");
@@ -408,17 +392,19 @@ public class SubjectTest extends TestCase {
     Subject subject = new Subject();
     Assert.assertEquals(Value.No, subject.passInclusion7());
 
-    subject.setGenoSource("0");
-    Assert.assertEquals(Value.Yes, subject.passInclusion7());
+    subject.addSampleSource(Subject.SampleSource.TUMOR_FFP);
+    Assert.assertEquals(Value.No, subject.passInclusion7());
 
     subject.setTumorSource("1");
     Assert.assertEquals(Value.Yes, subject.passInclusion7());
 
-    subject.setGenoSource("1");
+    subject.getSampleSources().clear();
+    subject.addSampleSource(Subject.SampleSource.BLOOD);
     subject.setBloodSource("3");
     Assert.assertEquals(Value.No, subject.passInclusion7());
 
-    subject.setGenoSource("1");
+    subject.getSampleSources().clear();
+    subject.addSampleSource(Subject.SampleSource.BLOOD);
     subject.setBloodSource("2");
     Assert.assertEquals(Value.Yes, subject.passInclusion7());
   }
@@ -557,7 +543,7 @@ public class SubjectTest extends TestCase {
     subject.setTamoxDose("0");
     subject.setChemotherapy("0");
     subject.setHormoneTherapy("0");
-    subject.setGenoSource("1");
+    subject.addSampleSource(Subject.SampleSource.BLOOD);
     subject.setBloodSource("2");
     subject.setFollowup("1");
   }

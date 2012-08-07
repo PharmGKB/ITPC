@@ -77,9 +77,7 @@ public class ItpcSheetTest extends TestCase {
     assertTrue(sheet.followupIdx>=0);
     assertTrue(sheet.timeBtwSurgTamoxIdx>=0);
     assertTrue(sheet.firstAdjEndoTherIdx>=0);
-    assertTrue(sheet.genoSourceIdx1>=0);
-    assertTrue(sheet.genoSourceIdx2>=0);
-    assertTrue(sheet.genoSourceIdx3>=0);
+    assertEquals(7, sheet.sampleSourceIdxs.size());
     assertTrue(sheet.otherGenoIdx>=0);
 
     assertTrue(sheet.fluoxetineCol>=0);

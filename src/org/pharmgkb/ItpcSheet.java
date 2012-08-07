@@ -54,9 +54,6 @@ public class ItpcSheet implements Iterator {
   protected int followupIdx = -1;
   protected int timeBtwSurgTamoxIdx = -1;
   protected int firstAdjEndoTherIdx = -1;
-  protected int genoSourceIdx1 = -1;
-  protected int genoSourceIdx2 = -1;
-  protected int genoSourceIdx3 = -1;
   protected int projectNotesIdx = -1;
   protected int tumorDimensionIdx = -1;
   protected int numPositiveNodesIdx = -1;
@@ -93,6 +90,17 @@ public class ItpcSheet implements Iterator {
   protected int rs28371706idx = -1;
   protected int rs28371725idx = -1;
   protected Set<Integer> sampleSourceIdxs = Sets.newHashSet();
+  protected static final Set<String> genotypeSourceHeaderTitles = Sets.newHashSet();
+  static {
+    genotypeSourceHeaderTitles.add("rs4986774 genotyping source");
+    genotypeSourceHeaderTitles.add("rs1065852 genotyping source");
+    genotypeSourceHeaderTitles.add("rs3892097 genotyping source");
+    genotypeSourceHeaderTitles.add("CYP2D6*5 genotyping source");
+    genotypeSourceHeaderTitles.add("rs5030655 genotyping source");
+    genotypeSourceHeaderTitles.add("rs16947 genotyping source");
+    genotypeSourceHeaderTitles.add("rs28371706 genotyping source");
+    genotypeSourceHeaderTitles.add("rs28371725 genotyping source");
+  }
 
   protected int amplichipidx = -1;
   protected int otherGenoIdx = -1;
@@ -284,27 +292,12 @@ public class ItpcSheet implements Iterator {
         projectNotesIdx = idx;
       } else if (header.equalsIgnoreCase("other cyp2d6 genotyping")) {
         otherGenoIdx = idx;
-      } else if (header.contains("rs4986774")) {
-        if (!header.contains("source")) {
-          rs4986774idx = idx;
-        }
-        else {
-          genoSourceIdx1 = idx;
-        }
-      } else if (header.contains("rs1065852")) {
-        if (!header.contains("source")) {
-          rs1065852idx = idx;
-        }
-        else {
-          genoSourceIdx2 = idx;
-        }
-      } else if (header.contains("rs3892097")) {
-        if (!header.contains("source")) {
-          rs3892097idx = idx;
-        }
-        else {
-          genoSourceIdx3 = idx;
-        }
+      } else if (header.contains("rs4986774") && !header.contains("source")) {
+        rs4986774idx = idx;
+      } else if (header.contains("rs1065852") && !header.contains("source")) {
+        rs1065852idx = idx;
+      } else if (header.contains("rs3892097") && !header.contains("source")) {
+        rs3892097idx = idx;
       } else if (header.contains("rs5030655") && !header.contains("source")) {
         rs5030655idx = idx;
       } else if (header.contains("rs16947") && !header.contains("source")) {
@@ -313,7 +306,7 @@ public class ItpcSheet implements Iterator {
         rs28371706idx = idx;
       } else if (header.contains("rs28371725") && !header.contains("source")) {
         rs28371725idx = idx;
-      } else if (header.endsWith("genotyping source")) {
+      } else if (genotypeSourceHeaderTitles.contains(header)) {
         sampleSourceIdxs.add(idx);
       } else if (header.contains("cyp2d6 *5") && !header.contains("source")) {
         star5idx = idx;
@@ -552,16 +545,6 @@ public class ItpcSheet implements Iterator {
     subject.setSurvivalNotDied(fields.get(survivalNotDiedIdx));
     subject.setCauseOfDeath(fields.get(causeOfDeathIdx));
 
-    if (!StringUtils.isBlank(fields.get(genoSourceIdx1)) && !fields.get(genoSourceIdx1).equals("NA")) {
-      subject.setGenoSource(fields.get(genoSourceIdx1));
-    }
-    else if (!StringUtils.isBlank(fields.get(genoSourceIdx2)) && !fields.get(genoSourceIdx2).equals("NA")) {
-      subject.setGenoSource(fields.get(genoSourceIdx2));
-    }
-    else if (!StringUtils.isBlank(fields.get(genoSourceIdx3)) && !fields.get(genoSourceIdx3).equals("NA")) {
-      subject.setGenoSource(fields.get(genoSourceIdx3));
-    }
-
     subject.setRs4986774(new VariantAlleles(fields.get(rs4986774idx)));
     subject.setRs1065852(new VariantAlleles(fields.get(rs1065852idx)));
     subject.setRs3892097(new VariantAlleles(fields.get(rs3892097idx)));
@@ -574,7 +557,7 @@ public class ItpcSheet implements Iterator {
     for (Integer idx : sampleSourceIdxs) {
       if (fields.get(idx) != null) {
         if (fields.get(idx).contains("0")) {
-          subject.addSampleSource(Subject.SampleSource.TUMOR);
+          subject.addSampleSource(Subject.SampleSource.TUMOR_FFP);
         }
         if (fields.get(idx).contains("1")) {
           subject.addSampleSource(Subject.SampleSource.BLOOD);
@@ -583,10 +566,10 @@ public class ItpcSheet implements Iterator {
           subject.addSampleSource(Subject.SampleSource.BUCCAL);
         }
         if (fields.get(idx).contains("3")) {
-          subject.addSampleSource(Subject.SampleSource.FROZEN);
+          subject.addSampleSource(Subject.SampleSource.TUMOR_FROZEN);
         }
         if (fields.get(idx).contains("4")) {
-          subject.addSampleSource(Subject.SampleSource.PARAFFIN);
+          subject.addSampleSource(Subject.SampleSource.NORMAL_PARAFFIN);
         }
       }
     }

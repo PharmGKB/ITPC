@@ -25,7 +25,7 @@ public class GenotypeSummary extends AbstractSummary {
 
   public GenotypeSummary() {
     int[] starFour = new int[]{0,0,0,0};
-    sourceMap.put(Subject.SampleSource.TUMOR, starFour);
+    sourceMap.put(Subject.SampleSource.TUMOR_FFP, starFour);
     starFour = new int[]{0,0,0,0};
     sourceMap.put(Subject.SampleSource.BLOOD, starFour);
     starFour = new int[]{0,0,0,0};
@@ -114,11 +114,11 @@ public class GenotypeSummary extends AbstractSummary {
     row.createCell(4).setCellValue("Non-*4");
 
     row = sheet.createRow(++rowNum);
-    row.createCell(0).setCellValue(Subject.SampleSource.TUMOR.toString());
-    row.createCell(1).setCellValue(sourceMap.get(Subject.SampleSource.TUMOR)[fourTotal]);
-    row.createCell(2).setCellValue(sourceMap.get(Subject.SampleSource.TUMOR)[fourHomo]);
-    row.createCell(3).setCellValue(sourceMap.get(Subject.SampleSource.TUMOR)[fourHeto]);
-    row.createCell(4).setCellValue(sourceMap.get(Subject.SampleSource.TUMOR)[fourNon]);
+    row.createCell(0).setCellValue(Subject.SampleSource.TUMOR_FFP.toString());
+    row.createCell(1).setCellValue(sourceMap.get(Subject.SampleSource.TUMOR_FFP)[fourTotal]);
+    row.createCell(2).setCellValue(sourceMap.get(Subject.SampleSource.TUMOR_FFP)[fourHomo]);
+    row.createCell(3).setCellValue(sourceMap.get(Subject.SampleSource.TUMOR_FFP)[fourHeto]);
+    row.createCell(4).setCellValue(sourceMap.get(Subject.SampleSource.TUMOR_FFP)[fourNon]);
 
     row = sheet.createRow(++rowNum);
     row.createCell(0).setCellValue(Subject.SampleSource.BLOOD.toString());
@@ -153,10 +153,10 @@ public class GenotypeSummary extends AbstractSummary {
 
     for (Integer i : tumorFreqMap.keySet()) {
       row = sheet.createRow(++rowNum);
-      Integer siteTotal = tumorFreqMap.get(i)[Subject.SampleSource.TUMOR.ordinal()] + tumorFreqMap.get(i)[Subject.SampleSource.BLOOD.ordinal()] + tumorFreqMap.get(i)[Subject.SampleSource.UNKNOWN.ordinal()];
+      Integer siteTotal = tumorFreqMap.get(i)[Subject.SampleSource.TUMOR_FFP.ordinal()] + tumorFreqMap.get(i)[Subject.SampleSource.BLOOD.ordinal()] + tumorFreqMap.get(i)[Subject.SampleSource.UNKNOWN.ordinal()];
 
-      Integer tumorTotal = tumorFreqMap.get(i)[Subject.SampleSource.TUMOR.ordinal()];
-      Float tumorPct = (float)tumorFreqMap.get(i)[Subject.SampleSource.TUMOR.ordinal()] / (float)siteTotal;
+      Integer tumorTotal = tumorFreqMap.get(i)[Subject.SampleSource.TUMOR_FFP.ordinal()];
+      Float tumorPct = (float)tumorFreqMap.get(i)[Subject.SampleSource.TUMOR_FFP.ordinal()] / (float)siteTotal;
       Integer bloodTotal = tumorFreqMap.get(i)[Subject.SampleSource.BLOOD.ordinal()];
       Float bloodPct = (float)tumorFreqMap.get(i)[Subject.SampleSource.BLOOD.ordinal()] / (float)siteTotal;
       Integer unkTotal = tumorFreqMap.get(i)[Subject.SampleSource.UNKNOWN.ordinal()];
@@ -182,16 +182,16 @@ public class GenotypeSummary extends AbstractSummary {
       cell.setCellValue(unkPct);
       cell.setCellStyle(pctStyle);
 
-      totals[Subject.SampleSource.TUMOR.ordinal()]+=tumorTotal;
+      totals[Subject.SampleSource.TUMOR_FFP.ordinal()]+=tumorTotal;
       totals[Subject.SampleSource.BLOOD.ordinal()]+=bloodTotal;
       totals[Subject.SampleSource.UNKNOWN.ordinal()]+=unkTotal;
     }
     row = sheet.createRow(++rowNum);
-    int projectTotal = totals[Subject.SampleSource.TUMOR.ordinal()] + totals[Subject.SampleSource.BLOOD.ordinal()] + totals[Subject.SampleSource.UNKNOWN.ordinal()];
-    row.createCell(1).setCellValue(totals[Subject.SampleSource.TUMOR.ordinal()]);
+    int projectTotal = totals[Subject.SampleSource.TUMOR_FFP.ordinal()] + totals[Subject.SampleSource.BLOOD.ordinal()] + totals[Subject.SampleSource.UNKNOWN.ordinal()];
+    row.createCell(1).setCellValue(totals[Subject.SampleSource.TUMOR_FFP.ordinal()]);
 
     Cell cell = row.createCell(2);
-    cell.setCellValue((float)totals[Subject.SampleSource.TUMOR.ordinal()] / (float)projectTotal);
+    cell.setCellValue((float)totals[Subject.SampleSource.TUMOR_FFP.ordinal()] / (float)projectTotal);
     cell.setCellStyle(pctStyle);
 
     row.createCell(3).setCellValue(totals[Subject.SampleSource.BLOOD.ordinal()]);
