@@ -2,7 +2,10 @@ import org.apache.commons.io.IOUtils;
 import org.apache.log4j.Logger;
 import org.pharmgkb.ItpcSheet;
 import org.pharmgkb.Subject;
-import summary.*;
+import summary.AbstractSummary;
+import summary.GenotypeSummary;
+import summary.InclusionSummary;
+import summary.MetabStatusSummary;
 import util.CliHelper;
 
 import java.io.File;

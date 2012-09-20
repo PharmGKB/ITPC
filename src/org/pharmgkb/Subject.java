@@ -63,6 +63,7 @@ public class Subject {
   private Genotype m_genotypePgkb = new Genotype();
   private Genotype m_genotypeAmplichip = new Genotype();
   private Genotype m_genotypeLimited = new Genotype();
+  private Genotype m_genotypeOther = new Genotype();
 
   private VariantAlleles m_rs1065852 = new VariantAlleles();
   private VariantAlleles m_rs4986774 = new VariantAlleles();
@@ -97,7 +98,7 @@ public class Subject {
 
   public void setGenotypeAmplichip(String alleles) {
     try {
-      this.setGenotypeAmplichip(processAmplichip(alleles));
+      this.setGenotypeAmplichip(processGenotype(alleles));
     }
     catch (Exception ex) {
       logger.warn("Cannot parse amplichip genotype: " + alleles);
@@ -619,17 +620,17 @@ public class Subject {
     }
   }
 
-  protected static Genotype processAmplichip(String amplichip) throws Exception {
+  protected static Genotype processGenotype(String genoString) throws Exception {
     Genotype genotype = new Genotype();
 
-    if (amplichip != null && amplichip.contains("/")) {
-      String[] tokens = amplichip.split("/");
+    if (StringUtils.isNotBlank(genoString) && genoString.contains("/")) {
+      String[] tokens = genoString.split("/");
       for (String token : tokens) {
         try {
           genotype.addString(token);
         }
         catch (Exception ex) {
-          throw new Exception("Error processing amplichip: " + amplichip, ex);
+          throw new Exception("Error processing amplichip: " + genoString, ex);
         }
       }
     }
@@ -1527,6 +1528,23 @@ public class Subject {
 
   public void addSampleSource(SampleSource sampleSource) {
     m_sampleSources.add(sampleSource);
+  }
+
+  public Genotype getGenotypeOther() {
+    return m_genotypeOther;
+  }
+
+  public void setGenotypeOther(Genotype genotype) {
+    m_genotypeOther = genotype;
+  }
+
+  public void setGenotypeOther(String alleles) {
+    try {
+      this.setGenotypeOther(processGenotype(alleles));
+    }
+    catch (Exception ex) {
+      logger.warn("Cannot parse amplichip genotype: " + alleles);
+    }
   }
 
   enum Deletion {Unknown, None, Hetero, Homo}

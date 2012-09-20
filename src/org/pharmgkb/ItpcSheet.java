@@ -30,6 +30,7 @@ public class ItpcSheet implements Iterator {
 
   private Sheet m_dataSheet = null;
   private int m_rowIndex = -1;
+  private List<String> m_currentDataRow = null;
 
   private CellStyle styleHighlight = null;
 
@@ -485,20 +486,38 @@ public class ItpcSheet implements Iterator {
 
   private void setSampleIterator(PoiWorksheetIterator sampleIterator) {
     m_sampleIterator = sampleIterator;
+
+    if (getSampleIterator().hasNext()) {
+      setCurrentDataRow(getSampleIterator().next());
+    }
   }
 
   public boolean hasNext() {
-    return this.getSampleIterator().hasNext();
+    return getCurrentDataRow()!=null
+            && !getCurrentDataRow().isEmpty()
+            && StringUtils.isNotBlank(getCurrentDataRow().get(0));
   }
 
   public Subject next() {
     rowIndexPlus();
-    return parseSubject(this.getSampleIterator().next());
+    Subject subject = parseSubject(getCurrentDataRow());
+    if (getSampleIterator().hasNext()) {
+      setCurrentDataRow(getSampleIterator().next());
+    }
+    else {
+      setCurrentDataRow(null);
+    }
+    return subject;
   }
 
   public void skipNext() {
     rowIndexPlus();
-    this.getSampleIterator().next();
+    if (getSampleIterator().hasNext()) {
+      setCurrentDataRow(getSampleIterator().next());
+    }
+    else {
+      setCurrentDataRow(null);
+    }
   }
 
   public void remove() {
@@ -578,9 +597,7 @@ public class ItpcSheet implements Iterator {
     }
 
     subject.setGenotypeAmplichip(fields.get(amplichipidx));
-    if (fields.size()>otherGenoIdx && !StringUtils.isBlank(fields.get(otherGenoIdx))) {
-      subject.setGenotypeAmplichip(fields.get(otherGenoIdx));
-    }
+    subject.setGenotypeOther(fields.get(otherGenoIdx));
 
     for (Med med : medIdx.keySet()) {
       subject.addMedStatus(med, translateDrugFieldToValue(fields.get(medIdx.get(med))));
@@ -727,5 +744,13 @@ public class ItpcSheet implements Iterator {
       }
     }
     return isDcis;
+  }
+
+  public List<String> getCurrentDataRow() {
+    return m_currentDataRow;
+  }
+
+  public void setCurrentDataRow(List<String> m_currentDataRow) {
+    this.m_currentDataRow = m_currentDataRow;
   }
 }
