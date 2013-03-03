@@ -125,9 +125,13 @@
       <entry name="?*.tld" />
       <entry name="?*.ftl" />
     </wildcardResourcePatterns>
-    <annotationProcessing enabled="false" useClasspath="true" />
+    <annotationProcessing>
+      <profile default="true" name="Default" enabled="false">
+        <processorPath useClasspath="true" />
+      </profile>
+    </annotationProcessing>
   </component>
-  <component name="CopyrightManager" default="">
+  <component name="CopyrightManager" default="PharmGKB">
     <copyright>
       <option name="notice" value="----- BEGIN LICENSE BLOCK -----&#10;Version: MPL 1.1/GPL 2.0/LGPL 2.1&#10;&#10;The contents of this file are subject to the Mozilla Public License Version&#10;1.1 (the &quot;License&quot;); you may not use this file except in compliance with the&#10;License. You may obtain a copy of the License at http://www.mozilla.org/MPL/&#10;&#10;Software distributed under the License is distributed on an &quot;AS IS&quot; basis,&#10;WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License for&#10;the specific language governing rights and limitations under the License.&#10;&#10;The Original Code is PharmGen.&#10;&#10;The Initial Developer of the Original Code is PharmGKB (The Pharmacogenetics&#10;and Pharmacogenetics Knowledge Base, supported by NIH U01GM61374). Portions&#10;created by the Initial Developer are Copyright (C) &amp;#36;today.year the Initial Developer.&#10;All Rights Reserved.&#10;&#10;Contributor(s):&#10;&#10;Alternatively, the contents of this file may be used under the terms of&#10;either the GNU General Public License Version 2 or later (the &quot;GPL&quot;), or the&#10;GNU Lesser General Public License Version 2.1 or later (the &quot;LGPL&quot;), in&#10;which case the provisions of the GPL or the LGPL are applicable instead of&#10;those above. If you wish to allow use of your version of this file only&#10;under the terms of either the GPL or the LGPL, and not to allow others to&#10;use your version of this file under the terms of the MPL, indicate your&#10;decision by deleting the provisions above and replace them with the notice&#10;and other provisions required by the GPL or the LGPL. If you do not delete&#10;the provisions above, a recipient may use your version of this file under&#10;the terms of any one of the MPL, the GPL or the LGPL.&#10;&#10;----- END LICENSE BLOCK -----" />
       <option name="keyword" value="Copyright" />
@@ -135,7 +139,9 @@
       <option name="myName" value="PharmGKB" />
       <option name="myLocal" value="true" />
     </copyright>
-    <module2copyright />
+    <module2copyright>
+      <element module="Project Files" copyright="PharmGKB" />
+    </module2copyright>
   </component>
   <component name="DependencyValidationManager">
     <option name="SKIP_IMPORT_STATEMENTS" value="false" />
@@ -299,6 +305,37 @@
       </item>
     </group>
   </component>
+  <component name="ProjectCodeStyleSettingsManager">
+    <option name="PER_PROJECT_SETTINGS">
+      <value>
+        <XML>
+          <option name="XML_LEGACY_SETTINGS_IMPORTED" value="true" />
+        </XML>
+        <codeStyleSettings language="GSP">
+          <indentOptions>
+            <option name="INDENT_SIZE" value="2" />
+          </indentOptions>
+        </codeStyleSettings>
+        <codeStyleSettings language="Groovy">
+          <indentOptions>
+            <option name="INDENT_SIZE" value="2" />
+          </indentOptions>
+        </codeStyleSettings>
+        <codeStyleSettings language="JAVA">
+          <indentOptions>
+            <option name="INDENT_SIZE" value="2" />
+            <option name="TAB_SIZE" value="2" />
+          </indentOptions>
+        </codeStyleSettings>
+        <codeStyleSettings language="JavaScript">
+          <indentOptions>
+            <option name="CONTINUATION_INDENT_SIZE" value="8" />
+          </indentOptions>
+        </codeStyleSettings>
+      </value>
+    </option>
+    <option name="USE_PER_PROJECT_SETTINGS" value="true" />
+  </component>
   <component name="ProjectDictionaryState">
     <dictionary name="whaleyr">
       <words>
@@ -364,7 +401,7 @@
         <root url="jar://$PROJECT_DIR$/lib/dom4j-1.6.1.jar!/" />
       </CLASSES>
       <JAVADOC>
-        <root url="file://$USER_HOME$/pharmgkb/tools/poi-3.6/docs/apidocs" />
+        <root url="file://$PROJECT_DIR$/../tools/poi-3.6/docs/apidocs" />
       </JAVADOC>
       <SOURCES />
     </library>
