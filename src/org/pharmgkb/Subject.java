@@ -819,14 +819,16 @@ public class Subject {
       return inclusion;
     }
 
-    if (getSampleSources().contains(SampleSource.BLOOD) || getSampleSources().contains(SampleSource.BUCCAL)) {
+    if (isSampleSourceTumor() && isSampleSourceBlood()) {
+      logger.warn("Sample is marked as both blood and tumor for "+getSubjectId());
+    }
+
+    if (isSampleSourceBlood()) {
       if (passingBloodTimings.contains(getBloodSource())) {
         inclusion = Value.Yes;
       }
     }
-    if (getSampleSources().contains(SampleSource.TUMOR_FFP)
-            || getSampleSources().contains(SampleSource.TUMOR_FROZEN)
-            || getSampleSources().contains(SampleSource.NORMAL_PARAFFIN)) {
+    if (isSampleSourceTumor()) {
       if (passingTumorTimings.contains(getTumorSource())) {
         inclusion = Value.Yes;
       }
@@ -1472,21 +1474,6 @@ public class Subject {
     m_dcisStatus = dcisStatus;
   }
 
-  public SampleSource getSampleSource() {
-    if ((ItpcUtils.isBlank(getTumorSource()) || getTumorSource().equals("3")) && (ItpcUtils.isBlank(getBloodSource()) || getBloodSource().equals("3"))) {
-      return SampleSource.UNKNOWN;
-    }
-    else if (!(ItpcUtils.isBlank(getTumorSource()) || getTumorSource().equals("3")) && (ItpcUtils.isBlank(getBloodSource()) || getBloodSource().equals("3"))) {
-      return SampleSource.TUMOR_FFP;
-    }
-    else if ((ItpcUtils.isBlank(getTumorSource()) || getTumorSource().equals("3")) && !(ItpcUtils.isBlank(getBloodSource()) || getBloodSource().equals("3"))) {
-      return SampleSource.BLOOD;
-    }
-    else {
-      return SampleSource.UNKNOWN;
-    }
-  }
-
   public String makeSqlInsert() {
     String insertStmt = "insert into tamoxdata(subjectid," +
             "projectid," +
@@ -1564,6 +1551,19 @@ public class Subject {
 
   public void addSampleSource(SampleSource sampleSource) {
     m_sampleSources.add(sampleSource);
+  }
+
+  public boolean isSampleSourceBlood() {
+    return getSampleSources()!=null && (
+            getSampleSources().contains(SampleSource.BLOOD)
+            || getSampleSources().contains(SampleSource.BUCCAL));
+  }
+
+  public boolean isSampleSourceTumor() {
+    return getSampleSources()!=null && (
+            getSampleSources().contains(SampleSource.TUMOR_FFP)
+            || getSampleSources().contains(SampleSource.TUMOR_FROZEN)
+            || getSampleSources().contains(SampleSource.NORMAL_PARAFFIN));
   }
 
   public Genotype getGenotypeOther() {

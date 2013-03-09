@@ -101,7 +101,15 @@ public class GenotypeSummary extends AbstractSummary {
         countMap.put(key, countMap.get(key)+1);
       }
 
-      int[] totals = sourceMap.get(subject.getSampleSource());
+      Subject.SampleSource source = Subject.SampleSource.UNKNOWN;
+      if (subject.isSampleSourceBlood() && !subject.isSampleSourceTumor()) {
+        source = Subject.SampleSource.BLOOD;
+      }
+      if (!subject.isSampleSourceBlood() && subject.isSampleSourceTumor()) {
+        source = Subject.SampleSource.TUMOR_FFP;
+      }
+
+      int[] totals = sourceMap.get(source);
       totals[fourTotal]++;
       switch (status) {
         case Homozygous:
@@ -114,7 +122,7 @@ public class GenotypeSummary extends AbstractSummary {
           totals[fourNon]++;
       }
 
-      tumorFreqMap.get(siteIdx)[subject.getSampleSource().ordinal()]++;
+      tumorFreqMap.get(siteIdx)[source.ordinal()]++;
     }
   }
 

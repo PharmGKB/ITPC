@@ -36,6 +36,7 @@
 
 package org.pharmgkb;
 
+import com.google.common.base.Joiner;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import org.apache.commons.io.IOUtils;
@@ -712,7 +713,7 @@ public class ItpcSheet implements Iterator {
     ExcelUtils.writeCell(row, includeCrit3Idx, ItpcUtils.valueToInclusion(subject.includeCrit3()), highlight);
 
     ExcelUtils.writeCell(row, bfciIdx, subject.getBreastCancerFreeInterval(), highlight);
-    ExcelUtils.writeCell(row, genoSourceIdx, subject.getSampleSource().toString(), highlight);
+    ExcelUtils.writeCell(row, genoSourceIdx, Joiner.on(',').join(subject.getSampleSources()), highlight);
   }
 
   public File saveOutput() throws IOException {
