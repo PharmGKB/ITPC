@@ -514,7 +514,7 @@ public class ItpcSheet implements Iterator {
     ExcelUtils.writeCell(descrRow, includeCrit1Idx, "based on Inc 1, 2a, 3, 4b, 4c, 5, 6, 8, 9\nnot otherwise excluded");
     ExcelUtils.writeCell(descrRow, includeCrit2Idx, "based on Inc 2a, 3, 4c, 5, 6, 9\nnot otherwise excluded");
     ExcelUtils.writeCell(descrRow, includeCrit3Idx, "all subjects\nnot otherwise excluded");
-    ExcelUtils.writeCell(descrRow, bfciIdx, "as per Huddis et al. 2000 (based on CE,CG,BR,BS,BT)");
+    ExcelUtils.writeCell(descrRow, bfciIdx, "as per Hudis et al. 2000 (based on CE,CG,BR,BS,BT)");
   }
 
   private PoiWorksheetIterator getSampleIterator() {
