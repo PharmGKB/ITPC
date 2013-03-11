@@ -446,12 +446,12 @@ public class ItpcSheet implements Iterator {
 
     ExcelUtils.writeCell(headerRow, allele1finalIdx, "CYP2D6 Allele 1 (Final)");
     ExcelUtils.writeCell(headerRow, allele2finalIdx, "CYP2D6 Allele 2 (Final)");
-    ExcelUtils.writeCell(headerRow, genotypeIdx, "CYP2D6 Genotype (PharmGKB)");
-    ExcelUtils.writeCell(headerRow, genoMetabStatusIdx, "Metabolizer Status based on Genotypes only (PharmGKB)");
+    ExcelUtils.writeCell(headerRow, genotypeIdx, "CYP2D6 Genotype (Final)");
+    ExcelUtils.writeCell(headerRow, genoMetabStatusIdx, "Metabolizer Status based on Genotypes only (Final)");
     ExcelUtils.writeCell(headerRow, weakIdx, "Weak Drug (PharmGKB)");
     ExcelUtils.writeCell(headerRow, potentIdx, "Potent Drug (PharmGKB)");
-    ExcelUtils.writeCell(headerRow, scoreIdx, "CYP2D6 Genotype Score (PharmGKB)");
-    ExcelUtils.writeCell(headerRow, metabStatusIdx, "Metabolizer Status based on CYP2D6 Genotype Score (PharmGKB)");
+    ExcelUtils.writeCell(headerRow, scoreIdx, "CYP2D6 Genotype Score (Final)");
+    ExcelUtils.writeCell(headerRow, metabStatusIdx, "Metabolizer Status based on CYP2D6 Genotype Score (Final)");
 
     ExcelUtils.writeCell(headerRow, incAgeIdx, "Inc 1\nPostmenopausal");
     ExcelUtils.writeCell(headerRow, incNonmetaIdx, "Inc 2a\nNon-metastatic invasive cancer");
