@@ -1,3 +1,5 @@
+[![DOI](https://zenodo.org/badge/6285/PharmGKB/ITPC.svg)](http://dx.doi.org/10.5281/zenodo.16801)
+
 ITPC Data Parser
 ================
 
